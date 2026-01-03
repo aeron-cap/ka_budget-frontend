@@ -55,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut: async () => {
       await clearToken();
       setTokenState(null);
-      router.replace("/(auth)/(login)");
+      router.replace("/(auth)/login");
     },
   }), [token, isLoading]);
 
