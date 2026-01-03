@@ -1,4 +1,4 @@
-import { router, useSegments } from "expo-router";
+import { router, usePathname } from "expo-router";
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { clearToken, getToken, setToken } from "./authStorage";
 
@@ -14,10 +14,10 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   // component that wraps the whole  app and provides auth data
-  const segments = useSegments();
-  // segments is an array describing the current path parts
   const [token, setTokenState] = useState<string |  null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const pathname = usePathname();
 
   useEffect(() => {
     (async () => {
@@ -31,17 +31,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isLoading) return;
-    const inAuthGroup = segments[0] === "(auth)";
+
     const isAuthed = !!token;
 
-    if (isAuthed && !inAuthGroup) {
+    if (!isAuthed && pathname !== "/login") {
       router.replace("/(auth)/login");
     }
 
-    if (isAuthed && inAuthGroup) {
+    if (isAuthed && (pathname === "/login" || pathname === "/register")) {
       router.replace("/(tabs)");
     }
-  }, [segments, token, isLoading]);
+  }, [pathname, token, isLoading]);
 
   const value = useMemo<AuthContextType>(() => ({
     // useMemo caches this object so it doesn't recreate on every render unless dependencies change.
