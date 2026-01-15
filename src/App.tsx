@@ -1,11 +1,12 @@
 import { Assets as NavigationAssets } from '@react-navigation/elements';
-import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { Asset } from 'expo-asset';
 import { createURL } from 'expo-linking';
 import * as SplashScreen from 'expo-splash-screen';
 import * as React from 'react';
-import { useColorScheme } from 'react-native';
+import { Text, useColorScheme, View } from 'react-native';
 import { Navigation } from './navigation';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 Asset.loadAsync([
   ...NavigationAssets,
@@ -17,21 +18,45 @@ SplashScreen.preventAutoHideAsync();
 
 const prefix = createURL('/');
 
-export function App() {
-  const colorScheme = useColorScheme();
-
-  const theme = colorScheme === 'dark' ? DarkTheme : DefaultTheme
-
+function HomeScreen() {
   return (
-    <Navigation
-      theme={theme}
-      linking={{
-        enabled: 'auto',
-        prefixes: [prefix],
-      }}
-      onReady={() => {
-        SplashScreen.hideAsync();
-      }}
-    />
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Home Screen</Text>
+    </View>
   );
 }
+const Stack = createNativeStackNavigator();
+
+function RootStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Home" component={HomeScreen} />
+    </Stack.Navigator>
+  );
+}
+
+export function App() {
+  return (
+    <NavigationContainer>
+      <RootStack />
+    </NavigationContainer>
+  )
+}
+// export function App() {
+//   const colorScheme = useColorScheme();
+
+//   const theme = colorScheme === 'dark' ? DarkTheme : DefaultTheme
+
+//   return (
+//     <Navigation
+//       theme={theme}
+//       linking={{
+//         enabled: 'auto',
+//         prefixes: [prefix],
+//       }}
+//       onReady={() => {
+//         SplashScreen.hideAsync();
+//       }}
+//     />
+//   );
+// }
