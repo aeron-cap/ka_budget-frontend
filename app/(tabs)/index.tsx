@@ -1,9 +1,9 @@
-import { Text, View } from "react-native";
-import Home from "./home";
+import { Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   return (
-    <View
+    <SafeAreaView
       style={{
         flex: 1,
         justifyContent: "center",
@@ -11,7 +11,6 @@ export default function Index() {
       }}
     >
       <Text>Hello World!</Text>
-      <Home />
-    </View>
+    </SafeAreaView>
   );
 }
