@@ -4,7 +4,12 @@ import { Tabs } from "expo-router";
 
 export default function HomeStackLayout() {
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: { padding: 0, margin: 0, height: "8%" },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
