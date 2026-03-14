@@ -1,5 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
 type ProtrudingAddIconProps = {
   onPress: () => void;
@@ -13,9 +14,14 @@ export default function ProtrudingAddIcon({ onPress }: ProtrudingAddIconProps) {
         onPress();
       }}
     >
-      <View style={[styles.button]}>
+      <LinearGradient
+        colors={["#2B60E9", "#1A3A8A"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.button}
+      >
         <Ionicons name="add" size={24} color={"white"} />
-      </View>
+      </LinearGradient>
     </TouchableOpacity>
   );
 }
@@ -35,5 +41,6 @@ const styles = StyleSheet.create({
     marginBottom: 80,
     borderWidth: 4,
     borderColor: "white",
+    elevation: 8,
   },
 });

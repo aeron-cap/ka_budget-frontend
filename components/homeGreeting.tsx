@@ -7,8 +7,8 @@ type HomeGreetingProps = {
 export default function HomeGreeting({ name }: HomeGreetingProps) {
   return (
     <View style={[styles.greetingContainer]}>
-      <Text style={[styles.greetingNameText]}>Hi, {name}</Text>
-      <Text>Today is {Date.now()}</Text>
+      <Text style={[styles.greetingGreetText]}>Good Morning!</Text>
+      <Text style={[styles.greetingNameText]}>{name}</Text>
     </View>
   );
 }
@@ -16,10 +16,17 @@ export default function HomeGreeting({ name }: HomeGreetingProps) {
 const styles = StyleSheet.create({
   greetingContainer: {
     height: 80,
-    backgroundColor: "white",
-    padding: 12,
+    padding: 8,
+    // borderWidth: 2,
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+  greetingGreetText: {
+    fontWeight: "medium",
+    color: "gray",
   },
   greetingNameText: {
     fontWeight: "bold",
+    fontSize: 24,
   },
 });

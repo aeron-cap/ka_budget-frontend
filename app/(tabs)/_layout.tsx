@@ -1,6 +1,8 @@
 import ProtrudingAddIcon from "@/components/protrudingAddIcon";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { BlurView } from "expo-blur";
 import { router, Tabs, useSegments } from "expo-router";
+import { StyleSheet, View } from "react-native";
 
 export default function HomeStackLayout() {
   const segments = useSegments();
@@ -12,18 +14,19 @@ export default function HomeStackLayout() {
       backBehavior="history"
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "blue",
+        tabBarActiveTintColor: "#2B60E9",
         tabBarShowLabel: false,
         tabBarStyle: {
           display: isAddScreen ? "none" : "flex",
           position: "absolute",
           borderRadius: 40,
-          backgroundColor: "white",
+          backgroundColor: "transparent",
           borderTopWidth: 0,
           height: 60,
-          margin: 40,
+          margin: 48,
           marginBottom: 40,
           paddingBottom: 0,
+          elevation: 0,
         },
         tabBarItemStyle: {
           paddingHorizontal: 0,
@@ -33,13 +36,29 @@ export default function HomeStackLayout() {
           marginTop: 8,
           marginBottom: 0,
         },
+        tabBarBackground: () => (
+          <View
+            style={{
+              flex: 1,
+              borderRadius: 40,
+              overflow: "hidden",
+              backgroundColor: "rgba(255, 255, 255, 0.3)",
+            }}
+          >
+            <BlurView
+              tint="light"
+              intensity={60}
+              style={StyleSheet.absoluteFill}
+            />
+          </View>
+        ),
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           tabBarIcon: ({ color }) => (
-            <Ionicons size={30} name="home" color={color} />
+            <Ionicons size={24} name="home" color={color} />
           ),
         }}
       />
@@ -47,7 +66,7 @@ export default function HomeStackLayout() {
         name="insights"
         options={{
           tabBarIcon: ({ color }) => (
-            <Ionicons size={30} name="analytics" color={color} />
+            <Ionicons size={24} name="analytics" color={color} />
           ),
         }}
       />
@@ -71,7 +90,7 @@ export default function HomeStackLayout() {
         name="history"
         options={{
           tabBarIcon: ({ color }) => (
-            <Ionicons size={30} name="time" color={color} />
+            <Ionicons size={24} name="time" color={color} />
           ),
         }}
       />
@@ -79,7 +98,7 @@ export default function HomeStackLayout() {
         name="profile"
         options={{
           tabBarIcon: ({ color }) => (
-            <Ionicons size={30} name="person" color={color} />
+            <Ionicons size={24} name="person" color={color} />
           ),
         }}
       />
