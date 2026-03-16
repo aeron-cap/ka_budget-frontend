@@ -26,7 +26,7 @@ export default function HomeStackLayout() {
           margin: 48,
           marginBottom: 40,
           paddingBottom: 0,
-          elevation: 0,
+          elevation: 8,
         },
         tabBarItemStyle: {
           paddingHorizontal: 0,
@@ -42,12 +42,12 @@ export default function HomeStackLayout() {
               flex: 1,
               borderRadius: 40,
               overflow: "hidden",
-              backgroundColor: "rgba(255, 255, 255, 0.3)",
+              backgroundColor: "rgba(255, 255, 255, 0.8)",
             }}
           >
             <BlurView
               tint="light"
-              intensity={60}
+              intensity={80}
               style={StyleSheet.absoluteFill}
             />
           </View>

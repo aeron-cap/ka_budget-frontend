@@ -8,6 +8,7 @@ export default function BudgetGoalContainer() {
     <View style={style.wrapper}>
       <View style={style.headerContainer}>
         <Text style={style.headerText}>Saving Goals</Text>
+        <Text>See more</Text>
       </View>
       <ScrollView
         horizontal={true}
@@ -32,6 +33,7 @@ const style = StyleSheet.create({
     alignSelf: "center",
     height: 240,
     margin: 8,
+    marginBottom: 24,
   },
   scrollContent: {
     paddingHorizontal: 24,
@@ -43,6 +45,10 @@ const style = StyleSheet.create({
   headerContainer: {
     paddingLeft: 24,
     marginBottom: 16,
+    marginRight: 24,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   headerText: {
     fontSize: 18,
