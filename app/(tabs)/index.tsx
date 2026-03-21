@@ -12,9 +12,7 @@ export default function Index() {
         <View style={[styles.screenContainer]}>
           <HomeGreeting name={"Aeron Caponpon"} />
           <BalanceHome />
-          {/* TODO: Add Budget Goals */}
           <BudgetGoalContainer />
-          {/* TODO: Add Recent transactions */}
           <TransactionList />
         </View>
       </SafeAreaView>
