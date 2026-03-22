@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     padding: 20,
     justifyContent: "space-between",
+
   },
   iconCircle: {
     width: 42,

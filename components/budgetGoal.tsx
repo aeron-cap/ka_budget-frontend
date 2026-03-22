@@ -31,7 +31,6 @@ const style = StyleSheet.create({
   goalContainer: {
     flex: 1,
     borderRadius: 28,
-    marginBottom: 8,
     padding: 24,
     width: 160,
     backgroundColor: "white",
@@ -46,7 +45,6 @@ const style = StyleSheet.create({
     padding: 8,
     marginBottom: 12,
   },
-  // limit character size
   description: {
     fontSize: 18,
     fontWeight: "bold",

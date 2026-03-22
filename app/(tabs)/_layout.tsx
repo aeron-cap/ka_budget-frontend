@@ -15,7 +15,7 @@ export default function HomeStackLayout() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: "#2B60E9",
-        tabBarShowLabel: false,
+        tabBarShowLabel: true,
         tabBarStyle: {
           display: isAddScreen ? "none" : "flex",
           position: "absolute",
@@ -33,7 +33,7 @@ export default function HomeStackLayout() {
           marginHorizontal: 0,
         },
         tabBarIconStyle: {
-          marginTop: 8,
+          marginTop: 4,
           marginBottom: 0,
         },
         tabBarBackground: () => (
@@ -57,6 +57,7 @@ export default function HomeStackLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (
             <Ionicons size={24} name="home" color={color} />
           ),
@@ -65,6 +66,7 @@ export default function HomeStackLayout() {
       <Tabs.Screen
         name="insights"
         options={{
+          tabBarLabel: "Insights",
           tabBarIcon: ({ color }) => (
             <Ionicons size={24} name="analytics" color={color} />
           ),
@@ -76,7 +78,7 @@ export default function HomeStackLayout() {
           tabBarButton: (props) => (
             <ProtrudingAddIcon
               {...props}
-              onPress={() => router.push("/(tabs)/add")}
+              onPress={() => router.push("/modals/add")}
             />
           ),
         }}
@@ -89,6 +91,7 @@ export default function HomeStackLayout() {
       <Tabs.Screen
         name="history"
         options={{
+          tabBarLabel: "History",
           tabBarIcon: ({ color }) => (
             <Ionicons size={24} name="time" color={color} />
           ),
@@ -97,6 +100,7 @@ export default function HomeStackLayout() {
       <Tabs.Screen
         name="profile"
         options={{
+          tabBarLabel: "Profile",
           tabBarIcon: ({ color }) => (
             <Ionicons size={24} name="person" color={color} />
           ),

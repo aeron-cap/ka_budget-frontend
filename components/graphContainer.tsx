@@ -81,7 +81,6 @@ export default function GraphContainer() {
           </View>
         </View>
 
-        {/*TODO: Fix wrapping of the tooltip and check for max amount of X axis labels*/}
         <View style={styles.chartWrapper}>
           <LineChart
             areaChart
@@ -97,7 +96,7 @@ export default function GraphContainer() {
             startFillColor={themeFill}
             endFillColor="rgba(255, 255, 255, 0.01)"
             initialSpacing={10}
-            endSpacing={10}
+            endSpacing={30}
             hideYAxisText
             yAxisLabelWidth={0}
             yAxisThickness={0}
@@ -116,8 +115,10 @@ export default function GraphContainer() {
               autoAdjustPointerLabelPosition: true,
               shiftPointerLabelX: -45,
               pointerLabelComponent: (items: any) => {
+                const isLastItem = items[0].label === chartData[chartData.length - 1].label;
+
                 return (
-                  <View style={styles.tooltip}>
+                  <View style={[styles.tooltip, isLastItem ? { left: -80 } : { left: 0 }]}>
                     <Text style={styles.tooltipTitle}>{items[0].label}</Text>
                     <Text style={[styles.tooltipAmount, { color: themeColor }]}>
                       {activeTab.toLowerCase()} : {items[0].value * 40}
@@ -171,6 +172,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 20,
     elevation: 5,
+    overflow: "visible",
   },
   headerRow: {
     flexDirection: "row",

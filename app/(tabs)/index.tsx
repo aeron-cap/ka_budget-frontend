@@ -2,7 +2,7 @@ import BalanceHome from "@/components/balanceHome";
 import BudgetGoalContainer from "@/components/budgetGoalsContainer";
 import HomeGreeting from "@/components/homeGreeting";
 import TransactionList from "@/components/transactionList";
-import { ScrollView, StyleSheet, View } from "react-native";
+import {ScrollView, StyleSheet, Text, View} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
@@ -13,7 +13,14 @@ export default function Index() {
           <HomeGreeting name={"Aeron Caponpon"} />
           <BalanceHome />
           <BudgetGoalContainer />
-          <TransactionList />
+
+          <View style={styles.transactionContainer}>
+            <View style={styles.headerContainer}>
+              <Text style={styles.headerText}>Recent Transactions</Text>
+              <Text>See more</Text>
+            </View>
+            <TransactionList />
+          </View>
         </View>
       </SafeAreaView>
     </ScrollView>
@@ -25,5 +32,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "slate",
     padding: 24,
+  },
+  transactionContainer: {
+    flex: 1,
+    paddingBottom: 100,
+  },
+  headerContainer: {
+    marginBottom: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  transactionsContainer: {
+    gap: 12,
   },
 });

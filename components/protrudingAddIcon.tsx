@@ -1,6 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import {StyleSheet} from "react-native";
+import {TouchableRipple} from "react-native-paper";
 
 type ProtrudingAddIconProps = {
   onPress: () => void;
@@ -8,7 +9,7 @@ type ProtrudingAddIconProps = {
 
 export default function ProtrudingAddIcon({ onPress }: ProtrudingAddIconProps) {
   return (
-    <TouchableOpacity
+    <TouchableRipple
       style={[styles.container]}
       onPress={() => {
         onPress();
@@ -22,7 +23,7 @@ export default function ProtrudingAddIcon({ onPress }: ProtrudingAddIconProps) {
       >
         <Ionicons name="add" size={24} color={"white"} />
       </LinearGradient>
-    </TouchableOpacity>
+    </TouchableRipple>
   );
 }
 

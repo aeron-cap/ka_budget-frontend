@@ -5,9 +5,10 @@ export default function RootLayout() {
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
-        name="add"
-        options={{ headerShown: false, presentation: "modal" }}
+        name="modals/add"
+        options={{ headerShown: false, presentation: "modal", animation: "slide_from_bottom" }}
       />
+    {/* TODO: Transaction here will use params */}
     </Stack>
   );
 }
