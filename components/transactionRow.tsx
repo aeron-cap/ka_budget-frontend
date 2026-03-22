@@ -1,7 +1,12 @@
 import { Ionicons } from "@expo/vector-icons"; // Ensure you have this installed
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function TransactionRow({ transaction }: { transaction: any }) {
+interface TransactionRowProps {
+  transaction: any;
+  onPress: () => void;
+}
+
+export default function TransactionRow({ transaction, onPress }: TransactionRowProps) {
   const isIncome = transaction.transaction_type_name === "Income";
 
   const formattedDate = new Date(transaction.dateTime).toLocaleDateString(
@@ -13,7 +18,7 @@ export default function TransactionRow({ transaction }: { transaction: any }) {
   );
 
   return (
-    <TouchableOpacity style={style.touchContainer} activeOpacity={0.7}>
+    <TouchableOpacity style={style.touchContainer} activeOpacity={0.7} onPress={onPress}>
       <View
         style={[
           style.iconBackground,

@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
     paddingTop: 32,
+    paddingLeft: 24,
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
     shadowColor: "#000",
@@ -97,5 +98,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 20,
+    paddingLeft: 24,
+    paddingRight: 24,
   },
 });

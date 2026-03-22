@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AddSavingGoalModal from "@/components/addSavingGoalModal";
 
 // TODO: we limit this to 3 max
 const budgetGoals = [
@@ -31,13 +32,17 @@ const budgetGoals = [
 ];
 
 export default function BudgetGoalList() {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const handleSaveSaving = (goalData: { name: string; target: string; account: string; color: string;}) => {
+    console.log("Saving new Saving Goal:", goalData);
+    setIsModalVisible(false);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.headerTitle}>Saving Goals</Text>
-        <TouchableOpacity>
-          <Text style={styles.manageText}>Manage</Text>
-        </TouchableOpacity>
       </View>
 
       {budgetGoals.map((goal) => {
@@ -72,10 +77,17 @@ export default function BudgetGoalList() {
         );
       })}
 
-      <TouchableOpacity style={styles.newGoalButton}>
+      <TouchableOpacity style={styles.newGoalButton} onPress={() => setIsModalVisible(true)}>
         <Ionicons name="flash" size={18} color="#2563EB" style={styles.newGoalIcon} />
         <Text style={styles.newGoalText}>Set New Saving Goal</Text>
       </TouchableOpacity>
+
+
+      <AddSavingGoalModal
+        isVisible={isModalVisible}
+        onClose={() => {setIsModalVisible(false)}}
+        onSave={handleSaveSaving}
+      />
     </View>
   );
 }
