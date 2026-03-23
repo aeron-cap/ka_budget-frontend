@@ -23,7 +23,7 @@ export default function HomeStackLayout() {
           backgroundColor: "transparent",
           borderTopWidth: 0,
           height: 60,
-          margin: 48,
+          margin: 24,
           marginBottom: 40,
           paddingBottom: 0,
           elevation: 8,

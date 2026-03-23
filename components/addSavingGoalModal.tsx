@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput, KeyboardAvoidingView, Platform, Dimensions, Animated, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import AccountDropdown from "@/components/accountDropdown";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const ACCOUNTS = ['Checking Account (**** 1234)', 'Savings Account (**** 5678)', 'Cash Wallet'];
@@ -18,7 +19,6 @@ export default function AddSavingGoalModal({ isVisible, onClose, onSave }: AddBu
   const [targetAmount, setTargetAmount] = useState('');
   const [selectedAccount, setSelectedAccount] = useState(ACCOUNTS[0]);
   const [selectedColor, setSelectedColor] = useState(THEME_COLORS[0]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [renderModal, setRenderModal] = useState(isVisible);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
@@ -50,11 +50,9 @@ export default function AddSavingGoalModal({ isVisible, onClose, onSave }: AddBu
     setTargetAmount('');
     setSelectedAccount(ACCOUNTS[0]);
     setSelectedColor(THEME_COLORS[0]);
-    setIsDropdownOpen(false);
   };
 
   const handleClose = () => {
-    setIsDropdownOpen(false);
     onClose();
   };
 
@@ -115,46 +113,8 @@ export default function AddSavingGoalModal({ isVisible, onClose, onSave }: AddBu
               />
             </View>
 
-            <View style={styles.dropdownZIndexWrapper}>
-              <Text style={styles.inputLabel}>Fund Location</Text>
-              <View style={styles.dropdownAnchor}>
-                <TouchableOpacity
-                  style={styles.dropdownTrigger}
-                  activeOpacity={0.7}
-                  onPress={() => setIsDropdownOpen(!isDropdownOpen)}
-                >
-                  <Text style={styles.dropdownText}>{selectedAccount}</Text>
-                  <Ionicons name={isDropdownOpen ? "chevron-up" : "chevron-down"} size={20} color="#64748B" />
-                </TouchableOpacity>
-
-                {isDropdownOpen && (
-                  <View style={styles.absoluteDropdownList}>
-                    <FlatList
-                      data={ACCOUNTS}
-                      keyExtractor={(item) => item}
-                      scrollEnabled={false}
-                      renderItem={({item, index}) => {
-                        const isSelected = selectedAccount === item;
-                        return (
-                          <TouchableOpacity
-                            style={[styles.dropdownItem, index === ACCOUNTS.length - 1 && styles.lastDropdownItem]}
-                            onPress={() => {
-                              setSelectedAccount(item);
-                              setIsDropdownOpen(false);
-                            }}
-                          >
-                            <Text style={[styles.dropdownItemText, isSelected && styles.dropdownItemTextActive]}>
-                              {item}
-                            </Text>
-                            {isSelected && <Ionicons name="checkmark" size={18} color="#2563EB" />}
-                          </TouchableOpacity>
-                        )
-                      }}
-                    />
-                  </View>
-                )}
-              </View>
-            </View>
+            <Text style={styles.inputLabel}>Account</Text>
+            <AccountDropdown/>
 
             <View style={styles.lowerSection}>
               <Text style={styles.inputLabel}>Theme Color</Text>

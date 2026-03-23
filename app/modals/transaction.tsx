@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Modal, Dimensions, Animated } from 'react-native';
+import {
+  StyleSheet, Text, View, TouchableOpacity, Modal, Dimensions, Animated, TextInput, Platform,
+  KeyboardAvoidingView
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import AccountDropdown from "@/components/accountDropdown";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -27,6 +31,8 @@ export default function TransactionDetailsModal({ isVisible, onClose, transactio
   const [renderModal, setRenderModal] = useState(isVisible);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [editMode, setEditMode] = useState(false);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (isVisible) {
@@ -40,6 +46,8 @@ export default function TransactionDetailsModal({ isVisible, onClose, transactio
         Animated.timing(slideAnim, { toValue: SCREEN_HEIGHT, duration: 250, useNativeDriver: true }),
         Animated.timing(fadeAnim, { toValue: 0, duration: 250, useNativeDriver: true }),
       ]).start(() => setRenderModal(false));
+
+      setEditMode(false);
     }
   }, [isVisible, slideAnim, fadeAnim]);
 
@@ -77,44 +85,115 @@ export default function TransactionDetailsModal({ isVisible, onClose, transactio
             </TouchableOpacity>
           </View>
 
-          <View style={styles.headerInfo}>
-            <View style={[styles.iconContainer, { backgroundColor: iconBgColor }]}>
-              <Ionicons name={transaction.iconName} size={32} color={iconColor} />
-            </View>
-            <Text style={[styles.amountText, { color: amountColor }]}>
-              {amountPrefix}${Math.abs(transaction.amount).toFixed(2)}
-            </Text>
-            <Text style={styles.payeeText}>{transaction.payee}</Text>
-          </View>
 
-          <View style={styles.detailsCard}>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Status</Text>
-              <Text style={[styles.detailValue, styles.statusCompleted]}>{transaction.status}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Date</Text>
-              <Text style={styles.detailValue}>{transaction.date}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Category</Text>
-              <Text style={styles.detailValue}>{transaction.category}</Text>
-            </View>
-            <View style={[styles.detailRow, styles.lastDetailRow]}>
-              <Text style={styles.detailLabel}>Account</Text>
-              <Text style={styles.detailValue}>{transaction.account}</Text>
-            </View>
-          </View>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
+            pointerEvents="box-none"
+            style={styles.keyboardAvoid}
+          >
+            <View style={styles.headerInfo}>
+              <View style={[styles.iconContainer, { backgroundColor: iconBgColor }]}>
+                <Ionicons name={transaction.iconName} size={32} color={iconColor} />
+              </View>
 
-          <View style={styles.actionButtonsContainer}>
-            <TouchableOpacity style={styles.voidButton} activeOpacity={0.7}>
-              <Text style={styles.voidButtonText}>Void</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.editButton} activeOpacity={0.7}>
-              <Text style={styles.editButtonText}>Edit</Text>
-            </TouchableOpacity>
-          </View>
+              {editMode ? (
+                <View style={styles.editAmountContainer}>
+                  <Text style={[styles.editAmountPrefix, { color: amountColor }]}>{amountPrefix}$</Text>
+                  <TextInput
+                    style={[styles.editAmountInput, { color: amountColor }]}
+                    defaultValue={Math.abs(transaction.amount).toFixed(2).toString()}
+                    keyboardType="numeric"
+                  />
+                </View>
+              ) : (
+                <Text style={[styles.amountText, { color: amountColor }]}>
+                  {amountPrefix}${Math.abs(transaction.amount).toFixed(2)}
+                </Text>
+              )}
 
+              {editMode ? (
+                <TextInput
+                  style={styles.editPayeeInput}
+                  defaultValue={transaction.payee}
+                  textAlign="center"
+                />
+              ) : (
+                <Text style={styles.payeeText}>{transaction.payee}</Text>
+              )}
+            </View>
+
+            <View style={styles.detailsCard}>
+              <View style={[styles.detailRow, editMode && styles.detailRowEdit]}>
+                <Text style={styles.detailLabel}>Status</Text>
+                {editMode ? (
+                  <TextInput
+                    style={styles.editInput}
+                    defaultValue={transaction.status}
+                    placeholderTextColor="#94A3B8"
+                  />
+                ) : (
+                  <Text style={[styles.detailValue, styles.statusCompleted]}>{transaction.status}</Text>
+                )}
+              </View>
+
+              <View style={[styles.detailRow, editMode && styles.detailRowEdit]}>
+                <Text style={styles.detailLabel}>Date</Text>
+                {editMode ? (
+                  <TextInput
+                    style={styles.editInput}
+                    defaultValue={transaction.date}
+                    placeholderTextColor="#94A3B8"
+                  />
+                ) : (
+                  <Text style={styles.detailValue}>{transaction.date}</Text>
+                )}
+              </View>
+
+              <View style={[styles.detailRow, editMode && styles.detailRowEdit]}>
+                <Text style={styles.detailLabel}>Category</Text>
+                {editMode ? (
+                  <TextInput
+                    style={styles.editInput}
+                    defaultValue={transaction.category}
+                    placeholderTextColor="#94A3B8"
+                  />
+                ) : (
+                  <Text style={styles.detailValue}>{transaction.category}</Text>
+                )}
+              </View>
+
+              <View style={[styles.detailRow, styles.lastDetailRow, editMode && styles.detailRowEdit]}>
+                <Text style={styles.detailLabel}>Account</Text>
+                {editMode ? (
+                  <AccountDropdown/>
+                ) : (
+                  <Text style={styles.detailValue}>{transaction.account}</Text>
+                )}
+              </View>
+            </View>
+
+            <View style={styles.actionButtonsContainer}>
+              {editMode ?
+                <>
+                  <TouchableOpacity style={styles.cancelButton} onPress={() => {setEditMode(false)}}>
+                    <Text style={styles.cancelButtonText}>Cancel Edit</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.saveButton} onPress={() => {setEditMode(false)}} >
+                    <Text style={styles.saveButtonText}>Save</Text>
+                  </TouchableOpacity>
+                </>
+                :
+                <>
+                  <TouchableOpacity style={styles.voidButton} activeOpacity={0.7}>
+                    <Text style={styles.voidButtonText}>Void</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.editButton} activeOpacity={0.7} onPress={() => {setEditMode(true)}}>
+                    <Text style={styles.editButtonText}>Edit</Text>
+                  </TouchableOpacity>
+                </>
+              }
+            </View>
+          </KeyboardAvoidingView>
         </Animated.View>
       </View>
     </Modal>
@@ -128,6 +207,10 @@ const styles = StyleSheet.create({
   },
   dismissArea: {
     ...StyleSheet.absoluteFillObject,
+  },
+  keyboardAvoid: {
+    width: '100%',
+    justifyContent: 'flex-end',
   },
   modalContent: {
     backgroundColor: 'white',
@@ -231,10 +314,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  cancelButton: {
+    flex: 1,
+    height: 56,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'red',
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   voidButtonText: {
     fontSize: 16,
     fontWeight: '700',
     color: '#0F172A',
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: 'red',
   },
   editButton: {
     flex: 1,
@@ -253,5 +351,72 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: 'white',
+  },
+  saveButton: {
+    flex: 1,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: 'green',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: 'green',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  saveButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: 'white',
+  },
+  detailRowEdit: {
+    alignItems: 'center',
+  },
+  editInput: {
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    fontSize: 14,
+    color: '#1E293B',
+    fontWeight: '600',
+    minWidth: 150,
+    textAlign: 'right',
+  },
+  editAmountContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    marginBottom: 8,
+  },
+  editAmountPrefix: {
+    fontSize: 24,
+    fontWeight: '800',
+    marginRight: 4,
+  },
+  editAmountInput: {
+    fontSize: 28,
+    fontWeight: '800',
+    minWidth: 100,
+  },
+  editPayeeInput: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0F172A',
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    minWidth: 180,
   },
 });
