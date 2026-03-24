@@ -6,9 +6,13 @@ export default function RootLayout() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
         name="modals/add"
-        options={{ headerShown: false, presentation: "modal", animation: "slide_from_bottom" }}
+        options={{
+          headerShown: false,
+          presentation: "modal",
+          animation: "slide_from_bottom",
+        }}
       />
-    {/* TODO: Transaction here will use params */}
+      {/* TODO: Transaction here will use params */}
     </Stack>
   );
 }

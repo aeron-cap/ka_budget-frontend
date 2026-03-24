@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { StyleSheet, Text, View } from "react-native";
 
 type CashflowCardProps = {
   type: "Income" | "Expense";
@@ -7,7 +7,11 @@ type CashflowCardProps = {
   color: string;
 };
 
-export default function CashflowCard({ type, percent, color }: CashflowCardProps) {
+export default function CashflowCard({
+  type,
+  percent,
+  color,
+}: CashflowCardProps) {
   const isIncome = type === "Income";
 
   return (
@@ -35,7 +39,6 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     padding: 20,
     justifyContent: "space-between",
-
   },
   iconCircle: {
     width: 42,

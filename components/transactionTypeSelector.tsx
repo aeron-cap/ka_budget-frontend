@@ -1,7 +1,7 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-type TransactionType = 'Expense' | 'Income' | 'Transfer';
+type TransactionType = "Expense" | "Income" | "Transfer";
 
 interface Props {
   selectedType: TransactionType;
@@ -9,8 +9,12 @@ interface Props {
   activeColor: string;
 }
 
-export default function TransactionTypeSelector({ selectedType, onSelect, activeColor }: Props) {
-  const types: TransactionType[] = ['Expense', 'Income', 'Transfer'];
+export default function TransactionTypeSelector({
+  selectedType,
+  onSelect,
+  activeColor,
+}: Props) {
+  const types: TransactionType[] = ["Expense", "Income", "Transfer"];
 
   return (
     <View style={styles.container}>
@@ -22,10 +26,17 @@ export default function TransactionTypeSelector({ selectedType, onSelect, active
             onPress={() => onSelect(type)}
             style={[
               styles.button,
-              isActive ? { backgroundColor: activeColor } : styles.inactiveButton,
+              isActive
+                ? { backgroundColor: activeColor }
+                : styles.inactiveButton,
             ]}
           >
-            <Text style={[styles.text, isActive ? styles.activeText : styles.inactiveText]}>
+            <Text
+              style={[
+                styles.text,
+                isActive ? styles.activeText : styles.inactiveText,
+              ]}
+            >
               {type}
             </Text>
           </TouchableOpacity>
@@ -37,13 +48,13 @@ export default function TransactionTypeSelector({ selectedType, onSelect, active
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
+    flexDirection: "row",
+    backgroundColor: "white",
     padding: 6,
     borderRadius: 24,
     marginHorizontal: 24,
     marginTop: -32,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
     shadowRadius: 10,
@@ -54,19 +65,19 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     borderRadius: 18,
-    alignItems: 'center',
+    alignItems: "center",
   },
   inactiveButton: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   text: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   activeText: {
-    color: 'white',
+    color: "white",
   },
   inactiveText: {
-    color: '#64748B',
+    color: "#64748B",
   },
 });

@@ -9,11 +9,6 @@ interface Props {
 export default function ProfileCard({ name, email }: Props) {
   return (
     <View style={styles.card}>
-      <Image
-        source={{ uri: '' }}
-        style={styles.avatar}
-      />
-
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.email}>{email}</Text>

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import {
+  Dimensions,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
   TouchableOpacity,
-  ScrollView,
-  Dimensions,
+  View,
 } from "react-native";
 import { LineChart } from "react-native-gifted-charts";
 
@@ -28,7 +28,10 @@ export default function GraphContainer() {
   ];
 
   const themeColor = activeTab === "Income" ? "#10B981" : "#F43F5E";
-  const themeFill = activeTab === "Income" ? "rgba(16, 185, 129, 0.2)" : "rgba(244, 63, 94, 0.2)";
+  const themeFill =
+    activeTab === "Income"
+      ? "rgba(16, 185, 129, 0.2)"
+      : "rgba(244, 63, 94, 0.2)";
 
   return (
     <View style={styles.outerWrapper}>
@@ -47,7 +50,12 @@ export default function GraphContainer() {
               activeFilter === filter && styles.filterItemActive,
             ]}
           >
-            <Text style={[styles.filterText, activeFilter === filter && styles.filterTextActive]}>
+            <Text
+              style={[
+                styles.filterText,
+                activeFilter === filter && styles.filterTextActive,
+              ]}
+            >
               {filter}
             </Text>
           </TouchableOpacity>
@@ -64,17 +72,33 @@ export default function GraphContainer() {
           <View style={styles.toggleWrapper}>
             <TouchableOpacity
               onPress={() => setActiveTab("Expense")}
-              style={[styles.toggleBtn, activeTab === "Expense" && styles.toggleBtnActive]}
+              style={[
+                styles.toggleBtn,
+                activeTab === "Expense" && styles.toggleBtnActive,
+              ]}
             >
-              <Text style={[styles.toggleText, activeTab === "Expense" && styles.toggleTextActive]}>
+              <Text
+                style={[
+                  styles.toggleText,
+                  activeTab === "Expense" && styles.toggleTextActive,
+                ]}
+              >
                 Expense
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setActiveTab("Income")}
-              style={[styles.toggleBtn, activeTab === "Income" && styles.toggleBtnActive]}
+              style={[
+                styles.toggleBtn,
+                activeTab === "Income" && styles.toggleBtnActive,
+              ]}
             >
-              <Text style={[styles.toggleText, activeTab === "Income" && styles.toggleTextActive]}>
+              <Text
+                style={[
+                  styles.toggleText,
+                  activeTab === "Income" && styles.toggleTextActive,
+                ]}
+              >
                 Income
               </Text>
             </TouchableOpacity>
@@ -115,10 +139,16 @@ export default function GraphContainer() {
               autoAdjustPointerLabelPosition: true,
               shiftPointerLabelX: -45,
               pointerLabelComponent: (items: any) => {
-                const isLastItem = items[0].label === chartData[chartData.length - 1].label;
+                const isLastItem =
+                  items[0].label === chartData[chartData.length - 1].label;
 
                 return (
-                  <View style={[styles.tooltip, isLastItem ? { left: -80 } : { left: 0 }]}>
+                  <View
+                    style={[
+                      styles.tooltip,
+                      isLastItem ? { left: -80 } : { left: 0 },
+                    ]}
+                  >
                     <Text style={styles.tooltipTitle}>{items[0].label}</Text>
                     <Text style={[styles.tooltipAmount, { color: themeColor }]}>
                       {activeTab.toLowerCase()} : {items[0].value * 40}

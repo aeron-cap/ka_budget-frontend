@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
-import {StyleSheet} from "react-native";
-import {TouchableRipple} from "react-native-paper";
+import { StyleSheet } from "react-native";
+import { TouchableRipple } from "react-native-paper";
 
 type ProtrudingAddIconProps = {
   onPress: () => void;

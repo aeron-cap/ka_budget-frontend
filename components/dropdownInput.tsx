@@ -1,13 +1,22 @@
-import React, { useState, useRef } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Modal, Dimensions, FlatList, ViewStyle } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
+import React, { useRef, useState } from "react";
+import {
+  Dimensions,
+  FlatList,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
 
 type TriggerLayout = {
   x: number;
   y: number;
   width: number;
   height: number;
-}
+};
 
 type DropdownProps = {
   label: string;
@@ -15,14 +24,22 @@ type DropdownProps = {
   iconName: keyof typeof Ionicons.glyphMap;
   options: string[];
   onSelect: (value: string) => void;
-}
+};
 
-export default function DropdownInput({ label, selectedValue, iconName, options, onSelect }: DropdownProps) {
+export default function DropdownInput({
+  label,
+  selectedValue,
+  iconName,
+  options,
+  onSelect,
+}: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [triggerLayout, setTriggerLayout] = useState<TriggerLayout | null>(null);
+  const [triggerLayout, setTriggerLayout] = useState<TriggerLayout | null>(
+    null,
+  );
   const containerRef = useRef<View>(null);
 
-  const screenHeight = Dimensions.get('window').height;
+  const screenHeight = Dimensions.get("window").height;
 
   const openDropdown = () => {
     containerRef.current?.measureInWindow((x, y, width, height) => {
@@ -50,8 +67,12 @@ export default function DropdownInput({ label, selectedValue, iconName, options,
 
   return (
     <View style={styles.container}>
-      <View ref={containerRef} style={{ overflow: 'visible' }}>
-        <TouchableOpacity style={styles.card} onPress={openDropdown} activeOpacity={0.7}>
+      <View ref={containerRef} style={{ overflow: "visible" }}>
+        <TouchableOpacity
+          style={styles.card}
+          onPress={openDropdown}
+          activeOpacity={0.7}
+        >
           <View style={styles.iconBox}>
             <Ionicons name={iconName} size={24} color="#64748B" />
           </View>
@@ -87,10 +108,17 @@ export default function DropdownInput({ label, selectedValue, iconName, options,
                   style={styles.optionItem}
                   onPress={() => handleSelect(item)}
                 >
-                  <Text style={[styles.optionText, isSelected && styles.selectedOptionText]}>
+                  <Text
+                    style={[
+                      styles.optionText,
+                      isSelected && styles.selectedOptionText,
+                    ]}
+                  >
                     {item}
                   </Text>
-                  {isSelected && <Ionicons name="checkmark" size={18} color="#2B60E9" />}
+                  {isSelected && (
+                    <Ionicons name="checkmark" size={18} color="#2B60E9" />
+                  )}
                 </TouchableOpacity>
               );
             }}
@@ -104,15 +132,15 @@ export default function DropdownInput({ label, selectedValue, iconName, options,
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
-    overflow: 'visible',
+    overflow: "visible",
   },
   card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
     borderRadius: 24,
     padding: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.03,
     shadowRadius: 8,
@@ -122,9 +150,9 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 16,
-    backgroundColor: '#F1F5F9',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#F1F5F9",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 16,
   },
   textContainer: {
@@ -132,49 +160,49 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    color: '#94A3B8',
-    fontWeight: '500',
+    color: "#94A3B8",
+    fontWeight: "500",
     marginBottom: 2,
   },
   value: {
     fontSize: 16,
-    color: '#1E293B',
-    fontWeight: '700',
+    color: "#1E293B",
+    fontWeight: "700",
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   floatingDropdown: {
-    position: 'absolute',
-    backgroundColor: 'white',
+    position: "absolute",
+    backgroundColor: "white",
     borderRadius: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.1,
     shadowRadius: 16,
     elevation: 10,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   listContent: {
     paddingVertical: 8,
     paddingHorizontal: 16,
   },
   optionItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: "#F1F5F9",
   },
   optionText: {
     fontSize: 15,
-    color: '#475569',
-    fontWeight: '500',
+    color: "#475569",
+    fontWeight: "500",
   },
   selectedOptionText: {
-    color: '#2B60E9',
-    fontWeight: '700',
+    color: "#2B60E9",
+    fontWeight: "700",
   },
 });

@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import AddAccountModal from "@/components/addAccountModal";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function AccountsSection() {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleSaveAccount = (accountData: { name: string; type: string; initialBalance: string }) => {
+  const handleSaveAccount = (accountData: {
+    name: string;
+    type: string;
+    initialBalance: string;
+  }) => {
     console.log("Saving new account:", accountData);
     setIsModalVisible(false);
   };
@@ -15,12 +25,19 @@ export default function AccountsSection() {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.sectionTitle}>My Accounts</Text>
-        <TouchableOpacity style={styles.addButton} onPress={() => setIsModalVisible(true)}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => setIsModalVisible(true)}
+        >
           <Ionicons name="add" size={20} color="#2563EB" />
         </TouchableOpacity>
       </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
         <View style={styles.accountCard}>
           <View style={styles.cardTopRow}>
             <View style={styles.iconBox}>
@@ -62,63 +79,63 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 16,
     paddingHorizontal: 20,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '700',
-    color: '#0F172A',
+    fontWeight: "700",
+    color: "#0F172A",
   },
   addButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#DBEAFE',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#DBEAFE",
+    justifyContent: "center",
+    alignItems: "center",
   },
   scrollContent: {
     paddingHorizontal: 20,
     gap: 16,
   },
   accountCard: {
-    backgroundColor: '#17202A',
+    backgroundColor: "#17202A",
     width: 160,
     height: 160,
     borderRadius: 24,
     padding: 20,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   cardTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   iconBox: {
     width: 36,
     height: 36,
     borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   accountNumber: {
-    color: '#94A3B8',
+    color: "#94A3B8",
     fontSize: 13,
   },
   cardBottom: {},
   accountLabel: {
-    color: '#94A3B8',
+    color: "#94A3B8",
     fontSize: 12,
     marginBottom: 4,
   },
   accountBalance: {
-    color: 'white',
+    color: "white",
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });

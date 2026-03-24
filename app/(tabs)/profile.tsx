@@ -1,10 +1,16 @@
-import { useLocalSearchParams } from "expo-router";
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import ProfileCard from "@/components/profileCard";
 import AccountsSection from "@/components/accountsSection";
+import ProfileCard from "@/components/profileCard";
 import SettingsSection from "@/components/settingSection";
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams } from "expo-router";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Profile() {
   const local = useLocalSearchParams<{ user: string }>();
@@ -13,7 +19,6 @@ export default function Profile() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Profile</Text>
         <TouchableOpacity style={styles.settingsButton}>
@@ -29,7 +34,6 @@ export default function Profile() {
         <AccountsSection />
         <SettingsSection />
       </ScrollView>
-
     </SafeAreaView>
   );
 }

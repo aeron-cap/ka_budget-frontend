@@ -6,7 +6,10 @@ interface TransactionRowProps {
   onPress: () => void;
 }
 
-export default function TransactionRow({ transaction, onPress }: TransactionRowProps) {
+export default function TransactionRow({
+  transaction,
+  onPress,
+}: TransactionRowProps) {
   const isIncome = transaction.transaction_type_name === "Income";
 
   const formattedDate = new Date(transaction.dateTime).toLocaleDateString(
@@ -18,7 +21,11 @@ export default function TransactionRow({ transaction, onPress }: TransactionRowP
   );
 
   return (
-    <TouchableOpacity style={style.touchContainer} activeOpacity={0.7} onPress={onPress}>
+    <TouchableOpacity
+      style={style.touchContainer}
+      activeOpacity={0.7}
+      onPress={onPress}
+    >
       <View
         style={[
           style.iconBackground,

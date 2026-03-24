@@ -1,25 +1,25 @@
-import {ScrollView, StyleSheet, Text, View} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import GraphContainer from "@/components/graphContainer";
-import CashflowCard from "@/components/cashflowCard";
 import BudgetGoalList from "@/components/budgetGoalList";
+import CashflowCard from "@/components/cashflowCard";
+import GraphContainer from "@/components/graphContainer";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Insights() {
   return (
-    <ScrollView style={{flex: 1}}>
-      <SafeAreaView edges={["top"]} style={styles.container} >
+    <ScrollView style={{ flex: 1 }}>
+      <SafeAreaView edges={["top"]} style={styles.container}>
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>Insights</Text>
         </View>
 
-        <GraphContainer/>
+        <GraphContainer />
 
         <View style={styles.cashFlowContainer}>
-          <CashflowCard type={"Income"} color={"green"} percent={"10%"}/>
-          <CashflowCard type={"Expense"} color={"red"} percent={"10%"}/>
+          <CashflowCard type={"Income"} color={"green"} percent={"10%"} />
+          <CashflowCard type={"Expense"} color={"red"} percent={"10%"} />
         </View>
 
-        <BudgetGoalList/>
+        <BudgetGoalList />
       </SafeAreaView>
     </ScrollView>
   );
@@ -49,5 +49,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 16,
     marginBottom: 16,
-  }
-})
+  },
+});

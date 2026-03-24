@@ -2,7 +2,7 @@ import BalanceHome from "@/components/balanceHome";
 import BudgetGoalContainer from "@/components/budgetGoalsContainer";
 import HomeGreeting from "@/components/homeGreeting";
 import TransactionList from "@/components/transactionList";
-import {ScrollView, StyleSheet, Text, View} from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
