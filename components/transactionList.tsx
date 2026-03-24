@@ -1,9 +1,6 @@
-import TransactionDetailsModal, {
-  TransactionDetails,
-} from "@/app/modals/transaction";
 import { transactions } from "@/constants/sampleData";
 import { Transaction } from "@/types/transactions/transactions.type";
-import { useState } from "react";
+import { router } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import TransactionRow from "./transactionRow";
 
@@ -14,20 +11,15 @@ type TransactionListProps = {
 // TODO: Max of 5 transactions for Home and Lazy Load for history
 export default function TransactionList() {
   const transactionList = transactions;
-  const [selectedTransaction, setSelectedTransaction] =
-    useState<TransactionDetails | null>(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const handleTransactionPress = (transaction: any) => {
-    setSelectedTransaction(transaction as TransactionDetails);
-    setIsModalVisible(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalVisible(false);
-    setTimeout(() => {
-      setSelectedTransaction(null);
-    }, 300);
+    router.push({
+      pathname: "/modals/add",
+      params: {
+        id: transaction.id,
+        data: JSON.stringify(transaction),
+      },
+    });
   };
 
   return (
@@ -41,12 +33,6 @@ export default function TransactionList() {
           />
         );
       })}
-
-      <TransactionDetailsModal
-        isVisible={isModalVisible}
-        onClose={handleCloseModal}
-        transaction={selectedTransaction}
-      />
     </View>
   );
 }

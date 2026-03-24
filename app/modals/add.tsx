@@ -1,26 +1,47 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import TransactionTypeSelector from "@/components/transactionTypeSelector";
-import DropdownInput from "@/components/dropdownInput";
 import DateAndFileInputs from "@/components/dateAndFileInput";
+import DropdownInput from "@/components/dropdownInput";
+import TransactionTypeSelector from "@/components/transactionTypeSelector";
+import { Ionicons } from "@expo/vector-icons";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const THEME_COLORS = {
-  Expense: '#FD3C4A',
-  Income: '#00A86B',
-  Transfer: '#2B60E9',
+  Expense: "#FD3C4A",
+  Income: "#00A86B",
+  Transfer: "#2B60E9",
 };
 
 type TransactionType = keyof typeof THEME_COLORS;
 
-const CATEGORIES = ['Food & Dining', 'Shopping', 'Transport', 'Salary', 'Entertainment'];
-const ACCOUNTS = ['Credit Card (**** 9012)', 'Main Checking', 'Savings', 'Cash'];
+const CATEGORIES = [
+  "Food & Dining",
+  "Shopping",
+  "Transport",
+  "Salary",
+  "Entertainment",
+];
+const ACCOUNTS = [
+  "Credit Card (**** 9012)",
+  "Main Checking",
+  "Savings",
+  "Cash",
+];
 
 export default function AddModal() {
-  const [type, setType] = useState<TransactionType>('Expense');
-  const [amount, setAmount] = useState('0');
+  const [type, setType] = useState<TransactionType>("Expense");
+  const [amount, setAmount] = useState("0");
+  const { id, data } = useLocalSearchParams();
 
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [account, setAccount] = useState(ACCOUNTS[0]);
@@ -30,15 +51,23 @@ export default function AddModal() {
 
   const saveTransaction = () => {
     console.log(amount, category, account, date);
-  }
+  };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
       <View style={styles.container}>
-
-        <SafeAreaView edges={['top']} style={[styles.header, { backgroundColor: activeColor }]}>
+        <SafeAreaView
+          edges={["top"]}
+          style={[styles.header, { backgroundColor: activeColor }]}
+        >
           <View style={styles.headerTopRow}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={styles.backButton}
+            >
               <Ionicons name="arrow-back" size={24} color="white" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>New Transaction</Text>
@@ -66,8 +95,10 @@ export default function AddModal() {
           activeColor={activeColor}
         />
 
-        <ScrollView style={styles.formContainer} showsVerticalScrollIndicator={false}>
-
+        <ScrollView
+          style={styles.formContainer}
+          showsVerticalScrollIndicator={false}
+        >
           <DropdownInput
             label="Category"
             selectedValue={category}
@@ -84,10 +115,7 @@ export default function AddModal() {
             onSelect={setAccount}
           />
 
-          <DateAndFileInputs
-            selectedDate={date}
-            onSelect={setDate}
-          />
+          <DateAndFileInputs selectedDate={date} onSelect={setDate} />
 
           <View style={styles.noteContainer}>
             <TextInput
@@ -98,11 +126,19 @@ export default function AddModal() {
             />
           </View>
 
-          <TouchableOpacity style={[styles.saveButton, { backgroundColor: '#2B60E9' }]} activeOpacity={0.8} onPress={() => saveTransaction()}>
-            <Ionicons name="checkmark" size={20} color="white" style={{ marginRight: 8 }} />
+          <TouchableOpacity
+            style={[styles.saveButton, { backgroundColor: "#2B60E9" }]}
+            activeOpacity={0.8}
+            onPress={() => saveTransaction()}
+          >
+            <Ionicons
+              name="checkmark"
+              size={20}
+              color="white"
+              style={{ marginRight: 8 }}
+            />
             <Text style={styles.saveButtonText}>Save Transaction</Text>
           </TouchableOpacity>
-
         </ScrollView>
       </View>
     </KeyboardAvoidingView>
@@ -112,7 +148,7 @@ export default function AddModal() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: "#F8FAFC",
   },
   header: {
     paddingHorizontal: 20,
@@ -121,9 +157,9 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 40,
   },
   headerTopRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 32,
     paddingTop: 24,
   },
@@ -131,38 +167,38 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerTitle: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   howMuchText: {
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: "rgba(255, 255, 255, 0.8)",
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 8,
   },
   amountContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     left: 16,
   },
   currencySymbol: {
-    color: 'white',
+    color: "white",
     fontSize: 32,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 10,
     marginRight: 8,
   },
   amountInput: {
-    color: 'white',
+    color: "white",
     fontSize: 64,
-    fontWeight: '800',
+    fontWeight: "800",
     minWidth: 100,
   },
   formContainer: {
@@ -171,12 +207,12 @@ const styles = StyleSheet.create({
     paddingTop: 24,
   },
   noteContainer: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 24,
     padding: 20,
     minHeight: 120,
     marginBottom: 24,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.03,
     shadowRadius: 8,
@@ -184,25 +220,25 @@ const styles = StyleSheet.create({
   },
   noteInput: {
     fontSize: 15,
-    color: '#1E293B',
-    textAlignVertical: 'top',
+    color: "#1E293B",
+    textAlignVertical: "top",
   },
   saveButton: {
-    flexDirection: 'row',
+    flexDirection: "row",
     height: 56,
     borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 40,
-    shadowColor: '#2B60E9',
+    shadowColor: "#2B60E9",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 8,
   },
   saveButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });
