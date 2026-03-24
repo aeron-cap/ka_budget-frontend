@@ -48,3 +48,20 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+Reset and clean build files
+
+```bash
+rm -rf android/app/build
+rm -rf android/app/.cxx
+rm -rf android/build
+rm -rf node_modules
+rm -rf ~/.gradle/caches/
+
+npm install
+npx expo start -c
+npx expo run:android
+
+
+adb logcat
+```
