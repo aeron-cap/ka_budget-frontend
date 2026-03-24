@@ -31,6 +31,7 @@ const CATEGORIES = [
   "Salary",
   "Entertainment",
 ];
+
 const ACCOUNTS = [
   "Credit Card (**** 9012)",
   "Main Checking",
@@ -39,10 +40,9 @@ const ACCOUNTS = [
 ];
 
 export default function AddModal() {
+  const { id, data } = useLocalSearchParams();
   const [type, setType] = useState<TransactionType>("Expense");
   const [amount, setAmount] = useState("0");
-  const { id, data } = useLocalSearchParams();
-
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [account, setAccount] = useState(ACCOUNTS[0]);
   const [date, setDate] = useState(new Date());
@@ -52,6 +52,16 @@ export default function AddModal() {
   const saveTransaction = () => {
     console.log(amount, category, account, date);
   };
+
+  // TODO: add proper types
+  if (id && data) {
+    const transactionData = JSON.parse(data as string);
+    console.log(transactionData);
+    const transactionType = transactionData.transaction_type;
+    const transactionAmount = transactionData.amount;
+    const transactionCategory = transactionData.transaction_category;
+    const transactionAccount = transactionData.account;
+  }
 
   return (
     <KeyboardAvoidingView

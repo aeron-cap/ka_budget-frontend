@@ -1,6 +1,6 @@
-import AccountDropdown from "@/components/accountDropdown";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
+import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -10,7 +10,6 @@ import {
   Platform,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -43,8 +42,6 @@ export default function TransactionDetailsModal({
   const [renderModal, setRenderModal] = useState(isVisible);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const [editMode, setEditMode] = useState(false);
-  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (isVisible) {
@@ -74,8 +71,6 @@ export default function TransactionDetailsModal({
           useNativeDriver: true,
         }),
       ]).start(() => setRenderModal(false));
-
-      setEditMode(false);
     }
   }, [isVisible, slideAnim, fadeAnim]);
 
@@ -86,6 +81,18 @@ export default function TransactionDetailsModal({
   const amountColor = isIncome ? "#10B981" : "#0F172A";
   const iconBgColor = isIncome ? "#ECFDF5" : "#FEF2F2";
   const iconColor = isIncome ? "#10B981" : "#EF4444";
+
+  const editTransaction = () => {
+    onClose();
+
+    router.push({
+      pathname: "/modals/add",
+      params: {
+        id: transaction.id,
+        data: JSON.stringify(transaction),
+      },
+    });
+  };
 
   return (
     <Modal
@@ -137,142 +144,48 @@ export default function TransactionDetailsModal({
                   color={iconColor}
                 />
               </View>
+              <Text style={[styles.amountText, { color: amountColor }]}>
+                {amountPrefix}${Math.abs(transaction.amount).toFixed(2)}
+              </Text>
 
-              {editMode ? (
-                <View style={styles.editAmountContainer}>
-                  <Text
-                    style={[styles.editAmountPrefix, { color: amountColor }]}
-                  >
-                    {amountPrefix}$
-                  </Text>
-                  <TextInput
-                    style={[styles.editAmountInput, { color: amountColor }]}
-                    defaultValue={Math.abs(transaction.amount)
-                      .toFixed(2)
-                      .toString()}
-                    keyboardType="numeric"
-                  />
-                </View>
-              ) : (
-                <Text style={[styles.amountText, { color: amountColor }]}>
-                  {amountPrefix}${Math.abs(transaction.amount).toFixed(2)}
-                </Text>
-              )}
-
-              {editMode ? (
-                <TextInput
-                  style={styles.editPayeeInput}
-                  defaultValue={transaction.payee}
-                  textAlign="center"
-                />
-              ) : (
-                <Text style={styles.payeeText}>{transaction.payee}</Text>
-              )}
+              <Text style={styles.payeeText}>{transaction.payee}</Text>
             </View>
 
             <View style={styles.detailsCard}>
-              <View
-                style={[styles.detailRow, editMode && styles.detailRowEdit]}
-              >
+              <View style={[styles.detailRow]}>
                 <Text style={styles.detailLabel}>Status</Text>
-                {editMode ? (
-                  <TextInput
-                    style={styles.editInput}
-                    defaultValue={transaction.status}
-                    placeholderTextColor="#94A3B8"
-                  />
-                ) : (
-                  <Text style={[styles.detailValue, styles.statusCompleted]}>
-                    {transaction.status}
-                  </Text>
-                )}
+                <Text style={[styles.detailValue, styles.statusCompleted]}>
+                  {transaction.status}
+                </Text>
               </View>
 
-              <View
-                style={[styles.detailRow, editMode && styles.detailRowEdit]}
-              >
+              <View style={[styles.detailRow]}>
                 <Text style={styles.detailLabel}>Date</Text>
-                {editMode ? (
-                  <TextInput
-                    style={styles.editInput}
-                    defaultValue={transaction.date}
-                    placeholderTextColor="#94A3B8"
-                  />
-                ) : (
-                  <Text style={styles.detailValue}>{transaction.date}</Text>
-                )}
+                <Text style={styles.detailValue}>{transaction.date}</Text>
               </View>
 
-              <View
-                style={[styles.detailRow, editMode && styles.detailRowEdit]}
-              >
+              <View style={[styles.detailRow]}>
                 <Text style={styles.detailLabel}>Category</Text>
-                {editMode ? (
-                  <TextInput
-                    style={styles.editInput}
-                    defaultValue={transaction.category}
-                    placeholderTextColor="#94A3B8"
-                  />
-                ) : (
-                  <Text style={styles.detailValue}>{transaction.category}</Text>
-                )}
+                <Text style={styles.detailValue}>{transaction.category}</Text>
               </View>
 
-              <View
-                style={[
-                  styles.detailRow,
-                  styles.lastDetailRow,
-                  editMode && styles.detailRowEdit,
-                ]}
-              >
+              <View style={[styles.detailRow, styles.lastDetailRow]}>
                 <Text style={styles.detailLabel}>Account</Text>
-                {editMode ? (
-                  <AccountDropdown />
-                ) : (
-                  <Text style={styles.detailValue}>{transaction.account}</Text>
-                )}
+                <Text style={styles.detailValue}>{transaction.account}</Text>
               </View>
             </View>
 
             <View style={styles.actionButtonsContainer}>
-              {editMode ? (
-                <>
-                  <TouchableOpacity
-                    style={styles.cancelButton}
-                    onPress={() => {
-                      setEditMode(false);
-                    }}
-                  >
-                    <Text style={styles.cancelButtonText}>Cancel Edit</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.saveButton}
-                    onPress={() => {
-                      setEditMode(false);
-                    }}
-                  >
-                    <Text style={styles.saveButtonText}>Save</Text>
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <>
-                  <TouchableOpacity
-                    style={styles.voidButton}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={styles.voidButtonText}>Void</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.editButton}
-                    activeOpacity={0.7}
-                    onPress={() => {
-                      setEditMode(true);
-                    }}
-                  >
-                    <Text style={styles.editButtonText}>Edit</Text>
-                  </TouchableOpacity>
-                </>
-              )}
+              <TouchableOpacity style={styles.voidButton} activeOpacity={0.7}>
+                <Text style={styles.voidButtonText}>Void</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.editButton}
+                activeOpacity={0.7}
+                onPress={() => editTransaction()}
+              >
+                <Text style={styles.editButtonText}>Edit</Text>
+              </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
         </Animated.View>
