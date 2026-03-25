@@ -1,6 +1,7 @@
 import DateAndFileInputs from "@/components/dateAndFileInput";
 import DropdownInput from "@/components/dropdownInput";
 import TransactionTypeSelector from "@/components/transactionTypeSelector";
+import { Transaction } from "@/types/transactions/transactions.type";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
@@ -40,28 +41,31 @@ const ACCOUNTS = [
 ];
 
 export default function AddModal() {
-  const { id, data } = useLocalSearchParams();
-  const [type, setType] = useState<TransactionType>("Expense");
-  const [amount, setAmount] = useState("0");
-  const [category, setCategory] = useState(CATEGORIES[0]);
-  const [account, setAccount] = useState(ACCOUNTS[0]);
-  const [date, setDate] = useState(new Date());
+  const { id, data } = useLocalSearchParams<{ id?: string; data?: string }>();
+
+  const initialData: Transaction | null = data ? JSON.parse(data) : null;
+
+  const [type, setType] = useState<TransactionType>(
+    initialData ? (initialData.transaction_type as TransactionType) : "Income",
+  );
+  const [amount, setAmount] = useState<string>(
+    initialData ? JSON.stringify(initialData.amount) : "0",
+  );
+  const [category, setCategory] = useState<string>(
+    initialData ? initialData.transaction_category : CATEGORIES[0],
+  );
+  const [account, setAccount] = useState<string>(
+    initialData ? initialData.account : ACCOUNTS[0],
+  );
+  const [date, setDate] = useState<Date>(
+    initialData ? new Date(initialData.datetime) : new Date(),
+  );
 
   const activeColor = THEME_COLORS[type];
 
   const saveTransaction = () => {
     console.log(amount, category, account, date);
   };
-
-  // TODO: add proper types
-  if (id && data) {
-    const transactionData = JSON.parse(data as string);
-    console.log(transactionData);
-    const transactionType = transactionData.transaction_type;
-    const transactionAmount = transactionData.amount;
-    const transactionCategory = transactionData.transaction_category;
-    const transactionAccount = transactionData.account;
-  }
 
   return (
     <KeyboardAvoidingView
@@ -80,14 +84,15 @@ export default function AddModal() {
             >
               <Ionicons name="arrow-back" size={24} color="white" />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>New Transaction</Text>
+            <Text style={styles.headerTitle}>
+              {id ? "Edit" : "New"} Transaction
+            </Text>
             <View style={{ width: 40 }} />
           </View>
 
           <Text style={styles.howMuchText}>How much?</Text>
 
           <View style={styles.amountContainer}>
-            <Text style={styles.currencySymbol}>$</Text>
             <TextInput
               style={styles.amountInput}
               value={amount}
@@ -196,7 +201,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    left: 16,
+    left: 4,
   },
   currencySymbol: {
     color: "white",

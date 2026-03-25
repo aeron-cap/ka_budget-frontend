@@ -13,11 +13,13 @@ type BudgetGoalProps = {
 export default function BudgetGoal() {
   return (
     <View style={[style.goalContainer]}>
-      <View style={style.iconContainer}>
-        <Ionicons name="wallet-outline" size={18} color={"white"} />
-      </View>
-      <Text style={style.description}>Description</Text>
       <View>
+        <View style={style.iconContainer}>
+          <Ionicons name="wallet-outline" size={18} color={"white"} />
+        </View>
+        <Text style={style.description}>Description</Text>
+      </View>
+      <View style={style.progress}>
         <Text style={{ marginBottom: 4, fontSize: 12 }}>Progress Track</Text>
         <View style={{ overflow: "hidden", borderRadius: 12 }}>
           <ProgressBar animatedValue={0.5} color="blue" />
@@ -34,6 +36,7 @@ const style = StyleSheet.create({
     padding: 24,
     width: 160,
     backgroundColor: "white",
+    justifyContent: "space-between",
   },
   iconContainer: {
     height: 40,
@@ -51,5 +54,7 @@ const style = StyleSheet.create({
     color: "slate",
     marginBottom: 8,
   },
-  progress: {},
+  progress: {
+    marginBottom: 8,
+  },
 });

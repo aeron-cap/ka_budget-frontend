@@ -1,8 +1,9 @@
-import { Ionicons } from "@expo/vector-icons"; // Ensure you have this installed
+import { Transaction } from "@/types/transactions/transactions.type";
+import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface TransactionRowProps {
-  transaction: any;
+  transaction: Transaction;
   onPress: () => void;
 }
 
@@ -10,15 +11,20 @@ export default function TransactionRow({
   transaction,
   onPress,
 }: TransactionRowProps) {
-  const isIncome = transaction.transaction_type_name === "Income";
+  const isIncome = transaction.transaction_type === "Income";
+  const dateObj = new Date(transaction.datetime);
 
-  const formattedDate = new Date(transaction.dateTime).toLocaleDateString(
-    "en-US",
-    {
-      month: "short",
-      day: "numeric",
-    },
-  );
+  const formattedDate = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+  }).format(dateObj);
+
+  const formattedTime = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(dateObj);
+
+  const dateTime = formattedDate + " " + formattedTime;
 
   return (
     <TouchableOpacity
@@ -33,18 +39,18 @@ export default function TransactionRow({
         ]}
       >
         <Ionicons
-          name={isIncome ? "briefcase" : "cafe"}
-          size={24}
+          name={transaction.category_icon}
+          size={22}
           color={isIncome ? "#10B981" : "#F43F5E"}
         />
       </View>
 
       <View style={style.infoSection}>
         <Text style={style.nameText} numberOfLines={1}>
-          {transaction.transaction_name}
+          {transaction.note ?? ""}
         </Text>
         <Text style={style.subText}>
-          {transaction.transaction_category_name} • {formattedDate}
+          {transaction.transaction_category} • {dateTime}
         </Text>
       </View>
 
@@ -75,18 +81,18 @@ const style = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
-    elevation: 3,
+    elevation: 4,
   },
   iconBackground: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     borderRadius: 15,
     justifyContent: "center",
     alignItems: "center",
   },
   infoSection: {
     flex: 1,
-    marginLeft: 16,
+    marginLeft: 10,
   },
   nameText: {
     fontSize: 16,
@@ -94,7 +100,7 @@ const style = StyleSheet.create({
     color: "#1E293B",
   },
   subText: {
-    fontSize: 13,
+    fontSize: 12,
     color: "#94A3B8",
     marginTop: 2,
   },

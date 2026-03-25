@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 import BudgetGoal from "./budgetGoal";
 
@@ -8,7 +9,7 @@ export default function BudgetGoalContainer() {
     <View style={style.wrapper}>
       <View style={style.headerContainer}>
         <Text style={style.headerText}>Saving Goals</Text>
-        <Text>See more</Text>
+        <Text onPress={() => router.push("/(tabs)/insights")}>See more</Text>
       </View>
       <ScrollView
         horizontal={true}

@@ -1,8 +1,9 @@
 export const transactions = [
   {
     id: "txn_8a7b6c5d4e",
-    dateTime: "2026-03-24T12:30:00Z",
+    datetime: "2026-03-24T12:30:00Z",
     transaction_category: "Groceries",
+    category_icon: "desktop",
     amount: 85.5,
     note: "Weekly restock",
     transaction_type: "Expense",
@@ -16,8 +17,9 @@ export const transactions = [
   },
   {
     id: "txn_1f2e3d4c5b",
-    dateTime: "2026-03-23T09:00:00Z",
+    datetime: "2026-03-23T09:00:00Z",
     transaction_category: "Salary",
+    category_icon: "desktop",
     amount: 3500.0,
     note: "March First Half",
     transaction_type: "Income",
@@ -30,8 +32,9 @@ export const transactions = [
   },
   {
     id: "txn_9q8w7e6r5t",
-    dateTime: "2026-03-22T15:45:00Z",
+    datetime: "2026-03-22T15:45:00Z",
     transaction_category: "Internal Transfer",
+    category_icon: "desktop",
     amount: 500.0,
     note: "Emergency fund allocation",
     transaction_type: "Transfer",

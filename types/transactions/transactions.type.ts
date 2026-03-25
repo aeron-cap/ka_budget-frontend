@@ -1,7 +1,8 @@
 export interface Transaction {
   id: string;
-  dateTime: string | Date;
+  datetime: string;
   transaction_category: string;
+  category_icon: string;
   amount: number;
   note: string;
   transaction_type: string;

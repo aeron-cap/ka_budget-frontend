@@ -1,3 +1,4 @@
+import { Transaction } from "@/types/transactions/transactions.type";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { router } from "expo-router";
@@ -5,9 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
-  KeyboardAvoidingView,
   Modal,
-  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -16,22 +15,10 @@ import {
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-export interface TransactionDetails {
-  id: string;
-  payee: string;
-  amount: number;
-  type: "income" | "expense";
-  date: string;
-  category: string;
-  account: string;
-  status: string;
-  iconName: keyof typeof Ionicons.glyphMap;
-}
-
 interface TransactionDetailsModalProps {
   isVisible: boolean;
   onClose: () => void;
-  transaction: TransactionDetails | null;
+  transaction: Transaction | null;
 }
 
 export default function TransactionDetailsModal({
@@ -76,11 +63,26 @@ export default function TransactionDetailsModal({
 
   if (!renderModal || !transaction) return null;
 
-  const isIncome = transaction.type === "income";
+  const isIncome = transaction.transaction_type === "income";
   const amountPrefix = isIncome ? "+" : "-";
   const amountColor = isIncome ? "#10B981" : "#0F172A";
   const iconBgColor = isIncome ? "#ECFDF5" : "#FEF2F2";
   const iconColor = isIncome ? "#10B981" : "#EF4444";
+
+  const dateObj = new Date(transaction.datetime);
+
+  const formattedDate = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(dateObj);
+
+  const formattedTime = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(dateObj);
+
+  const dateTime = formattedDate + " " + formattedTime;
 
   const editTransaction = () => {
     onClose();
@@ -129,65 +131,54 @@ export default function TransactionDetailsModal({
             </TouchableOpacity>
           </View>
 
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "padding"}
-            pointerEvents="box-none"
-            style={styles.keyboardAvoid}
-          >
-            <View style={styles.headerInfo}>
-              <View
-                style={[styles.iconContainer, { backgroundColor: iconBgColor }]}
-              >
-                <Ionicons
-                  name={transaction.iconName}
-                  size={32}
-                  color={iconColor}
-                />
-              </View>
-              <Text style={[styles.amountText, { color: amountColor }]}>
-                {amountPrefix}${Math.abs(transaction.amount).toFixed(2)}
+          <View style={styles.headerInfo}>
+            <View
+              style={[styles.iconContainer, { backgroundColor: iconBgColor }]}
+            >
+              <Ionicons
+                name={transaction.category_icon}
+                size={32}
+                color={iconColor}
+              />
+            </View>
+            <Text style={[styles.amountText, { color: amountColor }]}>
+              {amountPrefix}
+              {Math.abs(transaction.amount).toFixed(2)}
+            </Text>
+            <Text>{transaction.note}</Text>
+          </View>
+
+          <View style={styles.detailsCard}>
+            <View style={[styles.detailRow]}>
+              <Text style={styles.detailLabel}>Date</Text>
+              <Text style={styles.detailValue}>{dateTime}</Text>
+            </View>
+
+            <View style={[styles.detailRow]}>
+              <Text style={styles.detailLabel}>Category</Text>
+              <Text style={styles.detailValue}>
+                {transaction.transaction_category}
               </Text>
-
-              <Text style={styles.payeeText}>{transaction.payee}</Text>
             </View>
 
-            <View style={styles.detailsCard}>
-              <View style={[styles.detailRow]}>
-                <Text style={styles.detailLabel}>Status</Text>
-                <Text style={[styles.detailValue, styles.statusCompleted]}>
-                  {transaction.status}
-                </Text>
-              </View>
-
-              <View style={[styles.detailRow]}>
-                <Text style={styles.detailLabel}>Date</Text>
-                <Text style={styles.detailValue}>{transaction.date}</Text>
-              </View>
-
-              <View style={[styles.detailRow]}>
-                <Text style={styles.detailLabel}>Category</Text>
-                <Text style={styles.detailValue}>{transaction.category}</Text>
-              </View>
-
-              <View style={[styles.detailRow, styles.lastDetailRow]}>
-                <Text style={styles.detailLabel}>Account</Text>
-                <Text style={styles.detailValue}>{transaction.account}</Text>
-              </View>
+            <View style={[styles.detailRow, styles.lastDetailRow]}>
+              <Text style={styles.detailLabel}>Account</Text>
+              <Text style={styles.detailValue}>{transaction.account}</Text>
             </View>
+          </View>
 
-            <View style={styles.actionButtonsContainer}>
-              <TouchableOpacity style={styles.voidButton} activeOpacity={0.7}>
-                <Text style={styles.voidButtonText}>Void</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.editButton}
-                activeOpacity={0.7}
-                onPress={() => editTransaction()}
-              >
-                <Text style={styles.editButtonText}>Edit</Text>
-              </TouchableOpacity>
-            </View>
-          </KeyboardAvoidingView>
+          <View style={styles.actionButtonsContainer}>
+            <TouchableOpacity style={styles.voidButton} activeOpacity={0.7}>
+              <Text style={styles.voidButtonText}>Void</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.editButton}
+              activeOpacity={0.7}
+              onPress={() => editTransaction()}
+            >
+              <Text style={styles.editButtonText}>Edit</Text>
+            </TouchableOpacity>
+          </View>
         </Animated.View>
       </View>
     </Modal>
@@ -244,7 +235,7 @@ const styles = StyleSheet.create({
   },
   headerInfo: {
     alignItems: "center",
-    marginBottom: 32,
+    marginBottom: 14,
   },
   iconContainer: {
     width: 72,
@@ -252,7 +243,7 @@ const styles = StyleSheet.create({
     borderRadius: 36,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 14,
   },
   amountText: {
     fontSize: 32,
@@ -268,7 +259,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F8FAFC",
     borderRadius: 16,
     padding: 20,
-    marginBottom: 32,
+    marginBottom: 20,
   },
   detailRow: {
     flexDirection: "row",

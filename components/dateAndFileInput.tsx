@@ -21,7 +21,9 @@ export default function DateAndFileInputs({
   selectedDate,
   onSelect,
 }: DateAndFileInputProps) {
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(
+    new Date(selectedDate) ? new Date(selectedDate) : new Date(),
+  );
   const [showPicker, setShowPicker] = useState(false);
 
   const formattedDate = `${String(date.getMonth() + 1).padStart(2, "0")} / ${String(date.getDate()).padStart(2, "0")} / ${date.getFullYear()}`;
