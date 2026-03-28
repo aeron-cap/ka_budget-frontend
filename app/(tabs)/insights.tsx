@@ -1,8 +1,11 @@
 import BudgetGoalList from "@/components/budgetGoalList";
 import CashflowCard from "@/components/cashflowCard";
 import GraphContainer from "@/components/graphContainer";
+import { SAMPLE_SAVINGS } from "@/constants/sampleData";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+const savings = SAMPLE_SAVINGS;
 
 export default function Insights() {
   return (
@@ -19,7 +22,7 @@ export default function Insights() {
           <CashflowCard type={"Expense"} color={"red"} percent={"10%"} />
         </View>
 
-        <BudgetGoalList />
+        <BudgetGoalList savings={savings} />
       </SafeAreaView>
     </ScrollView>
   );

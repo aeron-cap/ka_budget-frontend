@@ -12,7 +12,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -30,7 +30,7 @@ const THEME_COLORS = [
   "#EF4444",
 ];
 
-interface AddBudgetGoalModalProps {
+interface AddGoalModalProps {
   isVisible: boolean;
   onClose: () => void;
   onSave: (goalData: {
@@ -41,11 +41,11 @@ interface AddBudgetGoalModalProps {
   }) => void;
 }
 
-export default function AddSavingGoalModal({
+export default function AddGoalModal({
   isVisible,
   onClose,
   onSave,
-}: AddBudgetGoalModalProps) {
+}: AddGoalModalProps) {
   const [goalName, setGoalName] = useState("");
   const [targetAmount, setTargetAmount] = useState("");
   const [selectedAccount, setSelectedAccount] = useState(ACCOUNTS[0]);

@@ -1,3 +1,5 @@
+import { Saving } from "@/types/savings/savings.type";
+
 export const transactions = [
   {
     id: "txn_8a7b6c5d4e",
@@ -45,5 +47,48 @@ export const transactions = [
     user_id: 10232,
     created_at: "2026-03-22T15:46:00Z",
     updated_at: "2026-03-22T15:46:00Z",
+  },
+];
+
+export const SAMPLE_SAVINGS: Saving[] = [
+  {
+    id: "789e4567-e89b-12d3-a456-426614174000",
+    color: "#4CAF50",
+    description: "Emergency Fund",
+    account: "Main Savings",
+    currentAmount: 15000.0,
+    goalAmount: 50000.0,
+  },
+  {
+    id: "789e4567-e89b-12d3-a456-426614174001",
+    color: "#2196F3",
+    description: "New Laptop",
+    account: "Digital Wallet",
+    currentAmount: 1200.5,
+    goalAmount: 2500.0,
+  },
+  {
+    id: "789e4567-e89b-12d3-a456-426614174002",
+    color: "#FFC107",
+    description: "Vacation Trip",
+    account: "Travel Fund",
+    currentAmount: 300.0,
+    goalAmount: 5000.0,
+  },
+  {
+    id: "789e4567-e89b-12d3-a456-426614174003",
+    color: "#E91E63",
+    description: "Car Downpayment",
+    account: "Main Savings",
+    currentAmount: 25000.0,
+    goalAmount: 100000.0,
+  },
+  {
+    id: "789e4567-e89b-12d3-a456-426614174004",
+    color: "#9C27B0",
+    description: "Christmas Gifts",
+    account: "Cash",
+    currentAmount: 500.0,
+    goalAmount: 1000.0,
   },
 ];

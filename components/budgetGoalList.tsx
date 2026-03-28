@@ -1,38 +1,16 @@
-import AddSavingGoalModal from "@/components/addSavingGoalModal";
+import AddGoalModal from "@/app/modals/addGoal";
+import { Saving } from "@/types/savings/savings.type";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-// TODO: we limit this to 3 max
-const budgetGoals = [
-  {
-    id: 1,
-    title: "New Car",
-    current: 8500,
-    target: 15000,
-    color: "#2563EB",
-    icon: "radio-button-on",
-  },
-  {
-    id: 2,
-    title: "Emergency Fund",
-    current: 7500,
-    target: 10000,
-    color: "#10B981",
-    icon: "wallet",
-  },
-  {
-    id: 3,
-    title: "Vacation",
-    current: 1200,
-    target: 3000,
-    color: "#F59E0B",
-    icon: "radio-button-on",
-  },
-];
+type SavingGoalListProps = {
+  savings: Saving[];
+};
 
-export default function BudgetGoalList() {
+export default function BudgetGoalList({ savings }: SavingGoalListProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const computedHeight = savings.length * 160;
 
   const handleSaveSaving = (goalData: {
     name: string;
@@ -45,43 +23,54 @@ export default function BudgetGoalList() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { height: computedHeight }]}>
       <View style={styles.headerContainer}>
         <Text style={styles.headerTitle}>Saving Goals</Text>
       </View>
 
-      {budgetGoals.map((goal) => {
-        const percentage = Math.round((goal.current / goal.target) * 100);
+      {savings.map((goal, idx) => {
+        const percentage = Math.round(
+          (goal.currentAmount / goal.goalAmount) * 100,
+        );
 
         return (
-          <View key={goal.id} style={styles.card}>
-            <View style={styles.cardTopRow}>
-              <View
-                style={[styles.iconContainer, { backgroundColor: goal.color }]}
-              >
-                <Ionicons name={goal.icon as any} size={20} color="white" />
+          <TouchableOpacity
+            key={idx}
+            activeOpacity={0.7}
+            style={styles.touchContainer}
+          >
+            <View>
+              <View style={styles.cardTopRow}>
+                <View
+                  style={[
+                    styles.iconContainer,
+                    { backgroundColor: goal.color },
+                  ]}
+                >
+                  <Ionicons name="radio" size={20} color="white" />
+                </View>
+
+                <View style={styles.infoContainer}>
+                  <Text style={styles.goalTitle}>{goal.description}</Text>
+                  <Text style={styles.goalSubtitle}>
+                    {goal.currentAmount.toLocaleString()} of{" "}
+                    {goal.goalAmount.toLocaleString()}
+                  </Text>
+                </View>
+
+                <Text style={styles.percentageText}>{percentage}%</Text>
               </View>
 
-              <View style={styles.infoContainer}>
-                <Text style={styles.goalTitle}>{goal.title}</Text>
-                <Text style={styles.goalSubtitle}>
-                  ${goal.current.toLocaleString()} of $
-                  {goal.target.toLocaleString()}
-                </Text>
+              <View style={styles.progressBarBackground}>
+                <View
+                  style={[
+                    styles.progressBarFill,
+                    { width: `${percentage}%`, backgroundColor: goal.color },
+                  ]}
+                />
               </View>
-
-              <Text style={styles.percentageText}>{percentage}%</Text>
             </View>
-
-            <View style={styles.progressBarBackground}>
-              <View
-                style={[
-                  styles.progressBarFill,
-                  { width: `${percentage}%`, backgroundColor: goal.color },
-                ]}
-              />
-            </View>
-          </View>
+          </TouchableOpacity>
         );
       })}
 
@@ -98,7 +87,7 @@ export default function BudgetGoalList() {
         <Text style={styles.newGoalText}>Set New Saving Goal</Text>
       </TouchableOpacity>
 
-      <AddSavingGoalModal
+      <AddGoalModal
         isVisible={isModalVisible}
         onClose={() => {
           setIsModalVisible(false);
@@ -110,9 +99,19 @@ export default function BudgetGoalList() {
 }
 
 const styles = StyleSheet.create({
+  touchContainer: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
   container: {
     flex: 1,
-    height: 600,
     borderRadius: 24,
   },
   headerContainer: {
@@ -130,17 +129,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     color: "#3B82F6",
-  },
-  card: {
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
   },
   cardTopRow: {
     flexDirection: "row",

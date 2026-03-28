@@ -2,6 +2,7 @@ import BalanceHome from "@/components/balanceHome";
 import BudgetGoalContainer from "@/components/budgetGoalsContainer";
 import HomeGreeting from "@/components/homeGreeting";
 import TransactionList from "@/components/transactionList";
+import { router } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -17,7 +18,13 @@ export default function Index() {
           <View style={styles.transactionContainer}>
             <View style={styles.headerContainer}>
               <Text style={styles.headerText}>Recent Transactions</Text>
-              <Text>See more</Text>
+              <Text
+                onPress={() => {
+                  router.push("/(tabs)/history");
+                }}
+              >
+                See more
+              </Text>
             </View>
             <TransactionList />
           </View>

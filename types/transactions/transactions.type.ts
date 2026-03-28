@@ -1,4 +1,4 @@
-export interface Transaction {
+export type Transaction = {
   id: string;
   datetime: string;
   transaction_category: string;
@@ -13,4 +13,4 @@ export interface Transaction {
   user_id: number;
   created_at?: string | Date;
   updated_at?: string | Date;
-}
+};

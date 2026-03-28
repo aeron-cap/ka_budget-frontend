@@ -1,48 +1,64 @@
+import { Saving } from "@/types/savings/savings.type";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { StyleSheet, Text, View } from "react-native";
-import { ProgressBar } from "react-native-paper";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type BudgetGoalProps = {
-  color: string;
-  description: string;
-  account: string;
-  currentAmount: string;
-  goalAmount: string;
+  goal: Saving;
+  onPress: () => void;
 };
 
-export default function BudgetGoal() {
+export default function BudgetGoal({ goal, onPress }: BudgetGoalProps) {
+  const percentage = Math.round((goal.currentAmount / goal.goalAmount) * 100);
+
   return (
-    <View style={[style.goalContainer]}>
-      <View>
-        <View style={style.iconContainer}>
-          <Ionicons name="wallet-outline" size={18} color={"white"} />
+    <TouchableOpacity
+      activeOpacity={0.7}
+      onPress={() => {}}
+      style={style.touchContainer}
+    >
+      <View style={[style.goalContainer]}>
+        <View>
+          <View
+            style={[
+              style.iconContainer,
+              { backgroundColor: goal.color, borderRadius: 12 },
+            ]}
+          >
+            <Ionicons name="wallet-outline" size={18} color={"white"} />
+          </View>
+          <Text style={style.description}>{goal.description}</Text>
         </View>
-        <Text style={style.description}>Description</Text>
-      </View>
-      <View style={style.progress}>
-        <Text style={{ marginBottom: 4, fontSize: 12 }}>Progress Track</Text>
-        <View style={{ overflow: "hidden", borderRadius: 12 }}>
-          <ProgressBar animatedValue={0.5} color="blue" />
+        <View style={style.progress}>
+          <Text style={{ marginBottom: 4, fontSize: 12 }}>
+            {" "}
+            {goal.currentAmount.toLocaleString()} of{" "}
+            {goal.goalAmount.toLocaleString()}
+          </Text>
+          <View style={{ overflow: "hidden", borderRadius: 12 }}>
+            <View style={style.progressBarBackground}>
+              <View
+                style={[
+                  style.progressBarFill,
+                  { width: `${percentage}%`, backgroundColor: goal.color },
+                ]}
+              />
+            </View>
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
 const style = StyleSheet.create({
   goalContainer: {
     flex: 1,
-    borderRadius: 28,
-    padding: 24,
-    width: 160,
-    backgroundColor: "white",
+    flexDirection: "column",
     justifyContent: "space-between",
   },
   iconContainer: {
     height: 40,
     width: 40,
-    borderRadius: 12,
-    backgroundColor: "blue",
     justifyContent: "center",
     alignItems: "center",
     padding: 8,
@@ -56,5 +72,28 @@ const style = StyleSheet.create({
   },
   progress: {
     marginBottom: 8,
+  },
+  touchContainer: {
+    flex: 1,
+    borderRadius: 28,
+    padding: 20,
+    width: 160,
+    backgroundColor: "white",
+    justifyContent: "space-between",
+  },
+  percentageText: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#1E293B",
+  },
+  progressBarBackground: {
+    height: 6,
+    backgroundColor: "#F1F5F9",
+    borderRadius: 3,
+    overflow: "hidden",
+  },
+  progressBarFill: {
+    height: "100%",
+    borderRadius: 3,
   },
 });

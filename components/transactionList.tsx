@@ -1,6 +1,4 @@
-import TransactionDetailsModal, {
-  TransactionDetails,
-} from "@/app/modals/transaction";
+import TransactionDetailsModal from "@/app/modals/transaction";
 import { transactions } from "@/constants/sampleData";
 import { Transaction } from "@/types/transactions/transactions.type";
 import { useState } from "react";
@@ -15,11 +13,11 @@ type TransactionListProps = {
 export default function TransactionList() {
   const transactionList = transactions;
   const [selectedTransaction, setSelectedTransaction] =
-    useState<TransactionDetails | null>(null);
+    useState<Transaction | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const handleTransactionPress = (transaction: any) => {
-    setSelectedTransaction(transaction as TransactionDetails);
+    setSelectedTransaction(transaction as Transaction);
     setIsModalVisible(true);
   };
 

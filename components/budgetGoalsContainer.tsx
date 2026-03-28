@@ -1,10 +1,17 @@
+import { SAMPLE_SAVINGS } from "@/constants/sampleData";
 import { router } from "expo-router";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 import BudgetGoal from "./budgetGoal";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
+const sampleSavings = SAMPLE_SAVINGS;
+
 export default function BudgetGoalContainer() {
+  const openSavingsModal = () => {
+    return 1;
+  };
+
   return (
     <View style={style.wrapper}>
       <View style={style.headerContainer}>
@@ -16,10 +23,10 @@ export default function BudgetGoalContainer() {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={style.scrollContent}
       >
-        {[1, 2, 3].map((b, idx) => {
+        {sampleSavings.map((b, idx) => {
           return (
             <View key={idx} style={style.itemWrapper}>
-              <BudgetGoal />
+              <BudgetGoal goal={b} onPress={openSavingsModal} />
             </View>
           );
         })}

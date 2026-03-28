@@ -60,6 +60,7 @@ export default function AddModal() {
   const [date, setDate] = useState<Date>(
     initialData ? new Date(initialData.datetime) : new Date(),
   );
+  const [note, setNote] = useState<string>(initialData ? initialData.note : "");
 
   const activeColor = THEME_COLORS[type];
 
@@ -138,6 +139,7 @@ export default function AddModal() {
               placeholder="Add note..."
               placeholderTextColor="#94A3B8"
               multiline
+              value={note}
             />
           </View>
 
