@@ -24,6 +24,7 @@ type DropdownProps = {
   iconName: keyof typeof Ionicons.glyphMap;
   options: string[];
   onSelect: (value: string) => void;
+  hasIcon: boolean;
 };
 
 export default function DropdownInput({
@@ -32,6 +33,7 @@ export default function DropdownInput({
   iconName,
   options,
   onSelect,
+  hasIcon,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [triggerLayout, setTriggerLayout] = useState<TriggerLayout | null>(
@@ -69,15 +71,17 @@ export default function DropdownInput({
     <View style={styles.container}>
       <View ref={containerRef} style={{ overflow: "visible" }}>
         <TouchableOpacity
-          style={styles.card}
+          style={[styles.card, label !== "" && { height: 80 }]}
           onPress={openDropdown}
           activeOpacity={0.7}
         >
-          <View style={styles.iconBox}>
-            <Ionicons name={iconName} size={24} color="#64748B" />
-          </View>
+          {hasIcon && (
+            <View style={styles.iconBox}>
+              <Ionicons name={iconName} size={24} color="#64748B" />
+            </View>
+          )}
           <View style={styles.textContainer}>
-            <Text style={styles.label}>{label}</Text>
+            {label !== "" && <Text style={styles.label}>{label}</Text>}
             <Text style={styles.value}>{selectedValue}</Text>
           </View>
           <Ionicons name="chevron-down" size={20} color="#94A3B8" />
@@ -165,7 +169,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   value: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#1E293B",
     fontWeight: "700",
   },

@@ -34,7 +34,8 @@ export default function BudgetGoalList({ savings }: SavingGoalListProps) {
 
       {savings.map((goal, idx) => {
         const percentage = Math.round(
-          (parseFloat(goal.currentAmount) / parseFloat(goal.goalAmount)) * 100,
+          (parseFloat(goal.current_amount) / parseFloat(goal.goal_amount)) *
+            100,
         );
 
         return (
@@ -58,8 +59,8 @@ export default function BudgetGoalList({ savings }: SavingGoalListProps) {
                 <View style={styles.infoContainer}>
                   <Text style={styles.goalTitle}>{goal.description}</Text>
                   <Text style={styles.goalSubtitle}>
-                    {goal.currentAmount.toLocaleString()} of{" "}
-                    {goal.goalAmount.toLocaleString()}
+                    {goal.current_amount.toLocaleString()} of{" "}
+                    {goal.goal_amount.toLocaleString()}
                   </Text>
                 </View>
 

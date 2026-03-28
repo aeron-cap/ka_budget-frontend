@@ -39,7 +39,7 @@ export default function TransactionRow({
         ]}
       >
         <Ionicons
-          name={transaction.category_icon}
+          name={transaction.icon}
           size={22}
           color={isIncome ? "#10B981" : "#F43F5E"}
         />
@@ -62,7 +62,7 @@ export default function TransactionRow({
           ]}
         >
           {isIncome ? "+" : "-"}
-          {transaction.amount.toFixed(2)}
+          {transaction.amount}
         </Text>
       </View>
     </TouchableOpacity>

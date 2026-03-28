@@ -14,18 +14,19 @@ import {
 type DateAndFileInputProps = {
   selectedDate: Date;
   onSelect: (value: Date) => void;
+  styleType: string;
 };
 
 // TODO: implement File Attachment Soon
 export default function DateAndFileInputs({
   selectedDate,
   onSelect,
+  styleType,
 }: DateAndFileInputProps) {
   const [date, setDate] = useState(
     new Date(selectedDate) ? new Date(selectedDate) : new Date(),
   );
   const [showPicker, setShowPicker] = useState(false);
-
   const formattedDate = `${String(date.getMonth() + 1).padStart(2, "0")} / ${String(date.getDate()).padStart(2, "0")} / ${date.getFullYear()}`;
 
   const togglePicker = () => {
@@ -44,13 +45,12 @@ export default function DateAndFileInputs({
   };
 
   return (
-    <View style={styles.row}>
+    <View style={[styles.row, styleType === "Transfer" ? { height: 86 } : {}]}>
       <TouchableOpacity
         style={styles.dateCard}
         activeOpacity={0.7}
         onPress={togglePicker}
       >
-        <Ionicons name="calendar-outline" size={20} color="#64748B" />
         <Text style={styles.dateText}>{formattedDate}</Text>
         <Ionicons name="calendar" size={18} color="#94A3B8" />
       </TouchableOpacity>

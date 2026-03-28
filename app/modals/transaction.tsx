@@ -63,7 +63,7 @@ export default function TransactionDetailsModal({
 
   if (!renderModal || !transaction) return null;
 
-  const isIncome = transaction.transaction_type === "income";
+  const isIncome = transaction.transaction_type === "Income";
   const amountPrefix = isIncome ? "+" : "-";
   const amountColor = isIncome ? "#10B981" : "#0F172A";
   const iconBgColor = isIncome ? "#ECFDF5" : "#FEF2F2";
@@ -135,15 +135,11 @@ export default function TransactionDetailsModal({
             <View
               style={[styles.iconContainer, { backgroundColor: iconBgColor }]}
             >
-              <Ionicons
-                name={transaction.category_icon}
-                size={32}
-                color={iconColor}
-              />
+              <Ionicons name={transaction.icon} size={32} color={iconColor} />
             </View>
             <Text style={[styles.amountText, { color: amountColor }]}>
               {amountPrefix}
-              {Math.abs(transaction.amount).toFixed(2)}
+              {transaction.amount}
             </Text>
             <Text>{transaction.note}</Text>
           </View>
@@ -163,7 +159,9 @@ export default function TransactionDetailsModal({
 
             <View style={[styles.detailRow, styles.lastDetailRow]}>
               <Text style={styles.detailLabel}>Account</Text>
-              <Text style={styles.detailValue}>{transaction.account}</Text>
+              <Text style={styles.detailValue}>
+                {transaction.transaction_account}
+              </Text>
             </View>
           </View>
 

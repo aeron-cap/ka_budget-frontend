@@ -9,7 +9,7 @@ type BudgetGoalProps = {
 
 export default function BudgetGoal({ goal, onPress }: BudgetGoalProps) {
   const percentage = Math.round(
-    (parseFloat(goal.currentAmount) / parseFloat(goal.goalAmount)) * 100,
+    (parseFloat(goal.current_amount) / parseFloat(goal.goal_amount)) * 100,
   );
 
   return (
@@ -33,8 +33,8 @@ export default function BudgetGoal({ goal, onPress }: BudgetGoalProps) {
         <View style={style.progress}>
           <Text style={{ marginBottom: 4, fontSize: 12 }}>
             {" "}
-            {goal.currentAmount.toLocaleString()} of{" "}
-            {goal.goalAmount.toLocaleString()}
+            {goal.current_amount.toLocaleString()} of{" "}
+            {goal.goal_amount.toLocaleString()}
           </Text>
           <View style={{ overflow: "hidden", borderRadius: 12 }}>
             <View style={style.progressBarBackground}>

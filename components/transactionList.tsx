@@ -9,7 +9,6 @@ type TransactionListProps = {
   transactions: Transaction[];
 };
 
-// TODO: Max of 5 transactions for Home and Lazy Load for history
 export default function TransactionList() {
   const transactionList = transactions;
   const [selectedTransaction, setSelectedTransaction] =

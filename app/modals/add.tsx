@@ -1,10 +1,11 @@
 import DateAndFileInputs from "@/components/dateAndFileInput";
 import DropdownInput from "@/components/dropdownInput";
 import TransactionTypeSelector from "@/components/transactionTypeSelector";
+import { Validator } from "@/helpers/helpers";
 import { Transaction } from "@/types/transactions/transactions.type";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -42,38 +43,90 @@ const ACCOUNTS = [
 
 export default function AddModal() {
   const { id, data } = useLocalSearchParams<{ id?: string; data?: string }>();
+  const [isEdit, setIsEdit] = useState(id ? true : false);
+  const [activeColor, setActiveColor] = useState(THEME_COLORS.Income);
+  const [isValidTransaction, setIsValidTransaction] = useState(
+    id ? true : false,
+  );
+  const [form, setForm] = useState<Transaction>({
+    id: "",
+    datetime: new Date(),
+    transaction_category: CATEGORIES[1],
+    amount: "0",
+    note: "",
+    transaction_type: "Income",
+    transaction_account: ACCOUNTS[0],
+    receiving_account: ACCOUNTS[-1],
+    saving_name: "",
+    fee: "0",
+    icon: "",
+    user_id: "0",
+    created_at: new Date(),
+    updated_at: new Date(),
+  });
 
-  const initialData: Transaction | null = data ? JSON.parse(data) : null;
+  useEffect(() => {
+    const parsedData: Transaction | null = data ? JSON.parse(data) : null;
 
-  const [type, setType] = useState<TransactionType>(
-    initialData ? (initialData.transaction_type as TransactionType) : "Income",
-  );
-  const [amount, setAmount] = useState<string>(
-    initialData ? JSON.stringify(initialData.amount) : "0",
-  );
-  const [category, setCategory] = useState<string>(
-    initialData ? initialData.transaction_category : CATEGORIES[0],
-  );
-  const [account, setAccount] = useState<string>(
-    initialData ? initialData.account : ACCOUNTS[0],
-  );
-  const [date, setDate] = useState<Date>(
-    initialData ? new Date(initialData.datetime) : new Date(),
-  );
-  const [note, setNote] = useState<string>(initialData ? initialData.note : "");
+    const type = (parsedData?.transaction_type ??
+      "Income") as keyof typeof THEME_COLORS;
+    const color = THEME_COLORS[type] ?? THEME_COLORS.Income;
 
-  const activeColor = THEME_COLORS[type];
+    setActiveColor(color);
+    setForm({
+      id: parsedData?.id ?? "",
+      datetime: parsedData?.datetime
+        ? new Date(parsedData.datetime)
+        : new Date(),
+      transaction_category: parsedData?.transaction_category ?? CATEGORIES[0],
+      amount: parsedData?.amount ?? "0",
+      note: parsedData?.note ?? "",
+      transaction_type: parsedData?.transaction_type ?? "Income",
+      transaction_account: parsedData?.transaction_account ?? ACCOUNTS[0],
+      receiving_account: parsedData?.receiving_account ?? "",
+      saving_name: parsedData?.saving_name ?? "",
+      fee: parsedData?.fee ?? "0",
+      icon: parsedData?.icon ?? "",
+      user_id: parsedData?.user_id ?? "0",
+      created_at: parsedData?.created_at
+        ? new Date(parsedData.created_at)
+        : new Date(),
+      updated_at: parsedData?.updated_at
+        ? new Date(parsedData.updated_at)
+        : new Date(),
+    });
+  }, [id, data, isEdit]);
+
+  const handleInputChange = (name: keyof typeof form, value: string | Date) => {
+    const nextForm = {
+      ...form,
+      [name]: value,
+    };
+
+    setForm(nextForm);
+
+    if (name === "transaction_type") {
+      const color =
+        THEME_COLORS[value as TransactionType] ?? THEME_COLORS.Expense;
+      setActiveColor(color);
+    }
+
+    const { errors } = Validator(nextForm, "Transaction");
+    console.log(errors);
+    setIsValidTransaction(errors.length === 0);
+  };
 
   const saveTransaction = () => {
-    console.log(amount, category, account, date);
+    console.log(form);
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 200 : 0}
+      >
         <SafeAreaView
           edges={["top"]}
           style={[styles.header, { backgroundColor: activeColor }]}
@@ -96,8 +149,8 @@ export default function AddModal() {
           <View style={styles.amountContainer}>
             <TextInput
               style={styles.amountInput}
-              value={amount}
-              onChangeText={setAmount}
+              value={form.amount}
+              onChangeText={(text) => handleInputChange("amount", text)}
               keyboardType="numeric"
               placeholder="0"
               placeholderTextColor="rgba(255,255,255,0.6)"
@@ -106,8 +159,8 @@ export default function AddModal() {
         </SafeAreaView>
 
         <TransactionTypeSelector
-          selectedType={type}
-          onSelect={setType}
+          selectedType={form.transaction_type as TransactionType}
+          onSelect={(text) => handleInputChange("transaction_type", text)}
           activeColor={activeColor}
         />
 
@@ -117,21 +170,81 @@ export default function AddModal() {
         >
           <DropdownInput
             label="Category"
-            selectedValue={category}
+            selectedValue={form.transaction_category}
             iconName="radio-button-on"
             options={CATEGORIES}
-            onSelect={setCategory}
+            onSelect={(text) => handleInputChange("transaction_category", text)}
+            hasIcon={true}
           />
 
-          <DropdownInput
-            label="Account"
-            selectedValue={account}
-            iconName="trending-up"
-            options={ACCOUNTS}
-            onSelect={setAccount}
-          />
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              gap: 12,
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              <DropdownInput
+                label="Account"
+                selectedValue={form.transaction_account}
+                iconName="trending-up"
+                options={ACCOUNTS}
+                onSelect={(text) =>
+                  handleInputChange("transaction_account", text)
+                }
+                hasIcon={false}
+              />
+            </View>
 
-          <DateAndFileInputs selectedDate={date} onSelect={setDate} />
+            {form.transaction_type === "Transfer" && (
+              <View style={{ flex: 1 }}>
+                <DropdownInput
+                  label="Receiving Account"
+                  selectedValue={form?.receiving_account ?? ACCOUNTS[0]}
+                  iconName="trending-down"
+                  options={ACCOUNTS}
+                  onSelect={(text) =>
+                    handleInputChange("receiving_account", text)
+                  }
+                  hasIcon={false}
+                />
+              </View>
+            )}
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              gap: 12,
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              <DateAndFileInputs
+                selectedDate={form.datetime}
+                onSelect={(text) => handleInputChange("datetime", text)}
+                styleType={form.transaction_type}
+              />
+            </View>
+
+            {form.transaction_type === "Transfer" && (
+              <View style={styles.transferFeeInput}>
+                <Text style={styles.inputLabel}>Transfer Fee</Text>
+                <View style={styles.amountInputContainer}>
+                  <Text style={styles.currencyPrefix}>P</Text>
+                  <TextInput
+                    style={styles.feeInput}
+                    placeholder=""
+                    placeholderTextColor="#94A3B8"
+                    keyboardType="numeric"
+                    value={form.fee ?? "0"}
+                    onChangeText={(text) => handleInputChange("fee", text)}
+                  />
+                </View>
+              </View>
+            )}
+          </View>
 
           <View style={styles.noteContainer}>
             <TextInput
@@ -139,14 +252,21 @@ export default function AddModal() {
               placeholder="Add note..."
               placeholderTextColor="#94A3B8"
               multiline
-              value={note}
+              value={form.note}
+              onChangeText={(text) => handleInputChange("note", text)}
             />
           </View>
 
           <TouchableOpacity
-            style={[styles.saveButton, { backgroundColor: "#2B60E9" }]}
+            style={[
+              styles.saveButton,
+              isValidTransaction
+                ? { backgroundColor: "#2B60E9" }
+                : { backgroundColor: "gray" },
+            ]}
             activeOpacity={0.8}
             onPress={() => saveTransaction()}
+            disabled={!isValidTransaction}
           >
             <Ionicons
               name="checkmark"
@@ -157,8 +277,8 @@ export default function AddModal() {
             <Text style={styles.saveButtonText}>Save Transaction</Text>
           </TouchableOpacity>
         </ScrollView>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -203,7 +323,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    left: 4,
   },
   currencySymbol: {
     color: "white",
@@ -213,10 +332,18 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   amountInput: {
-    color: "white",
-    fontSize: 64,
+    fontSize: 48,
     fontWeight: "800",
-    minWidth: 100,
+    color: "#FFFFFF",
+    textAlign: "center",
+    textAlignVertical: "center",
+    width: "100%",
+  },
+  feeInput: {
+    fontSize: 12,
+    fontWeight: "800",
+    color: "black",
+    width: "100%",
   },
   formContainer: {
     flex: 1,
@@ -257,5 +384,50 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "700",
+  },
+  keyboardAvoid: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "flex-end",
+  },
+  inputLabel: {
+    fontSize: 12,
+    color: "#94A3B8",
+    fontWeight: "500",
+    marginBottom: 4,
+  },
+  inputField: {
+    backgroundColor: "#F8FAFC",
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    height: 50,
+    fontSize: 15,
+    color: "#1E293B",
+  },
+  amountInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F8FAFC",
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    height: 40,
+  },
+  currencyPrefix: {
+    fontSize: 15,
+    color: "#64748B",
+    fontWeight: "600",
+    marginRight: 8,
+  },
+  transferFeeInput: {
+    flex: 1,
+    padding: 12,
+    backgroundColor: "white",
+    elevation: 1,
+    marginBottom: 16,
+    borderRadius: 24,
   },
 });

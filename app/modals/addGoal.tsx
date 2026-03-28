@@ -1,4 +1,5 @@
 import AccountDropdown from "@/components/accountDropdown";
+import DropdownInput from "@/components/dropdownInput";
 import { Saving } from "@/types/savings/savings.type";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
@@ -31,6 +32,14 @@ const THEME_COLORS = [
   "#EF4444",
 ];
 
+const CATEGORIES = [
+  "Food & Dining",
+  "Shopping",
+  "Transport",
+  "Salary",
+  "Entertainment",
+];
+
 interface AddGoalModalProps {
   isVisible: boolean;
   onClose: () => void;
@@ -51,8 +60,9 @@ export default function AddGoalModal({
     color: THEME_COLORS[0],
     description: "",
     account: ACCOUNTS[0],
-    currentAmount: "0",
-    goalAmount: "0",
+    current_amount: "0",
+    goal_amount: "0",
+    saving_category: "",
     icon: "",
   });
 
@@ -76,15 +86,18 @@ export default function AddGoalModal({
         }),
       ]).start();
 
+      console.log(goalData);
+
       setForm({
         id: goalData?.id ?? "",
         color: goalData?.color ?? THEME_COLORS[0],
         description: goalData?.description ?? "",
         account: goalData?.account ?? ACCOUNTS[0],
-        currentAmount: goalData?.currentAmount
-          ? `${goalData?.currentAmount}`
-          : "",
-        goalAmount: goalData?.goalAmount ? `${goalData?.goalAmount}` : "",
+        current_amount: goalData?.current_amount
+          ? goalData?.current_amount
+          : "0",
+        goal_amount: goalData?.goal_amount ? goalData?.goal_amount : "0",
+        saving_category: goalData?.saving_category ?? "",
         icon: goalData?.icon ?? "",
       });
     } else {
@@ -165,14 +178,34 @@ export default function AddGoalModal({
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.inputLabel}>Goal Name</Text>
-            <TextInput
-              style={styles.inputField}
-              placeholder="e.g. Dream House"
-              placeholderTextColor="#94A3B8"
-              value={form.description}
-              onChangeText={(text) => handleInputChange("description", text)}
-            />
+            <View style={{ flexDirection: "row", gap: 12 }}>
+              <View style={{ flexDirection: "column", width: "50%" }}>
+                <Text style={styles.inputLabel}>Goal Name</Text>
+                <TextInput
+                  style={styles.inputField}
+                  placeholder="e.g. Dream House"
+                  placeholderTextColor="#94A3B8"
+                  value={form.description}
+                  onChangeText={(text) =>
+                    handleInputChange("description", text)
+                  }
+                />
+              </View>
+
+              <View style={{ flexDirection: "column", width: "50%" }}>
+                <Text style={styles.inputLabel}>Category</Text>
+                <DropdownInput
+                  label=""
+                  selectedValue={form.saving_category}
+                  iconName="radio-button-on"
+                  options={CATEGORIES}
+                  onSelect={(text) =>
+                    handleInputChange("saving_category", text)
+                  }
+                  hasIcon={false}
+                />
+              </View>
+            </View>
 
             <View style={{ flexDirection: "row", gap: 12 }}>
               <View style={{ flexDirection: "column", width: "50%" }}>
@@ -184,9 +217,9 @@ export default function AddGoalModal({
                     placeholder=""
                     placeholderTextColor="#94A3B8"
                     keyboardType="numeric"
-                    value={form.currentAmount}
+                    value={form.current_amount}
                     onChangeText={(text) =>
-                      handleInputChange("currentAmount", text)
+                      handleInputChange("current_amount", text)
                     }
                   />
                 </View>
@@ -201,9 +234,9 @@ export default function AddGoalModal({
                     placeholder=""
                     placeholderTextColor="#94A3B8"
                     keyboardType="numeric"
-                    value={form.goalAmount}
+                    value={form.goal_amount}
                     onChangeText={(text) =>
-                      handleInputChange("goalAmount", text)
+                      handleInputChange("goal_amount", text)
                     }
                   />
                 </View>
@@ -245,7 +278,9 @@ export default function AddGoalModal({
                 style={[styles.saveBtn, { backgroundColor: form.color }]}
                 onPress={handleSave}
               >
-                <Text style={styles.saveBtnText}>Create Goal</Text>
+                <Text style={styles.saveBtnText}>
+                  {isEdit ? "Edit" : "Create"} Goal
+                </Text>
               </TouchableOpacity>
             </View>
 
@@ -322,7 +357,7 @@ const styles = StyleSheet.create({
     borderColor: "#E2E8F0",
     borderRadius: 12,
     paddingHorizontal: 16,
-    height: 50,
+    height: 60,
     fontSize: 15,
     color: "#1E293B",
   },
