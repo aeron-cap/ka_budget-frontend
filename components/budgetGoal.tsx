@@ -4,16 +4,18 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type BudgetGoalProps = {
   goal: Saving;
-  onPress: () => void;
+  onPress: (goal: Saving) => void;
 };
 
 export default function BudgetGoal({ goal, onPress }: BudgetGoalProps) {
-  const percentage = Math.round((goal.currentAmount / goal.goalAmount) * 100);
+  const percentage = Math.round(
+    (parseFloat(goal.currentAmount) / parseFloat(goal.goalAmount)) * 100,
+  );
 
   return (
     <TouchableOpacity
       activeOpacity={0.7}
-      onPress={() => {}}
+      onPress={() => onPress(goal)}
       style={style.touchContainer}
     >
       <View style={[style.goalContainer]}>

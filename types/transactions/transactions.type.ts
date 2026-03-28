@@ -3,14 +3,14 @@ export type Transaction = {
   datetime: string;
   transaction_category: string;
   category_icon: string;
-  amount: number;
+  amount: string;
   note: string;
   transaction_type: string;
   account: string;
   receiving_account: string | null;
   budget_name?: string | null;
-  fee?: number | null;
-  user_id: number;
+  fee?: string | null;
+  user_id: string;
   created_at?: string | Date;
   updated_at?: string | Date;
 };

@@ -3,6 +3,7 @@ export type Saving = {
   color: string;
   description: string;
   account: string;
-  currentAmount: number;
-  goalAmount: number;
+  currentAmount: string;
+  goalAmount: string;
+  icon?: string | null;
 };

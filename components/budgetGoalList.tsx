@@ -10,16 +10,20 @@ type SavingGoalListProps = {
 
 export default function BudgetGoalList({ savings }: SavingGoalListProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [currentGoal, setCurrentGoal] = useState<Saving | null>(null);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
   const computedHeight = savings.length * 160;
 
-  const handleSaveSaving = (goalData: {
-    name: string;
-    target: string;
-    account: string;
-    color: string;
-  }) => {
+  const handleSaveSaving = (goalData: Saving) => {
     console.log("Saving new Saving Goal:", goalData);
-    setIsModalVisible(false);
+  };
+
+  const editSavingGoal = (goalData: Saving) => {
+    if (goalData) {
+      setCurrentGoal(goalData);
+      setIsEdit(true);
+      setIsModalVisible(true);
+    }
   };
 
   return (
@@ -30,7 +34,7 @@ export default function BudgetGoalList({ savings }: SavingGoalListProps) {
 
       {savings.map((goal, idx) => {
         const percentage = Math.round(
-          (goal.currentAmount / goal.goalAmount) * 100,
+          (parseFloat(goal.currentAmount) / parseFloat(goal.goalAmount)) * 100,
         );
 
         return (
@@ -38,6 +42,7 @@ export default function BudgetGoalList({ savings }: SavingGoalListProps) {
             key={idx}
             activeOpacity={0.7}
             style={styles.touchContainer}
+            onPress={() => editSavingGoal(goal)}
           >
             <View>
               <View style={styles.cardTopRow}>
@@ -76,7 +81,11 @@ export default function BudgetGoalList({ savings }: SavingGoalListProps) {
 
       <TouchableOpacity
         style={styles.newGoalButton}
-        onPress={() => setIsModalVisible(true)}
+        onPress={() => {
+          setCurrentGoal(null);
+          setIsEdit(false);
+          setIsModalVisible(true);
+        }}
       >
         <Ionicons
           name="flash"
@@ -93,6 +102,8 @@ export default function BudgetGoalList({ savings }: SavingGoalListProps) {
           setIsModalVisible(false);
         }}
         onSave={handleSaveSaving}
+        goalData={currentGoal}
+        isEdit={isEdit}
       />
     </View>
   );

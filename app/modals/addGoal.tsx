@@ -1,4 +1,5 @@
 import AccountDropdown from "@/components/accountDropdown";
+import { Saving } from "@/types/savings/savings.type";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import React, { useEffect, useRef, useState } from "react";
@@ -33,23 +34,27 @@ const THEME_COLORS = [
 interface AddGoalModalProps {
   isVisible: boolean;
   onClose: () => void;
-  onSave: (goalData: {
-    name: string;
-    target: string;
-    account: string;
-    color: string;
-  }) => void;
+  onSave: (goalData: Saving) => void;
+  goalData?: Saving | null;
+  isEdit: boolean;
 }
 
 export default function AddGoalModal({
   isVisible,
   onClose,
   onSave,
+  goalData,
+  isEdit,
 }: AddGoalModalProps) {
-  const [goalName, setGoalName] = useState("");
-  const [targetAmount, setTargetAmount] = useState("");
-  const [selectedAccount, setSelectedAccount] = useState(ACCOUNTS[0]);
-  const [selectedColor, setSelectedColor] = useState(THEME_COLORS[0]);
+  const [form, setForm] = useState<Saving>({
+    id: "",
+    color: THEME_COLORS[0],
+    description: "",
+    account: ACCOUNTS[0],
+    currentAmount: "0",
+    goalAmount: "0",
+    icon: "",
+  });
 
   const [renderModal, setRenderModal] = useState(isVisible);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
@@ -70,6 +75,18 @@ export default function AddGoalModal({
           useNativeDriver: true,
         }),
       ]).start();
+
+      setForm({
+        id: goalData?.id ?? "",
+        color: goalData?.color ?? THEME_COLORS[0],
+        description: goalData?.description ?? "",
+        account: goalData?.account ?? ACCOUNTS[0],
+        currentAmount: goalData?.currentAmount
+          ? `${goalData?.currentAmount}`
+          : "",
+        goalAmount: goalData?.goalAmount ? `${goalData?.goalAmount}` : "",
+        icon: goalData?.icon ?? "",
+      });
     } else {
       Animated.parallel([
         Animated.timing(slideAnim, {
@@ -84,19 +101,17 @@ export default function AddGoalModal({
         }),
       ]).start(() => setRenderModal(false));
     }
-  }, [isVisible, slideAnim, fadeAnim]);
+  }, [isVisible, slideAnim, fadeAnim, goalData]);
+
+  const handleInputChange = (name: keyof typeof form, value: string) => {
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handleSave = () => {
-    onSave({
-      name: goalName,
-      target: targetAmount,
-      account: selectedAccount,
-      color: selectedColor,
-    });
-    setGoalName("");
-    setTargetAmount("");
-    setSelectedAccount(ACCOUNTS[0]);
-    setSelectedColor(THEME_COLORS[0]);
+    onSave(form);
   };
 
   const handleClose = () => {
@@ -139,7 +154,9 @@ export default function AddGoalModal({
             ]}
           >
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>New Budget Goal</Text>
+              <Text style={styles.modalTitle}>
+                {isEdit ? "Edit" : "New"} Savings Goal
+              </Text>
               <TouchableOpacity
                 style={styles.closeButton}
                 onPress={handleClose}
@@ -153,21 +170,44 @@ export default function AddGoalModal({
               style={styles.inputField}
               placeholder="e.g. Dream House"
               placeholderTextColor="#94A3B8"
-              value={goalName}
-              onChangeText={setGoalName}
+              value={form.description}
+              onChangeText={(text) => handleInputChange("description", text)}
             />
 
-            <Text style={styles.inputLabel}>Target Amount</Text>
-            <View style={styles.amountInputContainer}>
-              <Text style={styles.currencyPrefix}>$</Text>
-              <TextInput
-                style={styles.amountInput}
-                placeholder="5000"
-                placeholderTextColor="#94A3B8"
-                keyboardType="numeric"
-                value={targetAmount}
-                onChangeText={setTargetAmount}
-              />
+            <View style={{ flexDirection: "row", gap: 12 }}>
+              <View style={{ flexDirection: "column", width: "50%" }}>
+                <Text style={styles.inputLabel}>Current Amount</Text>
+                <View style={styles.amountInputContainer}>
+                  <Text style={styles.currencyPrefix}>P</Text>
+                  <TextInput
+                    style={styles.amountInput}
+                    placeholder=""
+                    placeholderTextColor="#94A3B8"
+                    keyboardType="numeric"
+                    value={form.currentAmount}
+                    onChangeText={(text) =>
+                      handleInputChange("currentAmount", text)
+                    }
+                  />
+                </View>
+              </View>
+
+              <View style={{ flexDirection: "column", width: "50%" }}>
+                <Text style={styles.inputLabel}>Target Amount</Text>
+                <View style={styles.amountInputContainer}>
+                  <Text style={styles.currencyPrefix}>P</Text>
+                  <TextInput
+                    style={styles.amountInput}
+                    placeholder=""
+                    placeholderTextColor="#94A3B8"
+                    keyboardType="numeric"
+                    value={form.goalAmount}
+                    onChangeText={(text) =>
+                      handleInputChange("goalAmount", text)
+                    }
+                  />
+                </View>
+              </View>
             </View>
 
             <Text style={styles.inputLabel}>Account</Text>
@@ -177,12 +217,12 @@ export default function AddGoalModal({
               <Text style={styles.inputLabel}>Theme Color</Text>
               <View style={styles.colorRow}>
                 {THEME_COLORS.map((color) => {
-                  const isSelected = selectedColor === color;
+                  const isSelected = form.color === color;
                   return (
                     <TouchableOpacity
                       key={color}
                       activeOpacity={0.8}
-                      onPress={() => setSelectedColor(color)}
+                      onPress={() => handleInputChange("color", color)}
                       style={[
                         styles.colorOuterCircle,
                         isSelected
@@ -201,7 +241,10 @@ export default function AddGoalModal({
                 })}
               </View>
 
-              <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
+              <TouchableOpacity
+                style={[styles.saveBtn, { backgroundColor: form.color }]}
+                onPress={handleSave}
+              >
                 <Text style={styles.saveBtnText}>Create Goal</Text>
               </TouchableOpacity>
             </View>
@@ -388,7 +431,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   saveBtn: {
-    backgroundColor: "#2563EB",
     borderRadius: 14,
     height: 54,
     justifyContent: "center",

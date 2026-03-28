@@ -1,15 +1,29 @@
+import AddGoalModal from "@/app/modals/addGoal";
 import { SAMPLE_SAVINGS } from "@/constants/sampleData";
+import { Saving } from "@/types/savings/savings.type";
 import { router } from "expo-router";
+import { useState } from "react";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 import BudgetGoal from "./budgetGoal";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-
 const sampleSavings = SAMPLE_SAVINGS;
 
 export default function BudgetGoalContainer() {
-  const openSavingsModal = () => {
-    return 1;
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [currentGoal, setCurrentGoal] = useState<Saving | null>(null);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+
+  const handleSaveSaving = (goalData: Saving) => {
+    console.log("Saving new Saving Goal:", goalData);
+  };
+
+  const editSavingGoal = (goalData: Saving) => {
+    if (goalData) {
+      setCurrentGoal(goalData);
+      setIsEdit(true);
+      setIsModalVisible(true);
+    }
   };
 
   return (
@@ -26,11 +40,21 @@ export default function BudgetGoalContainer() {
         {sampleSavings.map((b, idx) => {
           return (
             <View key={idx} style={style.itemWrapper}>
-              <BudgetGoal goal={b} onPress={openSavingsModal} />
+              <BudgetGoal goal={b} onPress={() => editSavingGoal(b)} />
             </View>
           );
         })}
       </ScrollView>
+
+      <AddGoalModal
+        isVisible={isModalVisible}
+        onClose={() => {
+          setIsModalVisible(false);
+        }}
+        onSave={handleSaveSaving}
+        goalData={currentGoal}
+        isEdit={isEdit}
+      />
     </View>
   );
 }
