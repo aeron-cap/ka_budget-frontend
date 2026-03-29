@@ -1,6 +1,4 @@
 import BudgetGoalList from "@/components/budgetGoalList";
-import CashflowCard from "@/components/cashflowCard";
-import GraphContainer from "@/components/graphContainer";
 import { SAMPLE_SAVINGS } from "@/constants/sampleData";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,12 +13,12 @@ export default function Insights() {
           <Text style={styles.headerText}>Insights</Text>
         </View>
 
-        <GraphContainer />
+        {/* <GraphContainer />
 
         <View style={styles.cashFlowContainer}>
           <CashflowCard type={"Income"} color={"green"} percent={"10%"} />
           <CashflowCard type={"Expense"} color={"red"} percent={"10%"} />
-        </View>
+        </View> */}
 
         <BudgetGoalList savings={savings} />
       </SafeAreaView>
