@@ -229,18 +229,19 @@ export default function AddModal() {
             </View>
 
             {form.transaction_type === "Transfer" && (
-              <View style={[styles.transferFeeInput, { flex: 1 }]}>
-                <Text style={styles.inputLabel}>Transfer Fee</Text>
-                <View style={styles.amountInputContainer}>
-                  <Text style={styles.currencyPrefix}>₱</Text>
-                  <TextInput
-                    style={styles.feeInput}
-                    placeholder="0"
-                    placeholderTextColor="#94A3B8"
-                    keyboardType="numeric"
-                    value={form.fee ?? "0"}
-                    onChangeText={(text) => handleInputChange("fee", text)}
-                  />
+              <View style={{ flex: 1 }}>
+                <View style={styles.transferFeeInput}>
+                  <Text style={styles.inputLabel}>Transfer Fee</Text>
+                  <View style={styles.amountInputContainer}>
+                    <TextInput
+                      style={styles.feeInput}
+                      placeholder="0"
+                      placeholderTextColor="#94A3B8"
+                      keyboardType="numeric"
+                      value={form.fee ?? "0"}
+                      onChangeText={(text) => handleInputChange("fee", text)}
+                    />
+                  </View>
                 </View>
               </View>
             )}
@@ -423,7 +424,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   transferFeeInput: {
-    flex: 1,
     padding: 12,
     backgroundColor: "white",
     elevation: 1,

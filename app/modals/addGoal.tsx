@@ -1,4 +1,3 @@
-import AccountDropdown from "@/components/accountDropdown";
 import ColorPicker from "@/components/colorPicker";
 import DropdownInput from "@/components/dropdownInput";
 import { THEME_COLORS } from "@/constants/sampleData";
@@ -239,7 +238,14 @@ export default function AddGoalModal({
             </View>
 
             <Text style={styles.inputLabel}>Account</Text>
-            <AccountDropdown />
+            <DropdownInput
+              label=""
+              selectedValue={form.account}
+              iconName="radio-button-on"
+              options={ACCOUNTS}
+              onSelect={(text) => handleInputChange("account", text)}
+              hasIcon={false}
+            />
 
             <View style={styles.lowerSection}>
               <Text style={styles.inputLabel}>Theme Color</Text>
