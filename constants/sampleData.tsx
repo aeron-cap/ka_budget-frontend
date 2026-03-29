@@ -1,4 +1,4 @@
-import { Account } from "@/types/accounts/accounts.type";
+import { Account, AccountInHome } from "@/types/accounts/accounts.type";
 import { Saving } from "@/types/savings/savings.type";
 import { Transaction } from "@/types/transactions/transactions.type";
 
@@ -159,3 +159,7 @@ export const THEME_COLORS = [
   "#EC4899",
   "#EF4444",
 ];
+
+export const SAMPLE_SELECTED_TAGS: AccountInHome = {
+  accounts: [ACCOUNTS[0], ACCOUNTS[1]],
+};

@@ -7,3 +7,7 @@ export type Account = {
   account_category: string;
   color: string;
 };
+
+export type AccountInHome = {
+  accounts: Account[];
+};

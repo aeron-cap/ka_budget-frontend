@@ -29,7 +29,7 @@ export default function TransactionList() {
 
   return (
     <View style={style.container}>
-      {transactionList.map((t, idx) => {
+      {transactionList.slice(0, 3).map((t, idx) => {
         return (
           <TransactionRow
             key={idx}

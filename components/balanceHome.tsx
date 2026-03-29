@@ -1,17 +1,33 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { SAMPLE_SELECTED_TAGS } from "@/constants/sampleData";
+import { Account } from "@/types/accounts/accounts.type";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, Text, View } from "react-native";
 
-const tags = ["Maribank", "GoTyme"];
-
 type BalanceHomeProps = {
   accounts: string[];
-  income: string;
-  expense: string;
-  totalBalance: string;
 };
 
 export default function BalanceHome() {
+  const shortenAccountName = (name: string) => {
+    return name.length > 12 ? name.slice(0, 10) + "..." : name;
+  };
+
+  const getAndFormatBalance = () => {
+    const balance: number = SAMPLE_SELECTED_TAGS.accounts.reduce(
+      (total: number, account: Account) => {
+        return total + parseFloat(account.current_balance || "0");
+      },
+      0,
+    );
+
+    return balance.toLocaleString("en-US", {
+      style: "currency",
+      currency: "PHP",
+    });
+  };
+
+  const balance = getAndFormatBalance();
+
   return (
     <View style={styles.balanceContainer}>
       <LinearGradient
@@ -23,20 +39,28 @@ export default function BalanceHome() {
       <View style={styles.content}>
         <View style={styles.topSection}>
           <View style={styles.headerRow}>
-            <Text style={styles.headerText}>Total Balance</Text>
-
-            <View style={styles.tagsSection}>
-              {tags.slice(0, 3).map((tag, idx) => (
-                <View key={idx} style={styles.tagPill}>
-                  <Text style={styles.tagText}>{tag}</Text>
-                </View>
-              ))}
-            </View>
+            <Text style={styles.headerText}>Total Balance for Accounts:</Text>
+          </View>
+          <View style={styles.tagsSection}>
+            {SAMPLE_SELECTED_TAGS.accounts.slice(0, 3).map((account, idx) => (
+              <View
+                key={idx}
+                style={[
+                  styles.tagPill,
+                  { backgroundColor: account.color + "70" },
+                ]}
+              >
+                <Text style={styles.tagText}>
+                  {shortenAccountName(account.name)}
+                </Text>
+              </View>
+            ))}
           </View>
 
-          <Text style={styles.balanceText}>24,500.50</Text>
+          <Text style={styles.balanceText}>{balance}</Text>
         </View>
 
+        {/* <Text style={styles.runningText}>This Month</Text>
         <View style={styles.movementContainer}>
           <View style={styles.movement}>
             <View
@@ -67,7 +91,7 @@ export default function BalanceHome() {
               <Text style={styles.movementValue}>3,450.75</Text>
             </View>
           </View>
-        </View>
+        </View> */}
       </View>
     </View>
   );
@@ -75,7 +99,7 @@ export default function BalanceHome() {
 
 const styles = StyleSheet.create({
   balanceContainer: {
-    height: 220,
+    height: 150,
     borderRadius: 28,
     overflow: "hidden",
     marginBottom: 8,
@@ -92,14 +116,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    marginTop: -8,
   },
   topSection: {
     marginTop: 0,
+    marginBottom: 12,
   },
   headerText: {
-    color: "rgba(255, 255, 255, 0.8)",
+    color: "rgba(255, 255, 255, 1)",
     fontSize: 16,
+    fontWeight: "500",
+    marginTop: -8,
+  },
+  runningText: {
+    color: "rgba(255, 255, 255, 1)",
+    fontSize: 14,
     fontWeight: "500",
     marginTop: -8,
   },
@@ -111,7 +141,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   tagPill: {
-    backgroundColor: "rgba(255, 255, 255, 0.15)",
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
