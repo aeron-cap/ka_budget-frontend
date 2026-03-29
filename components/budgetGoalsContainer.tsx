@@ -63,7 +63,7 @@ const style = StyleSheet.create({
   wrapper: {
     width: SCREEN_WIDTH,
     alignSelf: "center",
-    height: 240,
+    height: 220,
     margin: 8,
     marginBottom: 24,
   },
@@ -72,7 +72,7 @@ const style = StyleSheet.create({
     gap: 8,
   },
   itemWrapper: {
-    width: SCREEN_WIDTH * 0.4,
+    width: SCREEN_WIDTH * 0.5,
   },
   headerContainer: {
     paddingLeft: 24,

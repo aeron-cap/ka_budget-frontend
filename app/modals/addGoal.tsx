@@ -1,5 +1,8 @@
 import AccountDropdown from "@/components/accountDropdown";
+import ColorPicker from "@/components/colorPicker";
 import DropdownInput from "@/components/dropdownInput";
+import { THEME_COLORS } from "@/constants/sampleData";
+import { Validator } from "@/helpers/helpers";
 import { Saving } from "@/types/savings/savings.type";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
@@ -22,14 +25,6 @@ const ACCOUNTS = [
   "Checking Account (**** 1234)",
   "Savings Account (**** 5678)",
   "Cash Wallet",
-];
-const THEME_COLORS = [
-  "#2563EB",
-  "#10B981",
-  "#F59E0B",
-  "#A855F7",
-  "#EC4899",
-  "#EF4444",
 ];
 
 const CATEGORIES = [
@@ -58,7 +53,7 @@ export default function AddGoalModal({
   const [form, setForm] = useState<Saving>({
     id: "",
     color: THEME_COLORS[0],
-    description: "",
+    name: "",
     account: ACCOUNTS[0],
     current_amount: "0",
     goal_amount: "0",
@@ -66,6 +61,7 @@ export default function AddGoalModal({
     icon: "",
   });
 
+  const [isSavingsValid, setIsSavingsValid] = useState(goalData ? true : false);
   const [renderModal, setRenderModal] = useState(isVisible);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -86,12 +82,10 @@ export default function AddGoalModal({
         }),
       ]).start();
 
-      console.log(goalData);
-
       setForm({
         id: goalData?.id ?? "",
         color: goalData?.color ?? THEME_COLORS[0],
-        description: goalData?.description ?? "",
+        name: goalData?.name ?? "",
         account: goalData?.account ?? ACCOUNTS[0],
         current_amount: goalData?.current_amount
           ? goalData?.current_amount
@@ -121,6 +115,9 @@ export default function AddGoalModal({
       ...prev,
       [name]: value,
     }));
+
+    const { errors } = Validator(form, "Saving");
+    setIsSavingsValid(errors.length === 0);
   };
 
   const handleSave = () => {
@@ -185,10 +182,8 @@ export default function AddGoalModal({
                   style={styles.inputField}
                   placeholder="e.g. Dream House"
                   placeholderTextColor="#94A3B8"
-                  value={form.description}
-                  onChangeText={(text) =>
-                    handleInputChange("description", text)
-                  }
+                  value={form.name}
+                  onChangeText={(text) => handleInputChange("name", text)}
                 />
               </View>
 
@@ -248,31 +243,10 @@ export default function AddGoalModal({
 
             <View style={styles.lowerSection}>
               <Text style={styles.inputLabel}>Theme Color</Text>
-              <View style={styles.colorRow}>
-                {THEME_COLORS.map((color) => {
-                  const isSelected = form.color === color;
-                  return (
-                    <TouchableOpacity
-                      key={color}
-                      activeOpacity={0.8}
-                      onPress={() => handleInputChange("color", color)}
-                      style={[
-                        styles.colorOuterCircle,
-                        isSelected
-                          ? { borderColor: color }
-                          : { borderColor: "transparent" },
-                      ]}
-                    >
-                      <View
-                        style={[
-                          styles.colorInnerCircle,
-                          { backgroundColor: color },
-                        ]}
-                      />
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
+              <ColorPicker
+                selectedColor={form.color}
+                changeColor={(color) => handleInputChange("color", color)}
+              />
 
               <TouchableOpacity
                 style={[styles.saveBtn, { backgroundColor: form.color }]}
@@ -445,25 +419,6 @@ const styles = StyleSheet.create({
   },
   lowerSection: {
     ...(Platform.OS === "ios" ? { zIndex: -1 } : { elevation: -1, zIndex: -1 }),
-  },
-  colorRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginTop: 4,
-  },
-  colorOuterCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 2,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  colorInnerCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
   },
   saveBtn: {
     borderRadius: 14,

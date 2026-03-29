@@ -1,10 +1,13 @@
+import ColorPicker from "@/components/colorPicker";
+import DropdownInput from "@/components/dropdownInput";
+import { Validator } from "@/helpers/helpers";
+import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
-  FlatList,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -16,6 +19,7 @@ import {
 } from "react-native";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+
 const ACCOUNT_TYPES = [
   "Digital Bank",
   "Traditional Bank",
@@ -23,29 +27,44 @@ const ACCOUNT_TYPES = [
   "Cash",
 ];
 
-interface AddAccountModalProps {
+const CATEGORIES = [
+  "Food & Dining",
+  "Shopping",
+  "Transport",
+  "Salary",
+  "Entertainment",
+];
+
+interface AddAccountProps {
   isVisible: boolean;
   onClose: () => void;
-  onSave: (accountData: {
-    name: string;
-    type: string;
-    initialBalance: string;
-  }) => void;
+  onSave: (accountData: Account) => void;
+  accountData?: Account | null;
+  isEdit: boolean;
 }
 
-export default function AddAccountModal({
+export default function AddAccount({
   isVisible,
   onClose,
   onSave,
-}: AddAccountModalProps) {
-  const [accountName, setAccountName] = useState("");
-  const [accountType, setAccountType] = useState(ACCOUNT_TYPES[0]);
-  const [initialAmount, setInitialAmount] = useState("");
+  accountData,
+  isEdit,
+}: AddAccountProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
   const [renderModal, setRenderModal] = useState(isVisible);
+  const [isValidTransaction, setIsValidTransaction] = useState(false);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const [form, setForm] = useState<Account>({
+    id: "",
+    name: "",
+    account_type: ACCOUNT_TYPES[0],
+    initial_balance: "0",
+    current_balance: "0",
+    account_category: "",
+    color: "#000000",
+  });
 
   useEffect(() => {
     if (isVisible) {
@@ -62,6 +81,20 @@ export default function AddAccountModal({
           useNativeDriver: true,
         }),
       ]).start();
+
+      const nextForm = {
+        id: accountData ? accountData.id : "",
+        name: accountData ? accountData.name : "",
+        account_type: accountData ? accountData.account_type : ACCOUNT_TYPES[0],
+        initial_balance: accountData ? accountData.initial_balance : "0",
+        current_balance: accountData ? accountData.current_balance : "0",
+        account_category: accountData?.account_category || "",
+        color: accountData?.color || "#000000",
+      };
+      setForm(nextForm);
+
+      const { errors } = Validator(nextForm, "Account");
+      setIsValidTransaction(errors.length === 0);
     } else {
       Animated.parallel([
         Animated.timing(slideAnim, {
@@ -76,23 +109,29 @@ export default function AddAccountModal({
         }),
       ]).start(() => setRenderModal(false));
     }
-  }, [isVisible, slideAnim, fadeAnim]);
+  }, [isVisible, slideAnim, fadeAnim, accountData]);
 
   const handleSave = () => {
-    onSave({
-      name: accountName,
-      type: accountType,
-      initialBalance: initialAmount,
-    });
-    setAccountName("");
-    setAccountType(ACCOUNT_TYPES[0]);
-    setInitialAmount("");
+    onSave(form);
     setIsDropdownOpen(false);
   };
 
   const handleClose = () => {
     setIsDropdownOpen(false);
     onClose();
+  };
+
+  const handleInputChange = (name: keyof typeof form, value: string) => {
+    const nextForm = {
+      ...form,
+      [name]: value,
+    };
+
+    setForm(nextForm);
+
+    const { errors } = Validator(nextForm, "Account");
+    console.log(errors);
+    setIsValidTransaction(errors.length === 0);
   };
 
   if (!renderModal) return null;
@@ -131,7 +170,9 @@ export default function AddAccountModal({
             ]}
           >
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Add New Account</Text>
+              <Text style={styles.modalTitle}>
+                {isEdit ? "Edit" : "New"} Account
+              </Text>
               <TouchableOpacity
                 style={styles.closeButton}
                 onPress={handleClose}
@@ -145,86 +186,66 @@ export default function AddAccountModal({
               style={styles.inputField}
               placeholder="e.g. Chase Checking"
               placeholderTextColor="#94A3B8"
-              value={accountName}
-              onChangeText={setAccountName}
+              value={form.name}
+              onChangeText={(value) => handleInputChange("name", value)}
             />
 
-            <View style={styles.dropdownZIndexWrapper}>
-              <Text style={styles.inputLabel}>Account Type</Text>
-              <View style={styles.dropdownAnchor}>
-                <TouchableOpacity
-                  style={styles.dropdownTrigger}
-                  activeOpacity={0.7}
-                  onPress={() => setIsDropdownOpen(!isDropdownOpen)}
-                >
-                  <Text style={styles.dropdownText}>{accountType}</Text>
-                  <Ionicons
-                    name={isDropdownOpen ? "chevron-up" : "chevron-down"}
-                    size={20}
-                    color="#64748B"
-                  />
-                </TouchableOpacity>
+            <Text style={styles.inputLabel}>Account Type</Text>
+            <DropdownInput
+              label=""
+              selectedValue={form.account_type}
+              iconName="link"
+              options={ACCOUNT_TYPES}
+              onSelect={(text) => handleInputChange("account_type", text)}
+              hasIcon={false}
+            />
 
-                {isDropdownOpen && (
-                  <View style={styles.absoluteDropdownList}>
-                    <FlatList
-                      data={ACCOUNT_TYPES}
-                      keyExtractor={(item) => item}
-                      scrollEnabled={false}
-                      renderItem={({ item, index }) => {
-                        const isSelected = accountType === item;
-                        return (
-                          <TouchableOpacity
-                            style={[
-                              styles.dropdownItem,
-                              index === ACCOUNT_TYPES.length - 1 &&
-                                styles.lastDropdownItem,
-                            ]}
-                            onPress={() => {
-                              setAccountType(item);
-                              setIsDropdownOpen(false);
-                            }}
-                          >
-                            <Text
-                              style={[
-                                styles.dropdownItemText,
-                                isSelected && styles.dropdownItemTextActive,
-                              ]}
-                            >
-                              {item}
-                            </Text>
-                            {isSelected && (
-                              <Ionicons
-                                name="checkmark"
-                                size={18}
-                                color="#2563EB"
-                              />
-                            )}
-                          </TouchableOpacity>
-                        );
-                      }}
-                    />
-                  </View>
-                )}
-              </View>
-            </View>
+            <Text style={styles.inputLabel}>Account Category</Text>
+            <DropdownInput
+              label=""
+              selectedValue={form.account_category}
+              iconName="link"
+              options={CATEGORIES}
+              onSelect={(text) => handleInputChange("account_category", text)}
+              hasIcon={false}
+            />
 
             <View style={styles.lowerSection}>
               <Text style={styles.inputLabel}>Initial Balance</Text>
               <View style={styles.amountInputContainer}>
-                <Text style={styles.currencyPrefix}>$</Text>
                 <TextInput
                   style={styles.amountInput}
                   placeholder="0.00"
                   placeholderTextColor="#94A3B8"
                   keyboardType="numeric"
-                  value={initialAmount}
-                  onChangeText={setInitialAmount}
+                  value={form.initial_balance}
+                  onChangeText={(value) =>
+                    handleInputChange("initial_balance", value)
+                  }
                 />
               </View>
 
-              <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-                <Text style={styles.saveBtnText}>Save Account</Text>
+              <Text style={styles.inputLabel}>Theme Color</Text>
+              <ColorPicker
+                selectedColor={form.color}
+                changeColor={(color) => handleInputChange("color", color)}
+              />
+
+              <TouchableOpacity
+                style={[
+                  styles.saveBtn,
+                  {
+                    backgroundColor: isValidTransaction
+                      ? form.color
+                      : "#94A3B8",
+                  },
+                ]}
+                onPress={handleSave}
+                disabled={!isValidTransaction}
+              >
+                <Text style={styles.saveBtnText}>
+                  {isEdit ? "Edit" : "Save"} Account
+                </Text>
               </TouchableOpacity>
             </View>
 
@@ -391,7 +412,6 @@ const styles = StyleSheet.create({
     color: "#1E293B",
   },
   saveBtn: {
-    backgroundColor: "#2563EB",
     borderRadius: 14,
     height: 54,
     justifyContent: "center",

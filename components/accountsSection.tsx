@@ -1,4 +1,6 @@
-import AddAccountModal from "@/components/addAccountModal";
+import AddAccountModal from "@/app/modals/addAccount";
+import { ACCOUNTS } from "@/constants/sampleData";
+import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
@@ -8,17 +10,28 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import AccountCard from "./accountCards";
+
+const SAMPLE_ACCOUNTS: Account[] = ACCOUNTS;
 
 export default function AccountsSection() {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [currentAccount, setCurrentAccount] = useState<Account | null>(null);
 
-  const handleSaveAccount = (accountData: {
-    name: string;
-    type: string;
-    initialBalance: string;
-  }) => {
+  const handleSaveAccount = (accountData: Account) => {
     console.log("Saving new account:", accountData);
     setIsModalVisible(false);
+  };
+
+  const handleAccountView = (accountData: Account) => {
+    console.log("Viewing account:", accountData);
+    setCurrentAccount(accountData);
+    setIsModalVisible(true);
+  };
+
+  const handleCreateNewAccount = () => {
+    setCurrentAccount(null);
+    setIsModalVisible(true);
   };
 
   return (
@@ -27,7 +40,7 @@ export default function AccountsSection() {
         <Text style={styles.sectionTitle}>My Accounts</Text>
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => setIsModalVisible(true)}
+          onPress={() => handleCreateNewAccount()}
         >
           <Ionicons name="add" size={20} color="#2563EB" />
         </TouchableOpacity>
@@ -38,37 +51,21 @@ export default function AccountsSection() {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <View style={styles.accountCard}>
-          <View style={styles.cardTopRow}>
-            <View style={styles.iconBox}>
-              <Ionicons name="wallet-outline" size={20} color="white" />
+        {SAMPLE_ACCOUNTS.map((account, idx) => {
+          return (
+            <View key={idx}>
+              <AccountCard accountData={account} onPress={handleAccountView} />
             </View>
-            <Text style={styles.accountNumber}>**** 1234</Text>
-          </View>
-          <View style={styles.cardBottom}>
-            <Text style={styles.accountLabel}>Checking Account</Text>
-            <Text style={styles.accountBalance}>$12,400.00</Text>
-          </View>
-        </View>
-
-        <View style={styles.accountCard}>
-          <View style={styles.cardTopRow}>
-            <View style={styles.iconBox}>
-              <Ionicons name="wallet-outline" size={20} color="white" />
-            </View>
-            <Text style={styles.accountNumber}>**** 5678</Text>
-          </View>
-          <View style={styles.cardBottom}>
-            <Text style={styles.accountLabel}>Savings Account</Text>
-            <Text style={styles.accountBalance}>$10,500.00</Text>
-          </View>
-        </View>
+          );
+        })}
       </ScrollView>
 
       <AddAccountModal
         isVisible={isModalVisible}
+        isEdit={currentAccount ? true : false}
         onClose={() => setIsModalVisible(false)}
         onSave={handleSaveAccount}
+        accountData={currentAccount}
       />
     </View>
   );

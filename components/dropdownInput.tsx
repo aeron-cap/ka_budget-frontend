@@ -135,7 +135,7 @@ export default function DropdownInput({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: 8,
     overflow: "visible",
   },
   card: {

@@ -1,3 +1,4 @@
+import { Account } from "@/types/accounts/accounts.type";
 import { Saving } from "@/types/savings/savings.type";
 import { Transaction } from "@/types/transactions/transactions.type";
 
@@ -6,14 +7,14 @@ export const transactions: Transaction[] = [
     id: "txn_8a7b6c5d4e",
     datetime: new Date("2026-03-24T12:30:00Z"),
     transaction_category: "Groceries",
-    amount: "85.5", // String
+    amount: "85.5",
     note: "Weekly restock",
     transaction_type: "Expense",
-    transaction_account: "Credit Card", // Corrected key
+    transaction_account: "Credit Card",
     receiving_account: null,
-    fee: "0", // String
-    icon: "desktop", // Corrected key
-    user_id: "10232", // String
+    fee: "0",
+    icon: "desktop",
+    user_id: "10232",
     created_at: new Date("2026-03-24T12:35:00Z"),
     updated_at: new Date("2026-03-24T12:35:00Z"),
   },
@@ -52,8 +53,8 @@ export const transactions: Transaction[] = [
 export const SAMPLE_SAVINGS: Saving[] = [
   {
     id: "789e4567-e89b-12d3-a456-426614174000",
-    color: "#4CAF50",
-    description: "Emergency Fund",
+    color: "#2563EB",
+    name: "Emergency Fund",
     account: "Main Savings",
     current_amount: "15000",
     goal_amount: "50000",
@@ -62,8 +63,8 @@ export const SAMPLE_SAVINGS: Saving[] = [
   },
   {
     id: "789e4567-e89b-12d3-a456-426614174001",
-    color: "#2196F3",
-    description: "New Laptop",
+    color: "#10B981",
+    name: "New Laptop",
     account: "Digital Wallet",
     current_amount: "1200.5",
     goal_amount: "2500",
@@ -72,8 +73,8 @@ export const SAMPLE_SAVINGS: Saving[] = [
   },
   {
     id: "789e4567-e89b-12d3-a456-426614174002",
-    color: "#FFC107",
-    description: "Vacation Trip",
+    color: "#F59E0B",
+    name: "Vacation Trip",
     account: "Travel Fund",
     current_amount: "300",
     goal_amount: "5000",
@@ -82,8 +83,8 @@ export const SAMPLE_SAVINGS: Saving[] = [
   },
   {
     id: "789e4567-e89b-12d3-a456-426614174003",
-    color: "#E91E63",
-    description: "Car Downpayment",
+    color: "#A855F7",
+    name: "Car Downpayment",
     account: "Main Savings",
     current_amount: "25000",
     goal_amount: "100000",
@@ -92,12 +93,69 @@ export const SAMPLE_SAVINGS: Saving[] = [
   },
   {
     id: "789e4567-e89b-12d3-a456-426614174004",
-    color: "#9C27B0",
-    description: "Christmas Gifts",
+    color: "#EC4899",
+    name: "Christmas Gifts",
     account: "Cash",
     current_amount: "500",
     goal_amount: "1000",
     saving_category: "Shopping",
     icon: "gift",
   },
+];
+
+export const ACCOUNTS: Account[] = [
+  {
+    id: "acc_01_chase",
+    name: "Main Checking",
+    account_type: "Bank",
+    initial_balance: "2500.00",
+    current_balance: "3150.45",
+    account_category: "Salary",
+    color: "#2563EB",
+  },
+  {
+    id: "acc_02_revolut",
+    name: "Digital Wallet",
+    account_type: "Online Bank",
+    initial_balance: "500.00",
+    current_balance: "420.00",
+    account_category: "Shopping",
+    color: "#10B981",
+  },
+  {
+    id: "acc_03_amex",
+    name: "Visa Gold",
+    account_type: "Credit",
+    initial_balance: "0.00",
+    current_balance: "-1240.50",
+    account_category: "Transport",
+    color: "#F59E0B",
+  },
+  {
+    id: "acc_04_vanguard",
+    name: "Growth Portfolio",
+    account_type: "Investments",
+    initial_balance: "10000.00",
+    current_balance: "11200.00",
+    account_category: "Entertainment",
+    color: "#A855F7",
+  },
+  {
+    id: "acc_05_cash",
+    name: "Physical Wallet",
+    account_type: "Cash",
+    initial_balance: "150.00",
+    current_balance: "45.00",
+    account_category: "Food & Dining",
+    color: "#EC4899",
+  },
+];
+
+export const THEME_COLORS = [
+  "#2563EB",
+  "#10B981",
+  "#F59E0B",
+  "#A855F7",
+  "#EC4899",
+  "#EF4444",
 ];

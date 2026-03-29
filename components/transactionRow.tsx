@@ -62,7 +62,11 @@ export default function TransactionRow({
           ]}
         >
           {isIncome ? "+" : "-"}
-          {transaction.amount}
+          {parseFloat(transaction.amount).toLocaleString("en-US", {
+            style: "currency",
+            currency: "PHP",
+            minimumFractionDigits: 2,
+          })}
         </Text>
       </View>
     </TouchableOpacity>

@@ -57,7 +57,7 @@ export default function BudgetGoalList({ savings }: SavingGoalListProps) {
                 </View>
 
                 <View style={styles.infoContainer}>
-                  <Text style={styles.goalTitle}>{goal.description}</Text>
+                  <Text style={styles.goalTitle}>{goal.name}</Text>
                   <Text style={styles.goalSubtitle}>
                     {goal.current_amount.toLocaleString()} of{" "}
                     {goal.goal_amount.toLocaleString()}

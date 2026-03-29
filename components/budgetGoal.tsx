@@ -28,13 +28,18 @@ export default function BudgetGoal({ goal, onPress }: BudgetGoalProps) {
           >
             <Ionicons name="wallet-outline" size={18} color={"white"} />
           </View>
-          <Text style={style.description}>{goal.description}</Text>
+          <Text style={style.description}>{goal.name}</Text>
         </View>
         <View style={style.progress}>
           <Text style={{ marginBottom: 4, fontSize: 12 }}>
             {" "}
-            {goal.current_amount.toLocaleString()} of{" "}
-            {goal.goal_amount.toLocaleString()}
+            {parseFloat(goal.current_amount).toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+            })}{" "}
+            of{" "}
+            {parseFloat(goal.goal_amount).toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+            })}
           </Text>
           <View style={{ overflow: "hidden", borderRadius: 12 }}>
             <View style={style.progressBarBackground}>
@@ -79,7 +84,7 @@ const style = StyleSheet.create({
     flex: 1,
     borderRadius: 28,
     padding: 20,
-    width: 160,
+    width: 200,
     backgroundColor: "white",
     justifyContent: "space-between",
   },

@@ -1,7 +1,7 @@
 export type Saving = {
   id: string;
   color: string;
-  description: string;
+  name: string;
   account: string;
   current_amount: string;
   goal_amount: string;

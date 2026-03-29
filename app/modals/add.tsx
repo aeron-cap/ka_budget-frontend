@@ -229,13 +229,13 @@ export default function AddModal() {
             </View>
 
             {form.transaction_type === "Transfer" && (
-              <View style={styles.transferFeeInput}>
+              <View style={[styles.transferFeeInput, { flex: 1 }]}>
                 <Text style={styles.inputLabel}>Transfer Fee</Text>
                 <View style={styles.amountInputContainer}>
-                  <Text style={styles.currencyPrefix}>P</Text>
+                  <Text style={styles.currencyPrefix}>₱</Text>
                   <TextInput
                     style={styles.feeInput}
-                    placeholder=""
+                    placeholder="0"
                     placeholderTextColor="#94A3B8"
                     keyboardType="numeric"
                     value={form.fee ?? "0"}
