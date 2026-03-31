@@ -1,38 +1,24 @@
 import AccountsSection from "@/components/accountsSection";
-import ProfileCard from "@/components/profileCard";
-import SettingsSection from "@/components/settingSection";
-import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams } from "expo-router";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Profile() {
-  const local = useLocalSearchParams<{ user: string }>();
-
-  const displayName = local.user || "User Name";
-
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Profile</Text>
-        <TouchableOpacity style={styles.settingsButton}>
+        {/* <TouchableOpacity style={styles.settingsButton}>
           <Ionicons name="settings-outline" size={24} color="#64748B" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.contentPadding}>
+        {/* <View style={styles.contentPadding}>
           <ProfileCard name={displayName} email="user@gmail.com" />
-        </View>
+        </View> */}
 
         <AccountsSection />
-        <SettingsSection />
+        {/* <SettingsSection /> */}
       </ScrollView>
     </SafeAreaView>
   );
