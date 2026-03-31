@@ -6,6 +6,7 @@ type HomeGreetingProps = {
 
 export default function HomeGreeting({ name }: HomeGreetingProps) {
   return (
+    // add a greeting based on the time of day
     <View style={[styles.greetingContainer]}>
       <Text style={[styles.greetingGreetText]}>Good Morning!</Text>
       <Text style={[styles.greetingNameText]}>{name}</Text>

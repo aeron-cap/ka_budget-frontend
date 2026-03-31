@@ -5,9 +5,12 @@ import "react-native-get-random-values";
 export async function saveUserName(name: string) {
   try {
     const randomId = nanoid();
-    await AsyncStorage.setItem("user_name", name);
-    await AsyncStorage.setItem("user_id", randomId);
-    await AsyncStorage.setItem("user_string", `${name}-${randomId}`);
+    const userData = {
+      id: randomId,
+      name: name,
+      userString: `${name}-${randomId}`,
+    };
+    await AsyncStorage.setItem("user", JSON.stringify(userData));
   } catch (e) {
     console.error(e);
   }
@@ -15,7 +18,7 @@ export async function saveUserName(name: string) {
 
 export async function getUserName() {
   try {
-    return await AsyncStorage.getItem("user_name");
+    return await AsyncStorage.getItem("user");
   } catch (e) {
     return null;
   }
