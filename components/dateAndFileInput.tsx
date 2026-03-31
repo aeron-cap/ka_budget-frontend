@@ -17,33 +17,32 @@ type DateAndFileInputProps = {
   styleType: string;
 };
 
-// TODO: implement File Attachment Soon
 export default function DateAndFileInputs({
   selectedDate,
   onSelect,
   styleType,
 }: DateAndFileInputProps) {
-  const [date, setDate] = useState(
-    new Date(selectedDate) ? new Date(selectedDate) : new Date(),
-  );
   const [showPicker, setShowPicker] = useState(false);
-  const formattedDate = `${String(date.getMonth() + 1).padStart(2, "0")} / ${String(date.getDate()).padStart(2, "0")} / ${date.getFullYear()}`;
+  const displayDate = selectedDate || new Date();
+
+  const formattedDate = `${String(displayDate.getMonth() + 1).padStart(2, "0")} / ${String(
+    displayDate.getDate(),
+  ).padStart(2, "0")} / ${displayDate.getFullYear()}`;
 
   const togglePicker = () => {
     setShowPicker(!showPicker);
   };
 
-  const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
-    if (event.type === "set" && selectedDate) {
-      setDate(selectedDate);
-      onSelect(selectedDate);
-    }
-
+  const onChange = (event: DateTimePickerEvent, date?: Date) => {
     if (Platform.OS === "android") {
       setShowPicker(false);
     }
+    if (event.type === "set" && date) {
+      onSelect(date);
+    } else if (event.type === "dismissed" && Platform.OS === "ios") {
+      setShowPicker(false);
+    }
   };
-
   return (
     <View style={[styles.row, styleType === "Transfer" ? { height: 86 } : {}]}>
       <TouchableOpacity
@@ -57,7 +56,7 @@ export default function DateAndFileInputs({
 
       {showPicker && (
         <DateTimePicker
-          value={date}
+          value={displayDate}
           mode="date"
           display={Platform.OS === "ios" ? "spinner" : "default"}
           onChange={onChange}
