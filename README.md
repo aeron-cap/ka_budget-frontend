@@ -62,6 +62,7 @@ npm install
 npx expo start -c
 npx expo run:android
 
+npx expo prebuild
 
 adb logcat
 ```
