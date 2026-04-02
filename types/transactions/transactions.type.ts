@@ -10,7 +10,6 @@ export type Transaction = {
   receiving_account?: string | null;
   saving_name?: string | null;
   fee?: string | null;
-  icon?: string;
   user_id: string;
   created_at?: Date;
   updated_at?: Date;

@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
 
 type HomeGreetingProps = {
   name: string;
@@ -9,30 +10,46 @@ export default function HomeGreeting({ name }: HomeGreetingProps) {
   const currentHour = new Date().getHours();
   const firstName = name.split(" ")[0];
 
-  let greeting = "Good Morning";
-  let iconName: keyof typeof Ionicons.glyphMap = "sunrise-outline";
-  let iconColor = "#FDB813";
+  const getGreeting = () => {
+    if (currentHour >= 12 && currentHour < 18) {
+      return {
+        greeting: "Good Afternoon",
+        iconName: "sunny-outline",
+        iconColor: "#FF8C00",
+      };
+    } else if (currentHour >= 18 || currentHour < 4) {
+      return {
+        greeting: "Good Evening",
+        iconName: "moon-outline",
+        iconColor: "#94A3B8",
+      };
+    }
+  };
 
-  if (currentHour >= 12 && currentHour < 18) {
-    greeting = "Good Afternoon";
-    iconName = "sunny-outline";
-    iconColor = "#FF8C00";
-  } else if (currentHour >= 18 || currentHour < 4) {
-    greeting = "Good Evening";
-    iconName = "moon-outline";
-    iconColor = "#94A3B8";
-  }
+  const [data, setData] = useState(getGreeting());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setData(getGreeting());
+      // 10 mins
+    }, 600000);
+
+    return () => clearInterval(interval);
+  });
 
   return (
     <View style={styles.container}>
       <Ionicons
-        name={iconName}
+        name={
+          (data?.iconName as keyof typeof Ionicons.glyphMap) ?? "sunny-outline"
+        }
         size={32}
-        color={iconColor}
+        color={data?.iconColor}
         style={styles.icon}
       />
-      <Text style={styles.greetText}>{greeting}, </Text>
-      <Text style={styles.nameText}>{firstName}</Text>
+      <Text style={styles.greetText}>
+        {data?.greeting}, {firstName}{" "}
+      </Text>
     </View>
   );
 }

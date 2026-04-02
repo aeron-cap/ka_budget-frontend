@@ -1,3 +1,4 @@
+import { categoryIconsAndTypes } from "@/constants/uiElements";
 import { Transaction } from "@/types/transactions/transactions.type";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -26,6 +27,14 @@ export default function TransactionRow({
 
   const dateTime = formattedDate + " " + formattedTime;
 
+  const getIcon = (name: string) => {
+    if (name in categoryIconsAndTypes) {
+      return categoryIconsAndTypes[name].icon;
+    }
+
+    return "wallet-outline";
+  };
+
   return (
     <TouchableOpacity
       style={style.touchContainer}
@@ -39,7 +48,7 @@ export default function TransactionRow({
         ]}
       >
         <Ionicons
-          name={transaction.icon}
+          name={getIcon(transaction.transaction_category)}
           size={22}
           color={isIncome ? "#10B981" : "#F43F5E"}
         />
