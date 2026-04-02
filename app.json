@@ -15,7 +15,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.ka-budgetfrontend"
+      "bundleIdentifier": "com.anonymous.ka-budgetfrontend",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,7 +27,9 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.aeroncap.ka_budgetfrontend"
+      "package": "com.aeroncap.ka_budgetfrontend",
+      "enableFTS": true,
+      "useSQLCipher": true
     },
     "web": {
       "output": "static",
@@ -47,7 +50,8 @@
           }
         }
       ],
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true,

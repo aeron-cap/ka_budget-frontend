@@ -1,3 +1,4 @@
+import { categoryIconsAndTypes } from "@/constants/uiElements";
 import { Transaction } from "@/types/transactions/transactions.type";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
@@ -96,6 +97,14 @@ export default function TransactionDetailsModal({
     });
   };
 
+  const getIcon = (name: string) => {
+    if (name in categoryIconsAndTypes) {
+      return categoryIconsAndTypes[name].icon;
+    }
+
+    return "cash-outline";
+  };
+
   return (
     <Modal
       visible={renderModal}
@@ -135,7 +144,11 @@ export default function TransactionDetailsModal({
             <View
               style={[styles.iconContainer, { backgroundColor: iconBgColor }]}
             >
-              <Ionicons name={transaction.icon} size={32} color={iconColor} />
+              <Ionicons
+                name={getIcon(transaction.transaction_category)}
+                size={32}
+                color={iconColor}
+              />
             </View>
             <Text style={[styles.amountText, { color: amountColor }]}>
               {amountPrefix}

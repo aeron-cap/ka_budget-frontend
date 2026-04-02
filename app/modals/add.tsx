@@ -52,10 +52,6 @@ export default function AddModal() {
     receiving_account: ACCOUNTS[-1],
     saving_name: "",
     fee: "0",
-    icon: "",
-    user_id: "0",
-    created_at: new Date(),
-    updated_at: new Date(),
   });
 
   useEffect(() => {
@@ -79,14 +75,6 @@ export default function AddModal() {
       receiving_account: parsedData?.receiving_account ?? "",
       saving_name: parsedData?.saving_name ?? "",
       fee: parsedData?.fee ?? "0",
-      icon: parsedData?.icon ?? "",
-      user_id: parsedData?.user_id ?? "0",
-      created_at: parsedData?.created_at
-        ? new Date(parsedData.created_at)
-        : new Date(),
-      updated_at: parsedData?.updated_at
-        ? new Date(parsedData.updated_at)
-        : new Date(),
     });
   }, [id, data, isEdit]);
 

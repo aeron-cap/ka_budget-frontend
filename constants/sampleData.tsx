@@ -13,10 +13,6 @@ export const transactions: Transaction[] = [
     transaction_account: "Credit Card",
     receiving_account: null,
     fee: "0",
-    icon: "desktop",
-    user_id: "10232",
-    created_at: new Date("2026-03-24T12:35:00Z"),
-    updated_at: new Date("2026-03-24T12:35:00Z"),
   },
   {
     id: "txn_1f2e3d4c5b",
@@ -28,10 +24,6 @@ export const transactions: Transaction[] = [
     transaction_account: "Checking",
     receiving_account: null,
     fee: null,
-    icon: "desktop",
-    user_id: "10232",
-    created_at: new Date("2026-03-23T09:05:00Z"),
-    updated_at: new Date("2026-03-23T09:05:00Z"),
   },
   {
     id: "txn_9q8w7e6r5t",
@@ -43,10 +35,6 @@ export const transactions: Transaction[] = [
     transaction_account: "Checking",
     receiving_account: "Savings",
     fee: "1.5",
-    icon: "desktop",
-    user_id: "10232",
-    created_at: new Date("2026-03-22T15:46:00Z"),
-    updated_at: new Date("2026-03-22T15:46:00Z"),
   },
 ];
 
