@@ -24,6 +24,11 @@ export default function HomeGreeting({ name }: HomeGreetingProps) {
         iconColor: "#94A3B8",
       };
     }
+    return {
+      greeting: "Good Morning",
+      iconName: "sunny-outline",
+      iconColor: "#FFD700",
+    };
   };
 
   const [data, setData] = useState(getGreeting());
