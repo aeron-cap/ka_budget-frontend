@@ -1,6 +1,7 @@
 import DateAndFileInputs from "@/components/dateAndFileInput";
 import DropdownInput from "@/components/dropdownInput";
 import TransactionTypeSelector from "@/components/transactionTypeSelector";
+import { categories } from "@/constants/categories";
 import { Validator } from "@/helpers/helpers";
 import { Transaction } from "@/types/transactions/transactions.type";
 import { Ionicons } from "@expo/vector-icons";
@@ -26,14 +27,6 @@ const THEME_COLORS = {
 
 type TransactionType = keyof typeof THEME_COLORS;
 
-const CATEGORIES = [
-  "Food & Dining",
-  "Shopping",
-  "Transport",
-  "Salary",
-  "Entertainment",
-];
-
 const ACCOUNTS = [
   "Credit Card (**** 9012)",
   "Main Checking",
@@ -51,7 +44,7 @@ export default function AddModal() {
   const [form, setForm] = useState<Transaction>({
     id: "",
     datetime: new Date(),
-    transaction_category: CATEGORIES[1],
+    transaction_category: "",
     amount: "0",
     note: "",
     transaction_type: "Income",
@@ -78,7 +71,7 @@ export default function AddModal() {
       datetime: parsedData?.datetime
         ? new Date(parsedData.datetime)
         : new Date(),
-      transaction_category: parsedData?.transaction_category ?? CATEGORIES[0],
+      transaction_category: parsedData?.transaction_category ?? "",
       amount: parsedData?.amount ?? "0",
       note: parsedData?.note ?? "",
       transaction_type: parsedData?.transaction_type ?? "Income",
@@ -172,7 +165,7 @@ export default function AddModal() {
             label="Category"
             selectedValue={form.transaction_category}
             iconName="radio-button-on"
-            options={CATEGORIES}
+            options={categories}
             onSelect={(text) => handleInputChange("transaction_category", text)}
             hasIcon={true}
           />

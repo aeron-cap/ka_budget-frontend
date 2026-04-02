@@ -1,4 +1,5 @@
 import AddGoalModal from "@/app/modals/addGoal";
+import { categoryIconsAndTypes } from "@/constants/uiElements";
 import { Saving } from "@/types/savings/savings.type";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
@@ -24,6 +25,13 @@ export default function BudgetGoalList({ savings }: SavingGoalListProps) {
       setIsEdit(true);
       setIsModalVisible(true);
     }
+  };
+
+  const getIcon = (name: string) => {
+    if (name in categoryIconsAndTypes) {
+      return categoryIconsAndTypes[name].icon;
+    }
+    return "wallet-outline";
   };
 
   return (
@@ -53,14 +61,25 @@ export default function BudgetGoalList({ savings }: SavingGoalListProps) {
                     { backgroundColor: goal.color },
                   ]}
                 >
-                  <Ionicons name="radio" size={20} color="white" />
+                  <Ionicons
+                    name={getIcon(goal.saving_category)}
+                    size={20}
+                    color="white"
+                  />
                 </View>
 
                 <View style={styles.infoContainer}>
                   <Text style={styles.goalTitle}>{goal.name}</Text>
                   <Text style={styles.goalSubtitle}>
-                    {goal.current_amount.toLocaleString()} of{" "}
-                    {goal.goal_amount.toLocaleString()}
+                    {parseFloat(goal.current_amount).toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}{" "}
+                    of{" "}
+                    {parseFloat(goal.goal_amount).toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                   </Text>
                 </View>
 

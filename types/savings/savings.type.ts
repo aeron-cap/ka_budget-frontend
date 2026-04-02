@@ -6,5 +6,4 @@ export type Saving = {
   current_amount: string;
   goal_amount: string;
   saving_category: string;
-  icon?: string | null;
 };

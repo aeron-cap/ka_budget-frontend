@@ -1,3 +1,5 @@
+import { categoryIconsAndTypes } from "@/constants/uiElements";
+import { CategoryName } from "@/types/entities/categories.type";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
 import {
@@ -40,8 +42,19 @@ export default function DropdownInput({
     null,
   );
   const containerRef = useRef<View>(null);
-
   const screenHeight = Dimensions.get("window").height;
+  const [hasIcons, setHasIcons] = useState(() => {
+    const firstOption = options?.[0];
+    return !!firstOption && firstOption in categoryIconsAndTypes;
+  });
+
+  const getIcon = (name: string) => {
+    if (name in categoryIconsAndTypes) {
+      return categoryIconsAndTypes[name as CategoryName].icon;
+    }
+
+    return "help-circle-outline";
+  };
 
   const openDropdown = () => {
     containerRef.current?.measureInWindow((x, y, width, height) => {
@@ -112,6 +125,14 @@ export default function DropdownInput({
                   style={styles.optionItem}
                   onPress={() => handleSelect(item)}
                 >
+                  {hasIcons && (
+                    <Ionicons
+                      name={getIcon(item)}
+                      size={18}
+                      color={isSelected ? "#2B60E9" : "#94A3B8"}
+                      style={{ marginRight: 12 }}
+                    />
+                  )}
                   <Text
                     style={[
                       styles.optionText,
@@ -120,9 +141,6 @@ export default function DropdownInput({
                   >
                     {item}
                   </Text>
-                  {isSelected && (
-                    <Ionicons name="checkmark" size={18} color="#2B60E9" />
-                  )}
                 </TouchableOpacity>
               );
             }}

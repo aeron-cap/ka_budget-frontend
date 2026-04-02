@@ -59,7 +59,6 @@ export const SAMPLE_SAVINGS: Saving[] = [
     current_amount: "15000",
     goal_amount: "50000",
     saving_category: "Salary",
-    icon: "wallet",
   },
   {
     id: "789e4567-e89b-12d3-a456-426614174001",
@@ -68,8 +67,7 @@ export const SAMPLE_SAVINGS: Saving[] = [
     account: "Digital Wallet",
     current_amount: "1200.5",
     goal_amount: "2500",
-    saving_category: "Shopping",
-    icon: "laptop",
+    saving_category: "Investments",
   },
   {
     id: "789e4567-e89b-12d3-a456-426614174002",
@@ -79,7 +77,6 @@ export const SAMPLE_SAVINGS: Saving[] = [
     current_amount: "300",
     goal_amount: "5000",
     saving_category: "Entertainment",
-    icon: "airplane",
   },
   {
     id: "789e4567-e89b-12d3-a456-426614174003",
@@ -89,7 +86,6 @@ export const SAMPLE_SAVINGS: Saving[] = [
     current_amount: "25000",
     goal_amount: "100000",
     saving_category: "Transport",
-    icon: "car",
   },
   {
     id: "789e4567-e89b-12d3-a456-426614174004",
@@ -99,7 +95,6 @@ export const SAMPLE_SAVINGS: Saving[] = [
     current_amount: "500",
     goal_amount: "1000",
     saving_category: "Shopping",
-    icon: "gift",
   },
 ];
 

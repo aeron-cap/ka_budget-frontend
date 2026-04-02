@@ -1,5 +1,6 @@
 import ColorPicker from "@/components/colorPicker";
 import DropdownInput from "@/components/dropdownInput";
+import { categories } from "@/constants/categories";
 import { Validator } from "@/helpers/helpers";
 import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
@@ -25,14 +26,6 @@ const ACCOUNT_TYPES = [
   "Traditional Bank",
   "Credit Card",
   "Cash",
-];
-
-const CATEGORIES = [
-  "Food & Dining",
-  "Shopping",
-  "Transport",
-  "Salary",
-  "Entertainment",
 ];
 
 interface AddAccountProps {
@@ -205,7 +198,7 @@ export default function AddAccount({
               label=""
               selectedValue={form.account_category}
               iconName="link"
-              options={CATEGORIES}
+              options={categories}
               onSelect={(text) => handleInputChange("account_category", text)}
               hasIcon={false}
             />

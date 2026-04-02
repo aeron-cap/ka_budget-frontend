@@ -1,3 +1,4 @@
+import { categoryIconsAndTypes } from "@/constants/uiElements";
 import { Saving } from "@/types/savings/savings.type";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -11,6 +12,13 @@ export default function BudgetGoal({ goal, onPress }: BudgetGoalProps) {
   const percentage = Math.round(
     (parseFloat(goal.current_amount) / parseFloat(goal.goal_amount)) * 100,
   );
+
+  const getIcon = (name: string) => {
+    if (name in categoryIconsAndTypes) {
+      return categoryIconsAndTypes[name].icon;
+    }
+    return "wallet-outline";
+  };
 
   return (
     <TouchableOpacity
@@ -26,7 +34,11 @@ export default function BudgetGoal({ goal, onPress }: BudgetGoalProps) {
               { backgroundColor: goal.color, borderRadius: 12 },
             ]}
           >
-            <Ionicons name="wallet-outline" size={18} color={"white"} />
+            <Ionicons
+              name={getIcon(goal.saving_category)}
+              size={18}
+              color={"white"}
+            />
           </View>
           <Text style={style.description}>{goal.name}</Text>
         </View>
@@ -35,10 +47,12 @@ export default function BudgetGoal({ goal, onPress }: BudgetGoalProps) {
             {" "}
             {parseFloat(goal.current_amount).toLocaleString("en-US", {
               minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
             })}{" "}
             of{" "}
             {parseFloat(goal.goal_amount).toLocaleString("en-US", {
               minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
             })}
           </Text>
           <View style={{ overflow: "hidden", borderRadius: 12 }}>

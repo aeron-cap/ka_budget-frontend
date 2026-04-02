@@ -1,5 +1,6 @@
 import ColorPicker from "@/components/colorPicker";
 import DropdownInput from "@/components/dropdownInput";
+import { categories } from "@/constants/categories";
 import { THEME_COLORS } from "@/constants/sampleData";
 import { Validator } from "@/helpers/helpers";
 import { Saving } from "@/types/savings/savings.type";
@@ -20,18 +21,11 @@ import {
 } from "react-native";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+
 const ACCOUNTS = [
   "Checking Account (**** 1234)",
   "Savings Account (**** 5678)",
   "Cash Wallet",
-];
-
-const CATEGORIES = [
-  "Food & Dining",
-  "Shopping",
-  "Transport",
-  "Salary",
-  "Entertainment",
 ];
 
 interface AddGoalModalProps {
@@ -192,7 +186,7 @@ export default function AddGoalModal({
                   label=""
                   selectedValue={form.saving_category}
                   iconName="radio-button-on"
-                  options={CATEGORIES}
+                  options={categories}
                   onSelect={(text) =>
                     handleInputChange("saving_category", text)
                   }

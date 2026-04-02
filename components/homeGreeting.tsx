@@ -1,33 +1,61 @@
 import { StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 type HomeGreetingProps = {
   name: string;
 };
 
 export default function HomeGreeting({ name }: HomeGreetingProps) {
+  const currentHour = new Date().getHours();
+  const firstName = name.split(" ")[0];
+
+  let greeting = "Good Morning";
+  let iconName: keyof typeof Ionicons.glyphMap = "sunrise-outline";
+  let iconColor = "#FDB813";
+
+  if (currentHour >= 12 && currentHour < 18) {
+    greeting = "Good Afternoon";
+    iconName = "sunny-outline";
+    iconColor = "#FF8C00";
+  } else if (currentHour >= 18 || currentHour < 4) {
+    greeting = "Good Evening";
+    iconName = "moon-outline";
+    iconColor = "#94A3B8";
+  }
+
   return (
-    // add a greeting based on the time of day
-    <View style={[styles.greetingContainer]}>
-      <Text style={[styles.greetingGreetText]}>Good Morning!</Text>
-      <Text style={[styles.greetingNameText]}>{name}</Text>
+    <View style={styles.container}>
+      <Ionicons
+        name={iconName}
+        size={32}
+        color={iconColor}
+        style={styles.icon}
+      />
+      <Text style={styles.greetText}>{greeting}, </Text>
+      <Text style={styles.nameText}>{firstName}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  greetingContainer: {
-    height: 80,
-    padding: 8,
-    // borderWidth: 2,
-    borderRadius: 12,
-    marginBottom: 8,
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 4,
+    marginBottom: 4,
   },
-  greetingGreetText: {
-    fontWeight: "medium",
-    color: "gray",
+  icon: {
+    marginRight: 8,
   },
-  greetingNameText: {
-    fontWeight: "bold",
+  greetText: {
     fontSize: 24,
+    fontWeight: "800",
+    color: "black",
+  },
+  nameText: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "black",
   },
 });
