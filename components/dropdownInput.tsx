@@ -1,4 +1,7 @@
-import { categoryIconsAndTypes } from "@/constants/uiElements";
+import {
+  accountTypeIcons,
+  categoryIconsAndTypes,
+} from "@/constants/uiElements";
 import { CategoryName } from "@/types/entities/categories.type";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
@@ -45,12 +48,19 @@ export default function DropdownInput({
   const screenHeight = Dimensions.get("window").height;
   const [hasIcons, setHasIcons] = useState(() => {
     const firstOption = options?.[0];
-    return !!firstOption && firstOption in categoryIconsAndTypes;
+    return (
+      !!firstOption &&
+      (firstOption in categoryIconsAndTypes || firstOption in accountTypeIcons)
+    );
   });
 
   const getIcon = (name: string) => {
     if (name in categoryIconsAndTypes) {
       return categoryIconsAndTypes[name as CategoryName].icon;
+    }
+
+    if (name in accountTypeIcons) {
+      return accountTypeIcons[name as keyof typeof accountTypeIcons];
     }
 
     return "help-circle-outline";

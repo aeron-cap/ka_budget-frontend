@@ -1,5 +1,6 @@
 import ColorPicker from "@/components/colorPicker";
 import DropdownInput from "@/components/dropdownInput";
+import { accountTypes } from "@/constants/accountTypes";
 import { categories } from "@/constants/categories";
 import { Validator } from "@/helpers/helpers";
 import { Account } from "@/types/accounts/accounts.type";
@@ -20,13 +21,6 @@ import {
 } from "react-native";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-
-const ACCOUNT_TYPES = [
-  "Digital Bank",
-  "Traditional Bank",
-  "Credit Card",
-  "Cash",
-];
 
 interface AddAccountProps {
   isVisible: boolean;
@@ -52,7 +46,7 @@ export default function AddAccount({
   const [form, setForm] = useState<Account>({
     id: "",
     name: "",
-    account_type: ACCOUNT_TYPES[0],
+    account_type: accountTypes[0],
     initial_balance: "0",
     current_balance: "0",
     account_category: "",
@@ -78,7 +72,7 @@ export default function AddAccount({
       const nextForm = {
         id: accountData ? accountData.id : "",
         name: accountData ? accountData.name : "",
-        account_type: accountData ? accountData.account_type : ACCOUNT_TYPES[0],
+        account_type: accountData ? accountData.account_type : accountTypes[0],
         initial_balance: accountData ? accountData.initial_balance : "0",
         current_balance: accountData ? accountData.current_balance : "0",
         account_category: accountData?.account_category || "",
@@ -188,7 +182,7 @@ export default function AddAccount({
               label=""
               selectedValue={form.account_type}
               iconName="link"
-              options={ACCOUNT_TYPES}
+              options={accountTypes}
               onSelect={(text) => handleInputChange("account_type", text)}
               hasIcon={false}
             />

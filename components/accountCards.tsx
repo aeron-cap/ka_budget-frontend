@@ -1,3 +1,4 @@
+import { accountTypeIcons } from "@/constants/uiElements";
 import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -14,20 +15,11 @@ type AccountCardProps = {
 };
 
 const getAccountIcon = (type: string) => {
-  switch (type) {
-    case "Bank":
-      return "business-outline";
-    case "Online Bank":
-      return "globe-outline";
-    case "Credit":
-      return "card-outline";
-    case "Investments":
-      return "trending-up-outline";
-    case "Cash":
-      return "cash-outline";
-    default:
-      return "wallet-outline";
+  if (type in accountTypeIcons) {
+    return accountTypeIcons[type];
   }
+
+  return "wallet-outline";
 };
 
 export default function AccountCard({

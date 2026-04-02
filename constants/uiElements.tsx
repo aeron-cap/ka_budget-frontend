@@ -1,8 +1,10 @@
+import { AccountTypeName } from "@/types/entities/accountTypes.type";
 import {
   CategoryDetail,
   CategoryName,
   TransactionType,
 } from "@/types/entities/categories.type";
+import { Ionicons } from "@expo/vector-icons";
 
 const allTypes: TransactionType[] = [
   "Expense",
@@ -48,4 +50,17 @@ export const categoryIconsAndTypes: Record<CategoryName, CategoryDetail> = {
   Transportation: { type: allTypes, icon: "car-outline" },
   Utilities: { type: allTypes, icon: "construct-outline" },
   "Utilities Payment": { type: ["Expense"], icon: "card-outline" },
+};
+
+export const accountTypeIcons: Record<
+  AccountTypeName,
+  keyof typeof Ionicons.glyphMap
+> = {
+  "Digital Bank": "globe-outline",
+  "E-Wallet": "wallet-outline",
+  Investments: "trending-up-outline",
+  Loan: "cash-outline",
+  "Physical Bank": "business-outline",
+  "Credit Card": "card-outline",
+  Cash: "cash-outline",
 };
