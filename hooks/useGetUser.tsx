@@ -1,4 +1,4 @@
-import { getUserName } from "@/service/local/service";
+import { getLocalUser } from "@/service/local/service";
 import { useEffect, useState } from "react";
 
 export function useGetUser() {
@@ -8,7 +8,7 @@ export function useGetUser() {
   useEffect(() => {
     async function fetchUser() {
       try {
-        const userNameRaw = await getUserName();
+        const userNameRaw = await getLocalUser();
         const parsedUser = userNameRaw ? JSON.parse(userNameRaw) : null;
         setUser(parsedUser);
       } catch (e) {

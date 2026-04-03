@@ -1,9 +1,10 @@
-import { getUserName } from "@/service/local/service";
+import { getLocalUser } from "@/service/local/service";
 import { router, SplashScreen, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { db, expo } from "@/db";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { runMigrations } from "@/db/runMigrations";
+import { getUser } from "@/service/repositories/userRepository";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -17,9 +18,13 @@ export default function RootLayout() {
     async function prepare() {
       try {
         await runMigrations(db);
-        const name = await getUserName();
+        const name = await getLocalUser();
         if (name) {
-          setHasName(true);
+          const parsedUser = JSON.parse(name);
+          const savedUser = await getUser(parsedUser.id, parsedUser.name);
+          if (savedUser) {
+            setHasName(true);
+          }
         }
         await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (e) {

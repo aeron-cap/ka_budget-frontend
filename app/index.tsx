@@ -1,4 +1,9 @@
-import { saveUserName } from "@/service/local/service";
+import { saveLocalUser, setLocalUser } from "@/service/local/service";
+import {
+  createUser,
+  getUser,
+  getUserUsingName,
+} from "@/service/repositories/userRepository";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -19,8 +24,26 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     if (name.trim()) {
-      await saveUserName(name.trim());
-      router.replace("/(tabs)");
+      // temporary solution for multiple users in one device, or relogging in after clearing cache
+      const savedUser = await getUserUsingName(name.trim());
+      if (savedUser) {
+        const savedLocalUser = await setLocalUser(
+          savedUser.randId,
+          savedUser.name,
+          savedUser.userString,
+        );
+        if (savedLocalUser) {
+          router.replace("/(tabs)");
+        }
+      } else {
+        const savedLocalUser = await saveLocalUser(name.trim());
+        if (savedLocalUser) {
+          const response = await createUser(savedLocalUser);
+          if (response) {
+            router.replace("/(tabs)");
+          }
+        }
+      }
     }
   };
 
