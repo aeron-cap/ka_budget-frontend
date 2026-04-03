@@ -5,7 +5,9 @@ CREATE TABLE `accounts` (
 	`initialBalance` numeric DEFAULT '0' NOT NULL,
 	`currentBalance` numeric DEFAULT '0',
 	`account_category` text NOT NULL,
-	`color` text NOT NULL
+	`color` text NOT NULL,
+	`created_at` integer DEFAULT (strftime('%s', 'now')) NOT NULL,
+	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `savings` (
@@ -15,12 +17,14 @@ CREATE TABLE `savings` (
 	`account` text NOT NULL,
 	`currentAmount` numeric NOT NULL,
 	`goalAmount` numeric NOT NULL,
-	`saving_category` text NOT NULL
+	`saving_category` text NOT NULL,
+	`created_at` integer DEFAULT (strftime('%s', 'now')) NOT NULL,
+	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `transactions` (
 	`id` text PRIMARY KEY NOT NULL,
-	`datetime` integer DEFAULT strftime('%s', 'now') NOT NULL,
+	`datetime` integer DEFAULT (strftime('%s', 'now')) NOT NULL,
 	`transaction_category` text NOT NULL,
 	`amount` numeric NOT NULL,
 	`note` text,
@@ -28,12 +32,16 @@ CREATE TABLE `transactions` (
 	`transaction_account` text NOT NULL,
 	`receiving_account` text,
 	`saving_name` text,
-	`fee` numeric DEFAULT '0'
+	`fee` numeric DEFAULT '0',
+	`created_at` integer DEFAULT (strftime('%s', 'now')) NOT NULL,
+	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `users` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`randId` text NOT NULL,
 	`name` text NOT NULL,
-	`user_string` text NOT NULL
+	`user_string` text NOT NULL,
+	`created_at` integer DEFAULT (strftime('%s', 'now')) NOT NULL,
+	`updated_at` integer NOT NULL
 );

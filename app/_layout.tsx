@@ -1,27 +1,22 @@
 import { getUserName } from "@/service/local/service";
 import { router, SplashScreen, Stack } from "expo-router";
 import { useEffect, useState } from "react";
-import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { db, expo } from "@/db";
-import migrations from "@/drizzle/migrations";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
+import { runMigrations } from "@/db/runMigrations";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
   const [hasName, setHasName] = useState(false);
-  const { success, error } = useMigrations(db, migrations);
 
   useDrizzleStudio(expo);
 
   useEffect(() => {
-    if (error) {
-      console.error("Migration error:", error);
-    }
-
     async function prepare() {
       try {
+        await runMigrations(db);
         const name = await getUserName();
         if (name) {
           setHasName(true);
@@ -36,7 +31,7 @@ export default function RootLayout() {
     }
 
     prepare();
-  }, [success, error]);
+  }, []);
 
   useEffect(() => {
     if (isReady) {

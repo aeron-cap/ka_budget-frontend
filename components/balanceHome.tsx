@@ -99,7 +99,7 @@ export default function BalanceHome() {
 
 const styles = StyleSheet.create({
   balanceContainer: {
-    height: 150,
+    height: 132,
     borderRadius: 28,
     overflow: "hidden",
     marginBottom: 8,
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   balanceText: {
     color: "white",
     fontWeight: "bold",
-    fontSize: 48,
+    fontSize: 38,
     marginTop: -8,
   },
   movementContainer: {
