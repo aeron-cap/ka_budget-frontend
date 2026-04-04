@@ -33,6 +33,7 @@ export const transactionsTable = sqliteTable("transactions", {
   updatedAt: integer("updated_at", { mode: "timestamp_ms" })
     .notNull()
     .$onUpdate(() => new Date()),
+  userId: text("user_id").notNull(),
 });
 
 export const savingsTable = sqliteTable("savings", {
@@ -49,6 +50,7 @@ export const savingsTable = sqliteTable("savings", {
   updatedAt: integer("updated_at", { mode: "timestamp_ms" })
     .notNull()
     .$onUpdate(() => new Date()),
+  userId: text("user_id").notNull(),
 });
 
 export const accountsTable = sqliteTable("accounts", {
@@ -65,4 +67,5 @@ export const accountsTable = sqliteTable("accounts", {
   updatedAt: integer("updated_at", { mode: "timestamp_ms" })
     .notNull()
     .$onUpdate(() => new Date()),
+  userId: text("user_id").notNull(),
 });

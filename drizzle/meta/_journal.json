@@ -8,6 +8,13 @@
       "when": 1775197198565,
       "tag": "0000_sudden_zodiak",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1775289617262,
+      "tag": "0001_wet_synch",
+      "breakpoints": true
     }
   ]
 }
