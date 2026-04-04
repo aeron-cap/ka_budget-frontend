@@ -28,9 +28,9 @@ export default function LoginScreen() {
       const savedUser = await getUserUsingName(name.trim());
       if (savedUser) {
         const savedLocalUser = await setLocalUser(
-          savedUser.randId,
           savedUser.name,
-          savedUser.userString,
+          savedUser.rand_id,
+          savedUser.user_string,
         );
         if (savedLocalUser) {
           router.replace("/(tabs)");

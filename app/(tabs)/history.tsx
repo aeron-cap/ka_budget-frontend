@@ -37,7 +37,7 @@ export default function History() {
         style={styles.listContainer}
         showsVerticalScrollIndicator={false}
       >
-        <TransactionList />
+        <TransactionList limits="none" />
       </ScrollView>
     </View>
   );

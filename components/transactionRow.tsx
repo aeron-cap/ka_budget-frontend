@@ -8,12 +8,33 @@ interface TransactionRowProps {
   onPress: () => void;
 }
 
+const transactionColors = {
+  Income: {
+    bg: "#ECFDF5",
+    icon: "#34D399",
+    text: "#065F46",
+  },
+  Expense: {
+    bg: "#FEF3F2",
+    icon: "#F87171",
+    text: "#B91C1C",
+  },
+  Transfer: {
+    bg: "#EFF6FF",
+    icon: "#60A5FA",
+    text: "#1E40AF",
+  },
+};
+
 export default function TransactionRow({
   transaction,
   onPress,
 }: TransactionRowProps) {
-  const isIncome = transaction.transaction_type === "Income";
   const dateObj = new Date(transaction.datetime);
+  const type = transaction.transaction_type as keyof typeof transactionColors;
+  const bgColor = transactionColors[type].bg || "#F1F5F9";
+  const iconColor = transactionColors[type].icon || "#94A3B8";
+  const textColor = transactionColors[type].text || "#1E293B";
 
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -41,16 +62,11 @@ export default function TransactionRow({
       activeOpacity={0.7}
       onPress={onPress}
     >
-      <View
-        style={[
-          style.iconBackground,
-          { backgroundColor: isIncome ? "#ECFDF5" : "#FFF1F2" },
-        ]}
-      >
+      <View style={[style.iconBackground, { backgroundColor: bgColor }]}>
         <Ionicons
           name={getIcon(transaction.transaction_category)}
           size={22}
-          color={isIncome ? "#10B981" : "#F43F5E"}
+          color={iconColor}
         />
       </View>
 
@@ -64,13 +80,8 @@ export default function TransactionRow({
       </View>
 
       <View style={style.amountSection}>
-        <Text
-          style={[
-            style.amountText,
-            { color: isIncome ? "#10B981" : "#1E293B" },
-          ]}
-        >
-          {isIncome ? "+" : "-"}
+        <Text style={[style.amountText, { color: textColor }]}>
+          {type === "Expense" ? "-" : "+"}
           {parseFloat(transaction.amount).toLocaleString("en-US", {
             style: "currency",
             currency: "PHP",
@@ -99,7 +110,7 @@ const style = StyleSheet.create({
   iconBackground: {
     width: 40,
     height: 40,
-    borderRadius: 15,
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
   },

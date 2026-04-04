@@ -2,7 +2,9 @@ import DateAndFileInputs from "@/components/dateAndFileInput";
 import DropdownInput from "@/components/dropdownInput";
 import TransactionTypeSelector from "@/components/transactionTypeSelector";
 import { categories } from "@/constants/categories";
+import { ACCOUNTS } from "@/constants/sampleData";
 import { Validator } from "@/helpers/helpers";
+import { useCreateTransaction } from "@/hooks/useCreateTransaction";
 import { Transaction } from "@/types/transactions/transactions.type";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
@@ -27,13 +29,6 @@ const THEME_COLORS = {
 
 type TransactionType = keyof typeof THEME_COLORS;
 
-const ACCOUNTS = [
-  "Credit Card (**** 9012)",
-  "Main Checking",
-  "Savings",
-  "Cash",
-];
-
 export default function AddModal() {
   const { id, data } = useLocalSearchParams<{ id?: string; data?: string }>();
   const [isEdit, setIsEdit] = useState(id ? true : false);
@@ -41,6 +36,11 @@ export default function AddModal() {
   const [isValidTransaction, setIsValidTransaction] = useState(
     id ? true : false,
   );
+  const [accountNameList, setAccountNameList] = useState(() => {
+    return ACCOUNTS.map((account) => account.name);
+  });
+  const { processTransaction, isSubmitting } = useCreateTransaction();
+
   const [form, setForm] = useState<Transaction>({
     id: "",
     datetime: new Date(),
@@ -48,8 +48,8 @@ export default function AddModal() {
     amount: "0",
     note: "",
     transaction_type: "Income",
-    transaction_account: ACCOUNTS[0],
-    receiving_account: ACCOUNTS[-1],
+    transaction_account: ACCOUNTS[0].name,
+    receiving_account: ACCOUNTS[0].name,
     saving_name: "",
     fee: "0",
   });
@@ -71,7 +71,7 @@ export default function AddModal() {
       amount: parsedData?.amount ?? "0",
       note: parsedData?.note ?? "",
       transaction_type: parsedData?.transaction_type ?? "Income",
-      transaction_account: parsedData?.transaction_account ?? ACCOUNTS[0],
+      transaction_account: parsedData?.transaction_account ?? ACCOUNTS[0].name,
       receiving_account: parsedData?.receiving_account ?? "",
       saving_name: parsedData?.saving_name ?? "",
       fee: parsedData?.fee ?? "0",
@@ -98,7 +98,7 @@ export default function AddModal() {
   };
 
   const saveTransaction = () => {
-    console.log(form);
+    processTransaction(form as Transaction);
   };
 
   return (
@@ -170,7 +170,7 @@ export default function AddModal() {
                 label="Account"
                 selectedValue={form.transaction_account}
                 iconName="trending-up"
-                options={ACCOUNTS}
+                options={accountNameList}
                 onSelect={(text) =>
                   handleInputChange("transaction_account", text)
                 }
@@ -182,9 +182,9 @@ export default function AddModal() {
               <View style={{ flex: 1 }}>
                 <DropdownInput
                   label="Receiving Account"
-                  selectedValue={form?.receiving_account ?? ACCOUNTS[0]}
+                  selectedValue={form?.receiving_account ?? ACCOUNTS[0].name}
                   iconName="trending-down"
-                  options={ACCOUNTS}
+                  options={accountNameList}
                   onSelect={(text) =>
                     handleInputChange("receiving_account", text)
                   }
@@ -234,7 +234,7 @@ export default function AddModal() {
               placeholder="Add note..."
               placeholderTextColor="#94A3B8"
               multiline
-              value={form.note}
+              value={form.note ?? ""}
               onChangeText={(text) => handleInputChange("note", text)}
             />
           </View>

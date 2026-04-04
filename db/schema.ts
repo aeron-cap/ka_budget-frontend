@@ -3,13 +3,13 @@ import { integer, numeric, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const usersTable = sqliteTable("users", {
   id: integer().primaryKey({ autoIncrement: true }),
-  randId: text().notNull(),
+  rand_id: text().notNull(),
   name: text().notNull(),
-  userString: text("user_string").notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" })
+  user_string: text("user_string").notNull(),
+  created_at: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(strftime('%s', 'now'))`),
-  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+  updated_at: integer("updated_at", { mode: "timestamp_ms" })
     .notNull()
     .$onUpdate(() => new Date()),
 });
@@ -19,21 +19,21 @@ export const transactionsTable = sqliteTable("transactions", {
   datetime: integer({ mode: "timestamp" })
     .notNull()
     .default(sql`(strftime('%s', 'now'))`),
-  transactionCategory: text("transaction_category").notNull(),
+  transaction_category: text("transaction_category").notNull(),
   amount: numeric().notNull(),
   note: text(),
-  transactionType: text("transaction_type").notNull(),
-  transactionAccount: text("transaction_account").notNull(),
-  receivingAccount: text("receiving_account"),
-  savingName: text("saving_name"),
+  transaction_type: text("transaction_type").notNull(),
+  transaction_account: text("transaction_account").notNull(),
+  receiving_account: text("receiving_account"),
+  saving_name: text("saving_name"),
   fee: numeric().default("0"),
-  createdAt: integer("created_at", { mode: "timestamp" })
+  created_at: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(strftime('%s', 'now'))`),
-  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+  updated_at: integer("updated_at", { mode: "timestamp_ms" })
     .notNull()
     .$onUpdate(() => new Date()),
-  userId: text("user_id").notNull(),
+  user_id: text("user_id").notNull(),
 });
 
 export const savingsTable = sqliteTable("savings", {
@@ -41,31 +41,31 @@ export const savingsTable = sqliteTable("savings", {
   color: text().notNull(),
   name: text().notNull(),
   account: text().notNull(),
-  currentAmount: numeric().notNull(),
-  goalAmount: numeric().notNull(),
-  savingCategory: text("saving_category").notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" })
+  current_amount: numeric().notNull(),
+  goal_amount: numeric().notNull(),
+  saving_category: text("saving_category").notNull(),
+  created_at: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(strftime('%s', 'now'))`),
-  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+  updated_at: integer("updated_at", { mode: "timestamp_ms" })
     .notNull()
     .$onUpdate(() => new Date()),
-  userId: text("user_id").notNull(),
+  user_id: text("user_id").notNull(),
 });
 
 export const accountsTable = sqliteTable("accounts", {
   id: text().primaryKey(),
   name: text().notNull(),
-  accountType: text("account_type").notNull(),
-  initialBalance: numeric().notNull().default("0"),
-  currentBalance: numeric().default("0"),
-  accountCategory: text("account_category").notNull(),
+  account_type: text("account_type").notNull(),
+  initial_balance: numeric().notNull().default("0"),
+  current_balance: numeric().default("0"),
+  account_category: text("account_category").notNull(),
   color: text().notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" })
+  created_at: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(strftime('%s', 'now'))`),
-  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+  updated_at: integer("updated_at", { mode: "timestamp_ms" })
     .notNull()
     .$onUpdate(() => new Date()),
-  userId: text("user_id").notNull(),
+  user_id: text("user_id").notNull(),
 });

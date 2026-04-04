@@ -3,7 +3,7 @@ export type Transaction = {
   datetime: Date;
   transaction_category: string;
   amount: string;
-  note: string;
+  note: string | null;
   transaction_type: string;
   transaction_account: string;
 

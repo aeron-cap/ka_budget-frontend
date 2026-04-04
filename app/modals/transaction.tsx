@@ -1,4 +1,5 @@
 import { categoryIconsAndTypes } from "@/constants/uiElements";
+import { useDeleteTransaction } from "@/hooks/useDeleteTransaction";
 import { Transaction } from "@/types/transactions/transactions.type";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
@@ -30,6 +31,7 @@ export default function TransactionDetailsModal({
   const [renderModal, setRenderModal] = useState(isVisible);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const { removeTransaction, isDeleting } = useDeleteTransaction();
 
   useEffect(() => {
     if (isVisible) {
@@ -95,6 +97,11 @@ export default function TransactionDetailsModal({
         data: JSON.stringify(transaction),
       },
     });
+  };
+
+  const voidTransaction = () => {
+    removeTransaction(transaction.id);
+    onClose();
   };
 
   const getIcon = (name: string) => {
@@ -179,7 +186,11 @@ export default function TransactionDetailsModal({
           </View>
 
           <View style={styles.actionButtonsContainer}>
-            <TouchableOpacity style={styles.voidButton} activeOpacity={0.7}>
+            <TouchableOpacity
+              style={styles.voidButton}
+              activeOpacity={0.7}
+              onPress={() => voidTransaction()}
+            >
               <Text style={styles.voidButtonText}>Void</Text>
             </TouchableOpacity>
             <TouchableOpacity

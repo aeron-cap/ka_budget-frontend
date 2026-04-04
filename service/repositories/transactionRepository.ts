@@ -12,30 +12,43 @@ export async function createTransaction(data: Transaction, userId: string) {
   const transaction = await db
     .insert(transactionsTable)
     .values({
+      ...data,
       id: generateId("transaction"),
-      datetime: data.datetime,
-      transactionCategory: data.transaction_category,
-      amount: data.amount,
-      note: data.note,
-      transactionType: data.transaction_type,
-      transactionAccount: data.transaction_account,
-      receivingAccount: data.receiving_account,
-      savingName: data.saving_name,
-      fee: data.fee,
-      userId: userId,
+      user_id: userId,
     })
     .returning();
 
   return transaction;
 }
 
-export async function getAllTransactions(userId: string) {
+export async function editTransaction(
+  id: string,
+  data: Partial<Transaction>,
+  userId: string,
+) {
+  const transaction = await db
+    .update(transactionsTable)
+    .set(data)
+    .where(
+      and(eq(transactionsTable.id, id), eq(transactionsTable.user_id, userId)),
+    )
+    .returning();
+
+  return transaction;
+}
+
+export async function getAllTransactions(userId: string, limits: string) {
+  const limit_val = parseFloat(limits);
+
   const transactions = db
     .select()
     .from(transactionsTable)
-    .where(eq(transactionsTable.userId, userId))
-    .orderBy(desc(transactionsTable.datetime))
-    .get();
+    .where(eq(transactionsTable.user_id, userId))
+    .orderBy(desc(transactionsTable.datetime));
+
+  if (typeof limit_val === "number") {
+    transactions.limit(limit_val);
+  }
   return transactions;
 }
 
@@ -44,8 +57,18 @@ export async function getOneTransaction(id: string, userId: string) {
     .select()
     .from(transactionsTable)
     .where(
-      and(eq(transactionsTable.id, id), eq(transactionsTable.userId, userId)),
+      and(eq(transactionsTable.id, id), eq(transactionsTable.user_id, userId)),
+    );
+  return transaction;
+}
+
+export async function deleteTransaction(id: string, userId: string) {
+  const transaction = await db
+    .delete(transactionsTable)
+    .where(
+      and(eq(transactionsTable.id, id), eq(transactionsTable.user_id, userId)),
     )
-    .get();
+    .returning();
+
   return transaction;
 }

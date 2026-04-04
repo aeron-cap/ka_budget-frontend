@@ -40,7 +40,7 @@ export function Validator(
       const keysToCheck: (keyof Transaction)[] = [...transactionRequiredKeys];
 
       if (transactionData.transaction_type === "Transfer") {
-        keysToCheck.push("receiving_account", "fee");
+        keysToCheck.push("receiving_account");
 
         if (
           transactionData.receiving_account &&

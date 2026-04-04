@@ -47,7 +47,7 @@ export default function Index() {
                 See more
               </Text>
             </View>
-            <TransactionList />
+            <TransactionList limits="5" />
           </View>
         </View>
       </SafeAreaView>
