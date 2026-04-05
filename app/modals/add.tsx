@@ -5,10 +5,12 @@ import { categories } from "@/constants/categories";
 import { ACCOUNTS } from "@/constants/sampleData";
 import { Validator } from "@/helpers/helpers";
 import { useCreateTransaction } from "@/hooks/useCreateTransaction";
+import { useGetAccounts } from "@/hooks/useGetAccounts";
 import { Transaction } from "@/types/transactions/transactions.type";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -36,9 +38,17 @@ export default function AddModal() {
   const [isValidTransaction, setIsValidTransaction] = useState(
     id ? true : false,
   );
-  const [accountNameList, setAccountNameList] = useState(() => {
-    return ACCOUNTS.map((account) => account.name);
-  });
+  const { accountList, isFetching, refetch } = useGetAccounts("none");
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+
+      return () => {};
+    }, [refetch]),
+  );
+  const accountNameList = useMemo(() => {
+    return accountList.map((account) => account.name);
+  }, [accountList]);
   const { processTransaction, isSubmitting } = useCreateTransaction();
 
   const [form, setForm] = useState<Transaction>({
@@ -48,8 +58,8 @@ export default function AddModal() {
     amount: "0",
     note: "",
     transaction_type: "Income",
-    transaction_account: ACCOUNTS[0].name,
-    receiving_account: ACCOUNTS[0].name,
+    transaction_account: accountNameList[0],
+    receiving_account: accountNameList[0],
     saving_name: "",
     fee: "0",
   });
@@ -71,12 +81,13 @@ export default function AddModal() {
       amount: parsedData?.amount ?? "0",
       note: parsedData?.note ?? "",
       transaction_type: parsedData?.transaction_type ?? "Income",
-      transaction_account: parsedData?.transaction_account ?? ACCOUNTS[0].name,
+      transaction_account:
+        parsedData?.transaction_account ?? accountNameList[0],
       receiving_account: parsedData?.receiving_account ?? "",
       saving_name: parsedData?.saving_name ?? "",
       fee: parsedData?.fee ?? "0",
     });
-  }, [id, data, isEdit]);
+  }, [id, data, isEdit, accountNameList]);
 
   const handleInputChange = (name: keyof typeof form, value: string | Date) => {
     const nextForm = {

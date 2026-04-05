@@ -25,6 +25,7 @@ export const transactionsTable = sqliteTable("transactions", {
   transaction_type: text("transaction_type").notNull(),
   transaction_account: text("transaction_account").notNull(),
   receiving_account: text("receiving_account"),
+  receiving_category: text("receiving_category"),
   saving_name: text("saving_name"),
   fee: numeric().default("0"),
   created_at: integer("created_at", { mode: "timestamp" })

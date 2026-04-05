@@ -17,7 +17,7 @@ export default function Profile() {
           <ProfileCard name={displayName} email="user@gmail.com" />
         </View> */}
 
-        <AccountsSection />
+        <AccountsSection limits="none" />
         {/* <SettingsSection /> */}
       </ScrollView>
     </SafeAreaView>

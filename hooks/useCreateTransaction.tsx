@@ -20,10 +20,8 @@ export function useCreateTransaction() {
     setIsSubmitting(true);
     try {
       if (data.id !== "" && typeof data.id === "string") {
-        const editedTransaction = await editTransaction(data.id, data, user.id);
-        if (editedTransaction) {
-          router.back();
-        }
+        await editTransaction(data.id, data, user.id);
+        router.dismiss();
       } else {
         const newTransaction = await createTransaction(data, user.id);
         if (newTransaction) {

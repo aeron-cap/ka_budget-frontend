@@ -8,6 +8,14 @@ export type Transaction = {
   transaction_account: string;
 
   receiving_account?: string | null;
+  receiving_category?: string | null;
   saving_name?: string | null;
   fee?: string | null;
+};
+
+export type TransactionDetails = {
+  user_id: string;
+  account: string;
+  amount: string;
+  fee: string;
 };

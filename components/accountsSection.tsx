@@ -2,7 +2,7 @@ import AddAccountModal from "@/app/modals/addAccount";
 import { ACCOUNTS } from "@/constants/sampleData";
 import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -11,20 +11,38 @@ import {
   View,
 } from "react-native";
 import AccountCard from "./accountCards";
+import { useGetAccounts } from "@/hooks/useGetAccounts";
+import { useFocusEffect } from "@react-navigation/native";
+import { ActivityIndicator } from "react-native-paper";
+import { useCreateAccount } from "@/hooks/useCreateAccount";
 
 const SAMPLE_ACCOUNTS: Account[] = ACCOUNTS;
 
-export default function AccountsSection() {
+type accountListProps = {
+  limits: string;
+};
+
+export default function AccountsSection({ limits }: accountListProps) {
+  const { accountList, isFetching, refetch } = useGetAccounts(limits);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentAccount, setCurrentAccount] = useState<Account | null>(null);
+  const { processAccount, isSubmitting } = useCreateAccount();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+
+      return () => {};
+    }, [refetch]),
+  );
 
   const handleSaveAccount = (accountData: Account) => {
-    console.log("Saving new account:", accountData);
+    processAccount(accountData);
     setIsModalVisible(false);
+    refetch();
   };
 
   const handleAccountView = (accountData: Account) => {
-    console.log("Viewing account:", accountData);
     setCurrentAccount(accountData);
     setIsModalVisible(true);
   };
@@ -33,6 +51,10 @@ export default function AccountsSection() {
     setCurrentAccount(null);
     setIsModalVisible(true);
   };
+
+  if (isFetching) {
+    return <ActivityIndicator size="small" color="#000" />;
+  }
 
   return (
     <View style={styles.container}>
@@ -46,19 +68,28 @@ export default function AccountsSection() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {SAMPLE_ACCOUNTS.map((account, idx) => {
-          return (
-            <View key={idx}>
-              <AccountCard accountData={account} onPress={handleAccountView} />
-            </View>
-          );
-        })}
-      </ScrollView>
+      {accountList.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No Transactions available.</Text>
+        </View>
+      ) : (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {accountList.map((account) => {
+            return (
+              <View key={account.id}>
+                <AccountCard
+                  accountData={account}
+                  onPress={handleAccountView}
+                />
+              </View>
+            );
+          })}
+        </ScrollView>
+      )}
 
       <AddAccountModal
         isVisible={isModalVisible}
@@ -134,5 +165,15 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 20,
     fontWeight: "700",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    textAlign: "center",
+  },
+  emptyText: {
+    fontSize: 16,
+    color: "#888",
+    textAlign: "center",
   },
 });
