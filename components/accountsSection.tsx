@@ -1,7 +1,10 @@
 import AddAccountModal from "@/app/modals/addAccount";
 import { ACCOUNTS } from "@/constants/sampleData";
+import { useCreateAccount } from "@/hooks/useCreateAccount";
+import { useGetAccounts } from "@/hooks/useGetAccounts";
 import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
 import {
   ScrollView,
@@ -10,11 +13,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import AccountCard from "./accountCards";
-import { useGetAccounts } from "@/hooks/useGetAccounts";
-import { useFocusEffect } from "@react-navigation/native";
 import { ActivityIndicator } from "react-native-paper";
-import { useCreateAccount } from "@/hooks/useCreateAccount";
+import AccountCard from "./accountCards";
 
 const SAMPLE_ACCOUNTS: Account[] = ACCOUNTS;
 
@@ -70,7 +70,7 @@ export default function AccountsSection({ limits }: accountListProps) {
 
       {accountList.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No Transactions available.</Text>
+          <Text style={styles.emptyText}>No Accounts available.</Text>
         </View>
       ) : (
         <ScrollView

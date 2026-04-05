@@ -5,6 +5,7 @@ import m0000 from './0000_sudden_zodiak.sql';
 import m0001 from './0001_wet_synch.sql';
 import m0002 from './0002_tense_kabuki.sql';
 import m0003 from './0003_cultured_agent_zero.sql';
+import m0004 from './0004_perfect_switch.sql';
 
   export default {
     journal,
@@ -12,7 +13,8 @@ import m0003 from './0003_cultured_agent_zero.sql';
       m0000,
 m0001,
 m0002,
-m0003
+m0003,
+m0004
     }
   }
   

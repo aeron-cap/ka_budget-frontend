@@ -41,14 +41,7 @@ export function Validator(
 
       if (transactionData.transaction_type === "Transfer") {
         keysToCheck.push("receiving_account");
-
-        if (
-          transactionData.receiving_account &&
-          transactionData.receiving_account ===
-            transactionData.transaction_account
-        ) {
-          // keysToCheck.push("saving_name");
-        }
+        keysToCheck.push("receiving_category");
       }
 
       keysToCheck.forEach((key) => {

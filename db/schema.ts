@@ -70,3 +70,10 @@ export const accountsTable = sqliteTable("accounts", {
     .$onUpdate(() => new Date()),
   user_id: text("user_id").notNull(),
 });
+
+export const accountsInHomeTable = sqliteTable("accounts_in_home", {
+  id: text().primaryKey(),
+  account_id: text("account_id").notNull(),
+  account_name: text("account_name").notNull(),
+  user_id: text("user_id").notNull(),
+});

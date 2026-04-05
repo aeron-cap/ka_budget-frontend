@@ -1,11 +1,11 @@
 import TransactionDetailsModal from "@/app/modals/transaction";
-import { Transaction } from "@/types/transactions/transactions.type";
-import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import TransactionRow from "./transactionRow";
 import { useGetTransactions } from "@/hooks/useGetTransactions";
-import { ActivityIndicator } from "react-native-paper";
+import { Transaction } from "@/types/transactions/transactions.type";
 import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
+import TransactionRow from "./transactionRow";
 
 type transactionListProps = {
   limits: string;
@@ -38,6 +38,9 @@ export default function TransactionList({ limits }: transactionListProps) {
     return (
       <View style={style.emptyContainer}>
         <Text style={style.emptyText}>No Transactions available.</Text>
+        <Text style={style.emptyHelperText}>
+          Add one using the + button below.
+        </Text>
       </View>
     );
   }
@@ -82,6 +85,11 @@ const style = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
+    color: "#888",
+    textAlign: "center",
+  },
+  emptyHelperText: {
+    fontSize: 14,
     color: "#888",
     textAlign: "center",
   },

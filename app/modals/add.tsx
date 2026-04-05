@@ -60,6 +60,7 @@ export default function AddModal() {
     transaction_type: "Income",
     transaction_account: accountNameList[0],
     receiving_account: accountNameList[0],
+    receiving_category: "",
     saving_name: "",
     fee: "0",
   });
@@ -84,6 +85,7 @@ export default function AddModal() {
       transaction_account:
         parsedData?.transaction_account ?? accountNameList[0],
       receiving_account: parsedData?.receiving_account ?? "",
+      receiving_category: parsedData?.receiving_category ?? "",
       saving_name: parsedData?.saving_name ?? "",
       fee: parsedData?.fee ?? "0",
     });
@@ -160,14 +162,41 @@ export default function AddModal() {
           style={styles.formContainer}
           showsVerticalScrollIndicator={false}
         >
-          <DropdownInput
-            label="Category"
-            selectedValue={form.transaction_category}
-            iconName="radio-button-on"
-            options={categories}
-            onSelect={(text) => handleInputChange("transaction_category", text)}
-            hasIcon={true}
-          />
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              gap: 12,
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              <DropdownInput
+                label="Category"
+                selectedValue={form.transaction_category}
+                iconName="radio-button-on"
+                options={categories}
+                onSelect={(text) =>
+                  handleInputChange("transaction_category", text)
+                }
+                hasIcon={false}
+              />
+            </View>
+
+            {form.transaction_type === "Transfer" && (
+              <View style={{ flex: 1 }}>
+                <DropdownInput
+                  label="Receiving Category"
+                  selectedValue={form.receiving_category ?? ""}
+                  iconName="radio-button-on"
+                  options={categories}
+                  onSelect={(text) =>
+                    handleInputChange("receiving_category", text)
+                  }
+                  hasIcon={false}
+                />
+              </View>
+            )}
+          </View>
 
           <View
             style={{
