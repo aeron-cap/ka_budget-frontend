@@ -60,14 +60,14 @@ export async function getAllTransactions(userId: string, limits: string) {
   return transactions;
 }
 
-export async function getOneTransaction(id: string, userId: string) {
-  const transaction = db
+export async function getOneTransactionById(id: string, userId: string) {
+  const transaction = await db
     .select()
     .from(transactionsTable)
     .where(
       and(eq(transactionsTable.id, id), eq(transactionsTable.user_id, userId)),
-    )
-    .get();
+    );
+
   return transaction;
 }
 
@@ -78,6 +78,8 @@ export async function deleteTransaction(id: string, userId: string) {
       and(eq(transactionsTable.id, id), eq(transactionsTable.user_id, userId)),
     )
     .returning();
+
+  updateAccountBalances(transaction, userId);
 
   return transaction;
 }

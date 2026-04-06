@@ -51,12 +51,11 @@ export async function getAllAccounts(userId: string, limits: string) {
   return accounts;
 }
 
-export function getOneAccount(id: string, userId: string) {
-  const account = db
+export async function getOneAccountById(id: string, userId: string) {
+  const account = await db
     .select()
     .from(accountsTable)
-    .where(and(eq(accountsTable.id, id), eq(accountsTable.user_id, userId)))
-    .get();
+    .where(and(eq(accountsTable.id, id), eq(accountsTable.user_id, userId)));
 
   return account;
 }

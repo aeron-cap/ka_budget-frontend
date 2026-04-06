@@ -1,19 +1,35 @@
 import AddGoalModal from "@/app/modals/addGoal";
 import { categoryIconsAndTypes } from "@/constants/uiElements";
+import { useGetBudget } from "@/hooks/useGetBudget";
 import { Saving } from "@/types/savings/savings.type";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import { useFocusEffect } from "expo-router";
+import React, { useCallback, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 
 type SavingGoalListProps = {
   savings: Saving[];
 };
 
 export default function BudgetGoalList({ savings }: SavingGoalListProps) {
+  const { budgetList, isFetching, refetch } = useGetBudget("none");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentGoal, setCurrentGoal] = useState<Saving | null>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const computedHeight = savings.length * 160;
+  const computedHeight = budgetList.length > 0 ? budgetList.length * 160 : 200;
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+
+      return () => {};
+    }, [refetch]),
+  );
+
+  if (isFetching) {
+    return <ActivityIndicator size="small" color="#000" />;
+  }
 
   const handleSaveSaving = (goalData: Saving) => {
     console.log("Saving new Saving Goal:", goalData);
@@ -40,64 +56,73 @@ export default function BudgetGoalList({ savings }: SavingGoalListProps) {
         <Text style={styles.headerTitle}>Saving Goals</Text>
       </View>
 
-      {savings.map((goal, idx) => {
-        const percentage = Math.round(
-          (parseFloat(goal.current_amount) / parseFloat(goal.goal_amount)) *
-            100,
-        );
+      {budgetList.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No Saving Goals available.</Text>
+          <Text style={styles.emptyHelperText}>
+            Add one using the button below.
+          </Text>
+        </View>
+      ) : (
+        savings.map((goal, idx) => {
+          const percentage = Math.round(
+            (parseFloat(goal.current_amount) / parseFloat(goal.goal_amount)) *
+              100,
+          );
 
-        return (
-          <TouchableOpacity
-            key={idx}
-            activeOpacity={0.7}
-            style={styles.touchContainer}
-            onPress={() => editSavingGoal(goal)}
-          >
-            <View>
-              <View style={styles.cardTopRow}>
-                <View
-                  style={[
-                    styles.iconContainer,
-                    { backgroundColor: goal.color },
-                  ]}
-                >
-                  <Ionicons
-                    name={getIcon(goal.saving_category)}
-                    size={20}
-                    color="white"
+          return (
+            <TouchableOpacity
+              key={idx}
+              activeOpacity={0.7}
+              style={styles.touchContainer}
+              onPress={() => editSavingGoal(goal)}
+            >
+              <View>
+                <View style={styles.cardTopRow}>
+                  <View
+                    style={[
+                      styles.iconContainer,
+                      { backgroundColor: goal.color },
+                    ]}
+                  >
+                    <Ionicons
+                      name={getIcon(goal.saving_category)}
+                      size={20}
+                      color="white"
+                    />
+                  </View>
+
+                  <View style={styles.infoContainer}>
+                    <Text style={styles.goalTitle}>{goal.name}</Text>
+                    <Text style={styles.goalSubtitle}>
+                      {parseFloat(goal.current_amount).toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}{" "}
+                      of{" "}
+                      {parseFloat(goal.goal_amount).toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </Text>
+                  </View>
+
+                  <Text style={styles.percentageText}>{percentage}%</Text>
+                </View>
+
+                <View style={styles.progressBarBackground}>
+                  <View
+                    style={[
+                      styles.progressBarFill,
+                      { width: `${percentage}%`, backgroundColor: goal.color },
+                    ]}
                   />
                 </View>
-
-                <View style={styles.infoContainer}>
-                  <Text style={styles.goalTitle}>{goal.name}</Text>
-                  <Text style={styles.goalSubtitle}>
-                    {parseFloat(goal.current_amount).toLocaleString("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}{" "}
-                    of{" "}
-                    {parseFloat(goal.goal_amount).toLocaleString("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </Text>
-                </View>
-
-                <Text style={styles.percentageText}>{percentage}%</Text>
               </View>
-
-              <View style={styles.progressBarBackground}>
-                <View
-                  style={[
-                    styles.progressBarFill,
-                    { width: `${percentage}%`, backgroundColor: goal.color },
-                  ]}
-                />
-              </View>
-            </View>
-          </TouchableOpacity>
-        );
-      })}
+            </TouchableOpacity>
+          );
+        })
+      )}
 
       <TouchableOpacity
         style={styles.newGoalButton}
@@ -222,5 +247,21 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "600",
     color: "#2563EB",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    textAlign: "center",
+    paddingBottom: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: "#888",
+    textAlign: "center",
+  },
+  emptyHelperText: {
+    fontSize: 14,
+    color: "#888",
+    textAlign: "center",
   },
 });
