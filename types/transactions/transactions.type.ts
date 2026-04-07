@@ -18,4 +18,5 @@ export type TransactionDetails = {
   account: string;
   amount: string;
   fee: string;
+  category: string;
 };

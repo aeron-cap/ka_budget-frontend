@@ -1,11 +1,11 @@
-import { useRouter } from "expo-router";
-import { useState } from "react";
-import { useGetUser } from "./useGetUser";
-import { Account } from "@/types/accounts/accounts.type";
 import {
   createAccount,
   editAccount,
 } from "@/service/repositories/accountRepository";
+import { Account } from "@/types/accounts/accounts.type";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { useGetUser } from "./useGetUser";
 
 export function useCreateAccount() {
   const { user, isLoading } = useGetUser();
@@ -20,15 +20,9 @@ export function useCreateAccount() {
     setIsSubmitting(true);
     try {
       if (data.id !== "" && typeof data.id === "string") {
-        const editedTransaction = await editAccount(data.id, data, user.id);
-        if (editedTransaction) {
-          router.back();
-        }
+        await editAccount(data.id, data, user.id);
       } else {
-        const newTransaction = await createAccount(data, user.id);
-        if (newTransaction) {
-          router.replace("/(tabs)/profile");
-        }
+        await createAccount(data, user.id);
       }
     } catch (error) {
       console.error("Error creating account:", error);

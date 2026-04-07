@@ -7,6 +7,7 @@ import {
 import { and, desc, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { calculateCurrentBalance } from "./accountRepository";
+import { calculateCurrentAmount } from "./budgetRepository";
 
 function generateId(x: string) {
   return x + "-" + nanoid();
@@ -108,8 +109,10 @@ export async function updateAccountBalances(
       account: account ?? "",
       amount: transactionData.amount,
       fee: transactionData.fee || "0",
+      category: categories[index] ?? "",
     };
 
     calculateCurrentBalance(transactionDetails);
+    calculateCurrentAmount(transactionDetails);
   });
 }

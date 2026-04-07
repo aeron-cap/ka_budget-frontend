@@ -1,5 +1,6 @@
 import AddGoalModal from "@/app/modals/addGoal";
 import { categoryIconsAndTypes } from "@/constants/uiElements";
+import { useCreateBudget } from "@/hooks/useCreateBudget";
 import { useGetBudget } from "@/hooks/useGetBudget";
 import { Saving } from "@/types/savings/savings.type";
 import { Ionicons } from "@expo/vector-icons";
@@ -8,12 +9,9 @@ import React, { useCallback, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 
-type SavingGoalListProps = {
-  savings: Saving[];
-};
-
-export default function BudgetGoalList({ savings }: SavingGoalListProps) {
+export default function BudgetGoalList() {
   const { budgetList, isFetching, refetch } = useGetBudget("none");
+  const { processBudget, isSubmitting } = useCreateBudget();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentGoal, setCurrentGoal] = useState<Saving | null>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -32,7 +30,9 @@ export default function BudgetGoalList({ savings }: SavingGoalListProps) {
   }
 
   const handleSaveSaving = (goalData: Saving) => {
-    console.log("Saving new Saving Goal:", goalData);
+    processBudget(goalData);
+    setIsModalVisible(false);
+    refetch();
   };
 
   const editSavingGoal = (goalData: Saving) => {
@@ -64,11 +64,15 @@ export default function BudgetGoalList({ savings }: SavingGoalListProps) {
           </Text>
         </View>
       ) : (
-        savings.map((goal, idx) => {
-          const percentage = Math.round(
-            (parseFloat(goal.current_amount) / parseFloat(goal.goal_amount)) *
-              100,
-          );
+        (budgetList ?? []).map((goal, idx) => {
+          const percentage =
+            goal.current_amount === goal.goal_amount
+              ? 100
+              : Math.round(
+                  (parseFloat(goal.current_amount) /
+                    parseFloat(goal.goal_amount)) *
+                    100,
+                );
 
           return (
             <TouchableOpacity

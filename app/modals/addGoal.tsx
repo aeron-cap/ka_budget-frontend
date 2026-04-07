@@ -3,10 +3,18 @@ import DropdownInput from "@/components/dropdownInput";
 import { categories } from "@/constants/categories";
 import { THEME_COLORS } from "@/constants/sampleData";
 import { Validator } from "@/helpers/helpers";
+import { useGetAccounts } from "@/hooks/useGetAccounts";
 import { Saving } from "@/types/savings/savings.type";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import React, { useEffect, useRef, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Animated,
   Dimensions,
@@ -21,12 +29,6 @@ import {
 } from "react-native";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-
-const ACCOUNTS = [
-  "Checking Account (**** 1234)",
-  "Savings Account (**** 5678)",
-  "Cash Wallet",
-];
 
 interface AddGoalModalProps {
   isVisible: boolean;
@@ -43,15 +45,27 @@ export default function AddGoalModal({
   goalData,
   isEdit,
 }: AddGoalModalProps) {
+  const { accountList, isFetching, refetch } = useGetAccounts("none");
+  const accountNameList = useMemo(() => {
+    return accountList.map((account) => account.name);
+  }, [accountList]);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+
+      return () => {};
+    }, [refetch]),
+  );
+
   const [form, setForm] = useState<Saving>({
     id: "",
     color: THEME_COLORS[0],
     name: "",
-    account: ACCOUNTS[0],
+    account: accountNameList[0],
     current_amount: "0",
     goal_amount: "0",
     saving_category: "",
-    icon: "",
   });
 
   const [isSavingsValid, setIsSavingsValid] = useState(goalData ? true : false);
@@ -79,13 +93,12 @@ export default function AddGoalModal({
         id: goalData?.id ?? "",
         color: goalData?.color ?? THEME_COLORS[0],
         name: goalData?.name ?? "",
-        account: goalData?.account ?? ACCOUNTS[0],
+        account: goalData?.account ?? accountNameList[0],
         current_amount: goalData?.current_amount
           ? goalData?.current_amount
           : "0",
         goal_amount: goalData?.goal_amount ? goalData?.goal_amount : "0",
         saving_category: goalData?.saving_category ?? "",
-        icon: goalData?.icon ?? "",
       });
     } else {
       Animated.parallel([
@@ -101,7 +114,7 @@ export default function AddGoalModal({
         }),
       ]).start(() => setRenderModal(false));
     }
-  }, [isVisible, slideAnim, fadeAnim, goalData]);
+  }, [isVisible, slideAnim, fadeAnim, goalData, accountNameList]);
 
   const handleInputChange = (name: keyof typeof form, value: string) => {
     setForm((prev) => ({
@@ -236,7 +249,7 @@ export default function AddGoalModal({
               label=""
               selectedValue={form.account}
               iconName="radio-button-on"
-              options={ACCOUNTS}
+              options={accountNameList}
               onSelect={(text) => handleInputChange("account", text)}
               hasIcon={false}
             />
