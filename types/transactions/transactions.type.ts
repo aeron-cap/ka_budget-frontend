@@ -16,7 +16,5 @@ export type Transaction = {
 export type TransactionDetails = {
   user_id: string;
   account: string;
-  amount: string;
-  fee: string;
   category: string;
 };

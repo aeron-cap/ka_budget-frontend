@@ -107,8 +107,6 @@ export async function updateAccountBalances(
     const transactionDetails: TransactionDetails = {
       user_id: userId,
       account: account ?? "",
-      amount: transactionData.amount,
-      fee: transactionData.fee || "0",
       category: categories[index] ?? "",
     };
 

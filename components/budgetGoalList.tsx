@@ -29,8 +29,8 @@ export default function BudgetGoalList() {
     return <ActivityIndicator size="small" color="#000" />;
   }
 
-  const handleSaveSaving = (goalData: Saving) => {
-    processBudget(goalData);
+  const handleSaveSaving = async (goalData: Saving) => {
+    await processBudget(goalData);
     setIsModalVisible(false);
     refetch();
   };

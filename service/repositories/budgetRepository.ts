@@ -19,6 +19,14 @@ export async function createBugdet(data: Saving, userId: string) {
     })
     .returning();
 
+  const transactionDetails: TransactionDetails = {
+    user_id: userId,
+    account: data.account || "",
+    category: data.saving_category || "",
+  };
+
+  await calculateCurrentAmount(transactionDetails);
+
   return budget;
 }
 
@@ -32,6 +40,14 @@ export async function editBudget(
     .set(data)
     .where(and(eq(savingsTable.id, id), eq(savingsTable.user_id, userId)))
     .returning();
+
+  const transactionDetails: TransactionDetails = {
+    user_id: userId,
+    account: data.account || "",
+    category: data.saving_category || "",
+  };
+
+  await calculateCurrentAmount(transactionDetails);
 
   return budget;
 }

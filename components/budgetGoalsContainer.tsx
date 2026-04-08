@@ -31,8 +31,8 @@ export default function BudgetGoalContainer() {
     }, [refetch]),
   );
 
-  const handleSaveSaving = (goalData: Saving) => {
-    processBudget(goalData);
+  const handleSaveSaving = async (goalData: Saving) => {
+    await processBudget(goalData);
     setIsModalVisible(false);
     refetch();
   };
