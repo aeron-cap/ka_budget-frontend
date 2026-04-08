@@ -63,6 +63,7 @@ export default function AddGoalModal({
     color: THEME_COLORS[0],
     name: "",
     account: accountNameList[0],
+    initial_amount: "0",
     current_amount: "0",
     goal_amount: "0",
     saving_category: "",
@@ -94,6 +95,9 @@ export default function AddGoalModal({
         color: goalData?.color ?? THEME_COLORS[0],
         name: goalData?.name ?? "",
         account: goalData?.account ?? accountNameList[0],
+        initial_amount: goalData?.initial_amount
+          ? goalData?.initial_amount
+          : "0",
         current_amount: goalData?.current_amount
           ? goalData?.current_amount
           : "0",
@@ -210,7 +214,7 @@ export default function AddGoalModal({
 
             <View style={{ flexDirection: "row", gap: 12 }}>
               <View style={{ flexDirection: "column", width: "50%" }}>
-                <Text style={styles.inputLabel}>Current Amount</Text>
+                <Text style={styles.inputLabel}>Initial Amount</Text>
                 <View style={styles.amountInputContainer}>
                   <Text style={styles.currencyPrefix}>P</Text>
                   <TextInput
@@ -218,9 +222,9 @@ export default function AddGoalModal({
                     placeholder=""
                     placeholderTextColor="#94A3B8"
                     keyboardType="numeric"
-                    value={form.current_amount}
+                    value={form.initial_amount}
                     onChangeText={(text) =>
-                      handleInputChange("current_amount", text)
+                      handleInputChange("initial_amount", text)
                     }
                   />
                 </View>

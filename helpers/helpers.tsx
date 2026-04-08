@@ -22,7 +22,7 @@ const savingRequiredKeys: (keyof Saving)[] = [
   "color",
   "name",
   "account",
-  "current_amount",
+  "initial_amount",
   "goal_amount",
   "saving_category",
 ];

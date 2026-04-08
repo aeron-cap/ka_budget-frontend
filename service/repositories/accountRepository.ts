@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { accountsTable, transactionsTable } from "@/db/schema";
 import { Account } from "@/types/accounts/accounts.type";
 import { TransactionDetails } from "@/types/transactions/transactions.type";
-import { and, eq, sql, sum } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 
 function generateId(x: string) {
@@ -70,77 +70,34 @@ export async function deleteAccount(id: string, userId: string) {
 }
 
 export async function calculateCurrentBalance(data: TransactionDetails) {
-  const incomeTotal = await db
-    .select({ value: sum(transactionsTable.amount) })
+  const results = await db
+    .select({
+      income: sql<number>`COALESCE(sum(case when transaction_type = 'Income' then amount else 0 end), 0)`,
+      expense: sql<number>`COALESCE(sum(case when transaction_type = 'Expense' then amount else 0 end), 0)`,
+      transferred: sql<number>`COALESCE(sum(case when transaction_type = 'Transfer' and transaction_account = ${data.account} then amount else 0 end), 0)`,
+      received: sql<number>`COALESCE(sum(case when transaction_type = 'Transfer' and receiving_account = ${data.account} then amount else 0 end), 0)`,
+      fee: sql<number>`COALESCE(sum(case when transaction_type = 'Transfer' and transaction_account = ${data.account} then fee else 0 end), 0)`,
+    })
     .from(transactionsTable)
-    .where(
-      and(
-        eq(transactionsTable.transaction_type, "Income"),
-        eq(transactionsTable.transaction_account, data.account),
-        eq(transactionsTable.user_id, data.user_id),
-      ),
-    );
+    .where(eq(transactionsTable.user_id, data.user_id));
 
-  const expenseTotal = await db
-    .select({ value: sum(transactionsTable.amount) })
-    .from(transactionsTable)
-    .where(
-      and(
-        eq(transactionsTable.transaction_type, "Expense"),
-        eq(transactionsTable.transaction_account, data.account),
-        eq(transactionsTable.user_id, data.user_id),
-      ),
-    );
+  const { income, expense, transferred, received, fee } = results[0];
 
-  const receivingTotal = await db
-    .select({ value: sum(transactionsTable.amount) })
-    .from(transactionsTable)
-    .where(
-      and(
-        eq(transactionsTable.transaction_type, "Transfer"),
-        eq(transactionsTable.receiving_account, data.account),
-        eq(transactionsTable.user_id, data.user_id),
-      ),
-    );
-
-  const transferringTotal = await db
-    .select({ value: sum(transactionsTable.amount) })
-    .from(transactionsTable)
-    .where(
-      and(
-        eq(transactionsTable.transaction_type, "Transfer"),
-        eq(transactionsTable.transaction_account, data.account),
-        eq(transactionsTable.user_id, data.user_id),
-      ),
-    );
-
-  const feeTotal = await db
-    .select({ value: sum(transactionsTable.fee) })
-    .from(transactionsTable)
-    .where(
-      and(
-        eq(transactionsTable.transaction_type, "Transfer"),
-        eq(transactionsTable.transaction_account, data.account),
-        eq(transactionsTable.user_id, data.user_id),
-      ),
-    );
-
-  const formatSum = (result: { value: string | number | null }[]) => {
-    return parseFloat(result[0]?.value?.toString() || "0");
+  const formatSum = (value: number) => {
+    return value.toString() || "0";
   };
 
-  const income = formatSum(incomeTotal);
-  const expense = formatSum(expenseTotal);
-  const received = formatSum(receivingTotal);
-  const sent = formatSum(transferringTotal);
-  const fee = formatSum(feeTotal);
-
-  const finalBalance = income + received - (expense + sent) - fee;
+  const finalTotal =
+    parseFloat(formatSum(income)) -
+    parseFloat(formatSum(expense)) -
+    parseFloat(formatSum(transferred)) +
+    parseFloat(formatSum(received)) -
+    parseFloat(formatSum(fee));
 
   await db
     .update(accountsTable)
     .set({
-      current_balance: sql`(${accountsTable.initial_balance} + ${finalBalance})`,
+      current_balance: sql`(${accountsTable.initial_balance} + ${finalTotal})`,
     })
     .where(
       and(

@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { savingsTable, transactionsTable } from "@/db/schema";
 import { Saving } from "@/types/savings/savings.type";
 import { TransactionDetails } from "@/types/transactions/transactions.type";
-import { and, eq, sql, sum } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 
 function generateId(x: string) {
@@ -69,82 +69,34 @@ export async function deleteBudget(id: string, userId: string) {
 }
 
 export async function calculateCurrentAmount(data: TransactionDetails) {
-  const incomeTotal = await db
-    .select({ value: sum(transactionsTable.amount) })
+  const results = await db
+    .select({
+      income: sql<number>`COALESCE(sum(case when transaction_type = 'Income' and transaction_category = ${data.category} then amount else 0 end), 0)`,
+      expense: sql<number>`COALESCE(sum(case when transaction_type = 'Expense' and transaction_category = ${data.category} then amount else 0 end), 0)`,
+      transferred: sql<number>`COALESCE(sum(case when transaction_type = 'Transfer' and transaction_account = ${data.account} and transaction_category = ${data.category} then amount else 0 end), 0)`,
+      received: sql<number>`COALESCE(sum(case when transaction_type = 'Transfer' and receiving_account = ${data.account} and transaction_category = ${data.category} then amount else 0 end), 0)`,
+      fee: sql<number>`COALESCE(sum(case when transaction_type = 'Transfer' and transaction_account = ${data.account} and transaction_category = ${data.category} then fee else 0 end), 0)`,
+    })
     .from(transactionsTable)
-    .where(
-      and(
-        eq(transactionsTable.transaction_type, "Income"),
-        eq(transactionsTable.transaction_account, data.account),
-        eq(transactionsTable.user_id, data.user_id),
-        eq(transactionsTable.transaction_category, data.category),
-      ),
-    );
+    .where(eq(transactionsTable.user_id, data.user_id));
 
-  const expenseTotal = await db
-    .select({ value: sum(transactionsTable.amount) })
-    .from(transactionsTable)
-    .where(
-      and(
-        eq(transactionsTable.transaction_type, "Expense"),
-        eq(transactionsTable.transaction_account, data.account),
-        eq(transactionsTable.user_id, data.user_id),
-        eq(transactionsTable.transaction_category, data.category),
-      ),
-    );
+  const { income, expense, transferred, received, fee } = results[0];
 
-  const receivingTotal = await db
-    .select({ value: sum(transactionsTable.amount) })
-    .from(transactionsTable)
-    .where(
-      and(
-        eq(transactionsTable.transaction_type, "Transfer"),
-        eq(transactionsTable.receiving_account, data.account),
-        eq(transactionsTable.user_id, data.user_id),
-        eq(transactionsTable.receiving_category, data.category),
-      ),
-    );
-
-  const transferringTotal = await db
-    .select({ value: sum(transactionsTable.amount) })
-    .from(transactionsTable)
-    .where(
-      and(
-        eq(transactionsTable.transaction_type, "Transfer"),
-        eq(transactionsTable.transaction_account, data.account),
-        eq(transactionsTable.user_id, data.user_id),
-        eq(transactionsTable.transaction_category, data.category),
-      ),
-    );
-
-  const feeTotal = await db
-    .select({ value: sum(transactionsTable.fee) })
-    .from(transactionsTable)
-    .where(
-      and(
-        eq(transactionsTable.transaction_type, "Transfer"),
-        eq(transactionsTable.transaction_account, data.account),
-        eq(transactionsTable.user_id, data.user_id),
-        eq(transactionsTable.transaction_category, data.category),
-      ),
-    );
-
-  const formatSum = (result: { value: string | number | null }[]) => {
-    return parseFloat(result[0]?.value?.toString() || "0");
+  const formatSum = (value: number) => {
+    return value.toString() || "0";
   };
 
-  const income = formatSum(incomeTotal);
-  const expense = formatSum(expenseTotal);
-  const received = formatSum(receivingTotal);
-  const sent = formatSum(transferringTotal);
-  const fee = formatSum(feeTotal);
-
-  const finalBalance = income + received - (expense + sent) - fee;
+  const finalTotal =
+    parseFloat(formatSum(income)) -
+    parseFloat(formatSum(expense)) -
+    parseFloat(formatSum(transferred)) +
+    parseFloat(formatSum(received)) -
+    parseFloat(formatSum(fee));
 
   await db
     .update(savingsTable)
     .set({
-      current_amount: sql`${savingsTable.current_amount} + ${finalBalance}`,
+      current_amount: sql`${savingsTable.initial_amount} + ${finalTotal}`,
     })
     .where(
       and(

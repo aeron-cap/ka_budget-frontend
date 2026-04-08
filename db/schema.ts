@@ -42,7 +42,8 @@ export const savingsTable = sqliteTable("savings", {
   color: text().notNull(),
   name: text().notNull(),
   account: text().notNull(),
-  current_amount: numeric().notNull(),
+  initial_amount: numeric().notNull().default("0"),
+  current_amount: numeric().notNull().default("0"),
   goal_amount: numeric().notNull(),
   saving_category: text("saving_category").notNull(),
   created_at: integer("created_at", { mode: "timestamp" })
