@@ -1,14 +1,15 @@
 import { saveLocalUser, setLocalUser } from "@/service/local/service";
+import { getAllAccounts } from "@/service/repositories/accountRepository";
 import {
   createUser,
   getUserUsingName,
 } from "@/service/repositories/userRepository";
+import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
-  KeyboardAvoidingView,
   Platform,
   StyleSheet,
   Text,
@@ -17,9 +18,12 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AddAccount from "./modals/addAccount";
 
 export default function LoginScreen(): React.JSX.Element {
   const [name, setName] = useState<string>("");
+  const [showInitialAddAccountModal, setShowInitialAddAccountModal] =
+    useState<boolean>(false);
 
   const handleLogin = async (): Promise<void> => {
     const trimmedName = name.trim();
@@ -32,27 +36,48 @@ export default function LoginScreen(): React.JSX.Element {
           savedUser.user_string,
         );
         if (savedLocalUser) {
-          router.replace("/(tabs)");
+          // TODO: fix the keyboard avoiding for add account Modal
+          // TODO: when reloading, the login is shown for a brief moment
+          // TODO: the fix was in the _layout file, add the checker there, but make it as a helper
+          const hasAccount = await getAllAccounts(savedUser.rand_id, "none");
+          if (!hasAccount || hasAccount.length === 0) {
+            setShowInitialAddAccountModal(true);
+          } else {
+            setShowInitialAddAccountModal(false);
+            router.replace("/(tabs)");
+          }
         }
       } else {
         const savedLocalUser = await saveLocalUser(trimmedName);
         if (savedLocalUser) {
           const response = await createUser(savedLocalUser);
           if (response) {
-            router.replace("/(tabs)");
+            await openInitialAddAccountModal(savedLocalUser.id);
           }
         }
       }
     }
   };
 
+  const openInitialAddAccountModal = async (userId: string): Promise<void> => {
+    const hasAccount = await getAllAccounts(userId, "none");
+    if (!hasAccount || hasAccount.length === 0) {
+      setShowInitialAddAccountModal(true);
+    } else {
+      setShowInitialAddAccountModal(false);
+      router.replace("/(tabs)");
+    }
+  };
+
+  const handleSaveAccount = async (accountData: Account): Promise<void> => {
+    setShowInitialAddAccountModal(false);
+    router.replace("/(tabs)");
+  };
+
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top"]}>
+    <View style={styles.root}>
       <StatusBar style="light" />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.keyboardView}
-      >
+      <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           <View style={styles.contentWrapper}>
             <View style={styles.logoBadge}>
@@ -63,7 +88,7 @@ export default function LoginScreen(): React.JSX.Element {
               <Text style={styles.hiText}>Hi,</Text>
               <TextInput
                 style={styles.nameInput}
-                placeholder="Your Name"
+                placeholder="..."
                 placeholderTextColor="#78716C"
                 value={name}
                 onChangeText={setName}
@@ -99,23 +124,30 @@ export default function LoginScreen(): React.JSX.Element {
             </TouchableOpacity>
           </View>
         </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </SafeAreaView>
+
+      <AddAccount
+        isVisible={showInitialAddAccountModal}
+        isEdit={false}
+        onClose={() => setShowInitialAddAccountModal(false)}
+        onSave={handleSaveAccount}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  root: {
     flex: 1,
     backgroundColor: "#1C1816",
   },
-  keyboardView: {
+  safeArea: {
     flex: 1,
   },
   container: {
     flex: 1,
     justifyContent: "space-between",
-    paddingHorizontal: 32,
+    paddingHorizontal: 16,
     paddingBottom: Platform.OS === "ios" ? 20 : 32,
   },
   contentWrapper: {
@@ -125,7 +157,6 @@ const styles = StyleSheet.create({
   logoBadge: {
     width: 96,
     height: 96,
-    borderRadius: 0,
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     justifyContent: "center",
     alignItems: "center",
@@ -163,8 +194,6 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#FFFFFF",
     height: 60,
-    borderRadius: 0,
-    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
   },

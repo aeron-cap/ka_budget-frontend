@@ -1,4 +1,4 @@
-import AddAccountModal from "@/app/modals/addAccount";
+import AddAccount from "@/app/modals/addAccount";
 import { useCreateAccount } from "@/hooks/useCreateAccount";
 import { useGetAccounts } from "@/hooks/useGetAccounts";
 import { Account } from "@/types/accounts/accounts.type";
@@ -81,7 +81,7 @@ export default function AccountsSection({ limits }: accountListProps) {
         </ScrollView>
       )}
 
-      <AddAccountModal
+      <AddAccount
         isVisible={isModalVisible}
         isEdit={currentAccount ? true : false}
         onClose={() => setIsModalVisible(false)}

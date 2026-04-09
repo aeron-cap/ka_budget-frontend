@@ -13,8 +13,8 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
+  ScrollView,
   StyleSheet,
-  Switch,
   Text,
   TextInput,
   TouchableOpacity,
@@ -37,7 +37,7 @@ export default function AddAccount({
   onSave,
   accountData,
   isEdit,
-}: AddAccountProps) {
+}: AddAccountProps): React.JSX.Element | null {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [renderModal, setRenderModal] = useState(isVisible);
   const [isValidTransaction, setIsValidTransaction] = useState(false);
@@ -51,7 +51,7 @@ export default function AddAccount({
     initial_balance: "0",
     current_balance: "0",
     account_category: "",
-    color: "#000000",
+    color: "#FFFFFF",
     show_in_home: false,
   });
 
@@ -78,7 +78,7 @@ export default function AddAccount({
         initial_balance: accountData ? accountData.initial_balance : "0",
         current_balance: accountData ? accountData.current_balance : "0",
         account_category: accountData?.account_category || "",
-        color: accountData?.color || "#000000",
+        color: accountData?.color || "#FFFFFF",
         show_in_home: accountData?.show_in_home || false,
       };
       setForm(nextForm);
@@ -111,14 +111,15 @@ export default function AddAccount({
     onClose();
   };
 
-  const handleInputChange = (name: keyof typeof form, value: string | boolean) => {
+  const handleInputChange = (
+    name: keyof typeof form,
+    value: string | boolean,
+  ) => {
     const nextForm = {
       ...form,
       [name]: value,
     };
-
     setForm(nextForm);
-
     const { errors } = Validator(nextForm, "Account");
     setIsValidTransaction(errors.length === 0);
   };
@@ -149,9 +150,10 @@ export default function AddAccount({
         </Animated.View>
 
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "padding"}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
           pointerEvents="box-none"
           style={styles.keyboardAvoid}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
         >
           <Animated.View
             style={[
@@ -159,100 +161,132 @@ export default function AddAccount({
               { transform: [{ translateY: slideAnim }] },
             ]}
           >
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>
-                {isEdit ? "Edit" : "New"} Account
-              </Text>
+            <ScrollView
+              bounces={false}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={styles.scrollContainer}
+            >
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>
+                  {isEdit ? "Edit" : "New"} Account
+                </Text>
 
-              <View style={styles.headerActions}>
-                <View style={styles.switchWrapper}>
-                  <Switch
-                    value={form.show_in_home}
-                    onValueChange={(value) => handleInputChange("show_in_home", value)}
-                    trackColor={{ false: "#E2E8F0", true: form.color || "#2563EB" }}
-                    thumbColor="#FFFFFF"
-                    style={styles.headerSwitch}
-                  />
-                  <Text style={styles.switchHelperText}>Show amount in Home</Text>
+                <View style={styles.headerActions}>
+                  <TouchableOpacity
+                    style={styles.switchWrapper}
+                    activeOpacity={0.9}
+                    onPress={() =>
+                      handleInputChange("show_in_home", !form.show_in_home)
+                    }
+                  >
+                    <View
+                      style={[
+                        styles.checkbox,
+                        form.show_in_home && styles.checkboxActive,
+                      ]}
+                    >
+                      {form.show_in_home && (
+                        <Ionicons name="checkmark" size={14} color="#1C1816" />
+                      )}
+                    </View>
+                    <Text style={styles.switchHelperText}>Dashboard</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={handleClose}
+                  >
+                    <Ionicons name="close" size={24} color="#FFFFFF" />
+                  </TouchableOpacity>
                 </View>
-
-                <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={handleClose}
-                >
-                  <Ionicons name="close" size={20} color="#64748B" />
-                </TouchableOpacity>
               </View>
-            </View>
 
-            <Text style={styles.inputLabel}>Account Name</Text>
-            <TextInput
-              style={styles.inputField}
-              placeholder="e.g. Chase Checking"
-              placeholderTextColor="#94A3B8"
-              value={form.name}
-              onChangeText={(value) => handleInputChange("name", value)}
-            />
+              <Text style={styles.inputLabel}>Account Name</Text>
+              <TextInput
+                style={styles.inputField}
+                placeholder="e.g. Chase Checking"
+                placeholderTextColor="#78716C"
+                value={form.name}
+                onChangeText={(value) => handleInputChange("name", value)}
+                selectionColor="#FFFFFF"
+              />
 
-            <Text style={styles.inputLabel}>Account Type</Text>
-            <DropdownInput
-              label=""
-              selectedValue={form.account_type}
-              iconName="link"
-              options={accountTypes}
-              onSelect={(text) => handleInputChange("account_type", text)}
-              hasIcon={false}
-            />
-
-            <Text style={styles.inputLabel}>Account Category</Text>
-            <DropdownInput
-              label=""
-              selectedValue={form.account_category}
-              iconName="link"
-              options={categories}
-              onSelect={(text) => handleInputChange("account_category", text)}
-              hasIcon={false}
-            />
-
-            <View style={styles.lowerSection}>
-              <Text style={styles.inputLabel}>Initial Balance</Text>
-              <View style={styles.amountInputContainer}>
-                <TextInput
-                  style={styles.amountInput}
-                  placeholder="0.00"
-                  placeholderTextColor="#94A3B8"
-                  keyboardType="numeric"
-                  value={form.initial_balance}
-                  onChangeText={(value) =>
-                    handleInputChange("initial_balance", value)
-                  }
+              <Text style={styles.inputLabel}>Account Type</Text>
+              <View style={styles.dropdownContainer}>
+                <DropdownInput
+                  label=""
+                  selectedValue={form.account_type}
+                  iconName="wallet-outline"
+                  options={accountTypes}
+                  onSelect={(text) => handleInputChange("account_type", text)}
+                  hasIcon={false}
                 />
               </View>
 
-              <Text style={styles.inputLabel}>Theme Color</Text>
-              <ColorPicker
-                selectedColor={form.color}
-                changeColor={(color) => handleInputChange("color", color)}
-              />
+              <Text style={styles.inputLabel}>Account Category</Text>
+              <View style={styles.dropdownContainer}>
+                <DropdownInput
+                  label=""
+                  selectedValue={form.account_category}
+                  iconName="grid-outline"
+                  options={categories}
+                  onSelect={(text) =>
+                    handleInputChange("account_category", text)
+                  }
+                  hasIcon={false}
+                />
+              </View>
 
-              <TouchableOpacity
-                style={[
-                  styles.saveBtn,
-                  {
-                    backgroundColor: isValidTransaction
-                      ? form.color
-                      : "#94A3B8",
-                  },
-                ]}
-                onPress={handleSave}
-                disabled={!isValidTransaction}
-              >
-                <Text style={styles.saveBtnText}>
-                  {isEdit ? "Edit" : "Save"} Account
-                </Text>
-              </TouchableOpacity>
-            </View>
+              <View style={styles.lowerSection}>
+                <Text style={styles.inputLabel}>Initial Balance</Text>
+                <View style={styles.amountInputContainer}>
+                  <TextInput
+                    style={styles.amountInput}
+                    placeholder="0.00"
+                    placeholderTextColor="#78716C"
+                    keyboardType="numeric"
+                    value={form.initial_balance}
+                    onChangeText={(value) =>
+                      handleInputChange("initial_balance", value)
+                    }
+                    selectionColor="#FFFFFF"
+                  />
+                </View>
 
+                <Text style={styles.inputLabel}>Theme Color</Text>
+                <ColorPicker
+                  selectedColor={form.color}
+                  changeColor={(color) => handleInputChange("color", color)}
+                />
+
+                <TouchableOpacity
+                  style={[
+                    styles.saveBtn,
+                    {
+                      backgroundColor: isValidTransaction
+                        ? form.color
+                        : "rgba(255, 255, 255, 0.1)",
+                    },
+                  ]}
+                  onPress={handleSave}
+                  disabled={!isValidTransaction}
+                  activeOpacity={0.9}
+                >
+                  <Text
+                    style={[
+                      styles.saveBtnText,
+                      !isValidTransaction && styles.saveBtnTextDisabled,
+                      isValidTransaction && {
+                        color: form.color === "#FFFFFF" ? "#1C1816" : "#FFFFFF",
+                      },
+                    ]}
+                  >
+                    {isEdit ? "Edit" : "Save"} Account
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
             <View style={styles.bottomExtension} />
           </Animated.View>
         </KeyboardAvoidingView>
@@ -267,24 +301,23 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   keyboardAvoid: {
-    width: "100%",
+    flex: 1,
     justifyContent: "flex-end",
+    width: "100%",
   },
   dismissArea: {
     ...StyleSheet.absoluteFillObject,
   },
   modalContent: {
-    backgroundColor: "white",
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    paddingHorizontal: 24,
+    backgroundColor: "#1C1816",
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255, 255, 255, 0.1)",
+    maxHeight: SCREEN_HEIGHT * 0.85,
+  },
+  scrollContainer: {
+    paddingHorizontal: 16,
     paddingTop: 24,
-    paddingBottom: Platform.OS === "ios" ? 40 : 32,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 10,
+    paddingBottom: Platform.OS === "ios" ? 60 : 40,
   },
   bottomExtension: {
     position: "absolute",
@@ -292,7 +325,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 1000,
-    backgroundColor: "white",
+    backgroundColor: "#1C1816",
   },
   modalHeader: {
     flexDirection: "row",
@@ -301,131 +334,69 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   modalTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#0F172A",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 24,
+    color: "#FFFFFF",
   },
   closeButton: {
     width: 36,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: "#F1F5F9",
+    borderRadius: 0,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     justifyContent: "center",
     alignItems: "center",
   },
   inputLabel: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#475569",
+    fontFamily: "PlayfairDisplay_400Regular_Italic",
+    fontSize: 14,
+    color: "#A39B95",
     marginBottom: 8,
     marginTop: 16,
   },
   inputField: {
-    backgroundColor: "#F8FAFC",
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    borderRadius: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: 0,
     paddingHorizontal: 16,
-    height: 50,
-    fontSize: 15,
-    color: "#1E293B",
+    height: 60,
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#FFFFFF",
   },
-  dropdownZIndexWrapper: {
-    ...(Platform.OS === "ios"
-      ? { zIndex: 1000 }
-      : { elevation: 1000, zIndex: 1000 }),
-  },
-  dropdownAnchor: {
-    position: "relative",
-    zIndex: 1000,
-  },
-  absoluteDropdownList: {
-    position: "absolute",
-    top: 54,
-    left: 0,
-    right: 0,
-    backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    borderRadius: 12,
-    paddingVertical: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 10,
-    zIndex: 1000,
-  },
-  dropdownTrigger: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#F8FAFC",
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    height: 50,
-  },
-  dropdownText: {
-    fontSize: 15,
-    color: "#1E293B",
-  },
-  dropdownItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F1F5F9",
-  },
-  lastDropdownItem: {
-    borderBottomWidth: 0,
-  },
-  dropdownItemText: {
-    fontSize: 15,
-    color: "#475569",
-  },
-  dropdownItemTextActive: {
-    color: "#2563EB",
-    fontWeight: "600",
+  dropdownContainer: {
+    minHeight: 60,
+    justifyContent: "center",
   },
   lowerSection: {
-    ...(Platform.OS === "ios" ? { zIndex: -1 } : { elevation: -1, zIndex: -1 }),
+    zIndex: -1,
+    elevation: -1,
   },
   amountInputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F8FAFC",
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    borderRadius: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: 0,
     paddingHorizontal: 16,
-    height: 50,
-  },
-  currencyPrefix: {
-    fontSize: 15,
-    color: "#64748B",
-    fontWeight: "600",
-    marginRight: 8,
+    height: 60,
   },
   amountInput: {
     flex: 1,
-    fontSize: 15,
-    color: "#1E293B",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#FFFFFF",
   },
   saveBtn: {
-    borderRadius: 14,
-    height: 54,
+    borderRadius: 0,
+    height: 60,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 32,
   },
   saveBtnText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "700",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+  },
+  saveBtnTextDisabled: {
+    color: "#78716C",
   },
   headerActions: {
     flexDirection: "row",
@@ -433,15 +404,26 @@ const styles = StyleSheet.create({
   },
   switchWrapper: {
     alignItems: "center",
-    marginRight: 24,
+    marginRight: 16,
     flexDirection: "row",
+    paddingVertical: 8,
   },
-  headerSwitch: {
-    transform: [{ scale: 0.85 }],
+  checkbox: {
+    width: 18,
+    height: 18,
+    borderWidth: 1,
+    borderColor: "#A39B95",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 8,
+  },
+  checkboxActive: {
+    backgroundColor: "#FFFFFF",
+    borderColor: "#FFFFFF",
   },
   switchHelperText: {
-    fontSize: 10,
-    fontWeight: "500",
-    color: "#94A3B8",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 14,
+    color: "#FFFFFF",
   },
 });

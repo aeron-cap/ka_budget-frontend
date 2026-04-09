@@ -32,7 +32,7 @@ export default function DropdownInput({
   options,
   onSelect,
   hasIcon,
-}: DropdownProps) {
+}: DropdownProps): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -75,18 +75,20 @@ export default function DropdownInput({
       <TouchableOpacity
         style={[styles.card, label !== "" && { height: 80 }]}
         onPress={openDropdown}
-        activeOpacity={0.7}
+        activeOpacity={0.9}
       >
         {hasIcon && (
           <View style={styles.iconBox}>
-            <Ionicons name={iconName} size={24} color="#64748B" />
+            <Ionicons name={iconName} size={24} color="#FFFFFF" />
           </View>
         )}
         <View style={styles.textContainer}>
           {label !== "" && <Text style={styles.label}>{label}</Text>}
-          <Text style={styles.value}>{selectedValue}</Text>
+          <Text style={styles.value}>
+            {selectedValue || "Select an option"}
+          </Text>
         </View>
-        <Ionicons name="chevron-down" size={20} color="#94A3B8" />
+        <Ionicons name="chevron-down" size={20} color="#A39B95" />
       </TouchableOpacity>
 
       <Modal
@@ -103,18 +105,18 @@ export default function DropdownInput({
           />
 
           <View style={styles.bottomSheet}>
-            <View style={styles.dragHandle} />
-
             <View style={styles.searchContainer}>
-              <Ionicons name="search" size={18} color="#94A3B8" />
+              <Ionicons name="search" size={18} color="#A39B95" />
               <TextInput
                 style={styles.searchInput}
                 placeholder="Search..."
+                placeholderTextColor="#78716C"
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 autoFocus={true}
                 autoCorrect={false}
                 clearButtonMode="while-editing"
+                selectionColor="#FFFFFF"
               />
             </View>
 
@@ -135,7 +137,7 @@ export default function DropdownInput({
                       <Ionicons
                         name={getIcon(item)}
                         size={18}
-                        color={isSelected ? "#2B60E9" : "#94A3B8"}
+                        color={isSelected ? "#FFFFFF" : "#A39B95"}
                         style={{ marginRight: 12 }}
                       />
                     )}
@@ -160,25 +162,20 @@ export default function DropdownInput({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 8,
+    marginBottom: 16,
   },
   card: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: 24,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: 0,
     padding: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 2,
   },
   iconBox: {
     width: 48,
     height: 48,
-    borderRadius: 16,
-    backgroundColor: "#F1F5F9",
+    borderRadius: 0,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,
@@ -187,82 +184,66 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   label: {
-    fontSize: 12,
-    color: "#94A3B8",
-    fontWeight: "500",
-    marginBottom: 2,
+    fontFamily: "PlayfairDisplay_400Regular_Italic",
+    fontSize: 14,
+    color: "#A39B95",
+    marginBottom: 4,
   },
   value: {
-    fontSize: 14,
-    color: "#1E293B",
-    fontWeight: "700",
-  },
-  keyboardAvoidingView: {
-    flex: 1,
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#FFFFFF",
   },
   modalContentWrapper: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
   },
   modalOverlay: {
     ...StyleSheet.absoluteFillObject,
   },
   bottomSheet: {
-    backgroundColor: "white",
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    backgroundColor: "#1C1816",
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255, 255, 255, 0.1)",
     maxHeight: "80%",
     minHeight: "80%",
     paddingTop: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 16,
-    elevation: 10,
-  },
-  dragHandle: {
-    width: 40,
-    height: 4,
-    backgroundColor: "#E2E8F0",
-    borderRadius: 2,
-    alignSelf: "center",
-    marginBottom: 8,
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#F1F5F9",
+    borderBottomColor: "rgba(255, 255, 255, 0.05)",
   },
   searchInput: {
     flex: 1,
-    marginLeft: 10,
-    fontSize: 16,
-    color: "#1E293B",
+    marginLeft: 12,
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#FFFFFF",
     paddingVertical: 8,
   },
   listContent: {
     paddingVertical: 8,
     paddingHorizontal: 20,
-    paddingBottom: Platform.OS === "ios" ? 40 : 20, // Extra padding for bottom home indicator
+    paddingBottom: Platform.OS === "ios" ? 40 : 20,
   },
   optionItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 16,
+    paddingVertical: 18,
     borderBottomWidth: 1,
-    borderBottomColor: "#F1F5F9",
+    borderBottomColor: "rgba(255, 255, 255, 0.05)",
   },
   optionText: {
-    fontSize: 16,
-    color: "#475569",
-    fontWeight: "500",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#A39B95",
   },
   selectedOptionText: {
-    color: "#2B60E9",
-    fontWeight: "700",
+    color: "#FFFFFF",
   },
 });
