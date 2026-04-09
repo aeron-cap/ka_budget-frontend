@@ -2,7 +2,6 @@ import DateAndFileInputs from "@/components/dateAndFileInput";
 import DropdownInput from "@/components/dropdownInput";
 import TransactionTypeSelector from "@/components/transactionTypeSelector";
 import { categories } from "@/constants/categories";
-import { ACCOUNTS } from "@/constants/sampleData";
 import { Validator } from "@/helpers/helpers";
 import { useCreateTransaction } from "@/hooks/useCreateTransaction";
 import { useGetAccounts } from "@/hooks/useGetAccounts";
@@ -221,7 +220,7 @@ export default function AddModal() {
               <View style={{ flex: 1 }}>
                 <DropdownInput
                   label="Receiving Account"
-                  selectedValue={form?.receiving_account ?? ACCOUNTS[0].name}
+                  selectedValue={form?.receiving_account ?? accountNameList[0]}
                   iconName="trending-down"
                   options={accountNameList}
                   onSelect={(text) =>

@@ -1,5 +1,4 @@
 import AddAccountModal from "@/app/modals/addAccount";
-import { ACCOUNTS } from "@/constants/sampleData";
 import { useCreateAccount } from "@/hooks/useCreateAccount";
 import { useGetAccounts } from "@/hooks/useGetAccounts";
 import { Account } from "@/types/accounts/accounts.type";
@@ -14,8 +13,6 @@ import {
 } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import AccountCard from "./accountCards";
-
-const SAMPLE_ACCOUNTS: Account[] = ACCOUNTS;
 
 type accountListProps = {
   limits: string;

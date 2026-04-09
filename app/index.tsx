@@ -1,7 +1,6 @@
 import { saveLocalUser, setLocalUser } from "@/service/local/service";
 import {
   createUser,
-  getUser,
   getUserUsingName,
 } from "@/service/repositories/userRepository";
 import { Ionicons } from "@expo/vector-icons";
@@ -24,7 +23,6 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     if (name.trim()) {
-      // temporary solution for multiple users in one device, or relogging in after clearing cache
       const savedUser = await getUserUsingName(name.trim());
       if (savedUser) {
         const savedLocalUser = await setLocalUser(

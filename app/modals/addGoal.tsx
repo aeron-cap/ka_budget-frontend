@@ -1,7 +1,7 @@
 import ColorPicker from "@/components/colorPicker";
 import DropdownInput from "@/components/dropdownInput";
 import { categories } from "@/constants/categories";
-import { THEME_COLORS } from "@/constants/sampleData";
+import { THEME_COLORS } from "@/constants/uiElements";
 import { Validator } from "@/helpers/helpers";
 import { useGetAccounts } from "@/hooks/useGetAccounts";
 import { Saving } from "@/types/savings/savings.type";

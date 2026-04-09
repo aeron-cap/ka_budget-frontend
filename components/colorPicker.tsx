@@ -1,4 +1,4 @@
-import { THEME_COLORS } from "@/constants/sampleData";
+import { THEME_COLORS } from "@/constants/uiElements";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 type ColorPickerProps = {

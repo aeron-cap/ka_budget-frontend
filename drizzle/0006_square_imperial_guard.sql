@@ -1,0 +1,1 @@
+ALTER TABLE `accounts` ADD `show_in_home` integer DEFAULT false;

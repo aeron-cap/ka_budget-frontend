@@ -21,6 +21,7 @@ export function useCreateTransaction() {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["savings"] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      queryClient.invalidateQueries({ queryKey: ["accountsAndBalance"] });
     },
   });
 }

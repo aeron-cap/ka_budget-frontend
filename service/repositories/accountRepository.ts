@@ -122,3 +122,22 @@ export async function calculateCurrentBalance(data: TransactionDetails) {
       ),
     );
 }
+
+export async function getAccountsAndBalance(userId: string) {
+  const accounts = await db.
+    select()
+    .from(accountsTable)
+    .where(and(eq(accountsTable.user_id, userId), eq(accountsTable.show_in_home, true)));
+
+  const total = await db
+    .select({
+      total_balance: sql<number>`COALESCE(sum(current_balance), 0)`,
+    })
+    .from(accountsTable)
+    .where(and(eq(accountsTable.user_id, userId), eq(accountsTable.show_in_home, true)));
+
+  return {
+    accounts,
+    total_balance: total[0].total_balance,
+  };
+}

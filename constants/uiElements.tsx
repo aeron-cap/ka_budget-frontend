@@ -6,6 +6,14 @@ import {
 } from "@/types/entities/categories.type";
 import { Ionicons } from "@expo/vector-icons";
 
+export const THEME_COLORS = [
+  "#2563EB", 
+  "#16A34A", 
+  "#D97706", 
+  "#DC2626",
+  "#9333EA", 
+];
+
 const allTypes: TransactionType[] = [
   "Expense",
   "Income",

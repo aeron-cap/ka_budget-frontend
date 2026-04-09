@@ -43,6 +43,13 @@
       "when": 1775605435793,
       "tag": "0005_adorable_war_machine",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1775709372868,
+      "tag": "0006_square_imperial_guard",
+      "breakpoints": true
     }
   ]
 }

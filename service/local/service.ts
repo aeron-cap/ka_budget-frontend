@@ -44,3 +44,11 @@ export async function setLocalUser(
     return null;
   }
 }
+
+export async function clearLocalUser() {
+  try {
+    await AsyncStorage.clear();
+  } catch (e) {
+    console.error(e);
+  }
+}

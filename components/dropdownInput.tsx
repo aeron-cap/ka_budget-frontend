@@ -4,24 +4,17 @@ import {
 } from "@/constants/uiElements";
 import { CategoryName } from "@/types/entities/categories.type";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
-  Dimensions,
   FlatList,
   Modal,
+  Platform,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
-  ViewStyle,
 } from "react-native";
-
-type TriggerLayout = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
 
 type DropdownProps = {
   label: string;
@@ -41,12 +34,9 @@ export default function DropdownInput({
   hasIcon,
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [triggerLayout, setTriggerLayout] = useState<TriggerLayout | null>(
-    null,
-  );
-  const containerRef = useRef<View>(null);
-  const screenHeight = Dimensions.get("window").height;
-  const [hasIcons, setHasIcons] = useState(() => {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [hasIcons] = useState(() => {
     const firstOption = options?.[0];
     return (
       !!firstOption &&
@@ -54,23 +44,25 @@ export default function DropdownInput({
     );
   });
 
+  const filteredOptions = useMemo(() => {
+    return options.filter((option) =>
+      option.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }, [options, searchQuery]);
+
   const getIcon = (name: string) => {
     if (name in categoryIconsAndTypes) {
       return categoryIconsAndTypes[name as CategoryName].icon;
     }
-
     if (name in accountTypeIcons) {
       return accountTypeIcons[name as keyof typeof accountTypeIcons];
     }
-
     return "help-circle-outline";
   };
 
   const openDropdown = () => {
-    containerRef.current?.measureInWindow((x, y, width, height) => {
-      setTriggerLayout({ x, y, width, height });
-      setIsOpen(true);
-    });
+    setSearchQuery("");
+    setIsOpen(true);
   };
 
   const handleSelect = (option: string) => {
@@ -78,38 +70,24 @@ export default function DropdownInput({
     setIsOpen(false);
   };
 
-  const getDropdownStyle = (): ViewStyle => {
-    if (!triggerLayout) return {};
-    const { x, y, width, height } = triggerLayout;
-
-    return {
-      top: y + height + 8,
-      left: x,
-      width: width,
-      maxHeight: Math.min(screenHeight * 0.4, screenHeight - y - height - 100),
-    };
-  };
-
   return (
     <View style={styles.container}>
-      <View ref={containerRef} style={{ overflow: "visible" }}>
-        <TouchableOpacity
-          style={[styles.card, label !== "" && { height: 80 }]}
-          onPress={openDropdown}
-          activeOpacity={0.7}
-        >
-          {hasIcon && (
-            <View style={styles.iconBox}>
-              <Ionicons name={iconName} size={24} color="#64748B" />
-            </View>
-          )}
-          <View style={styles.textContainer}>
-            {label !== "" && <Text style={styles.label}>{label}</Text>}
-            <Text style={styles.value}>{selectedValue}</Text>
+      <TouchableOpacity
+        style={[styles.card, label !== "" && { height: 80 }]}
+        onPress={openDropdown}
+        activeOpacity={0.7}
+      >
+        {hasIcon && (
+          <View style={styles.iconBox}>
+            <Ionicons name={iconName} size={24} color="#64748B" />
           </View>
-          <Ionicons name="chevron-down" size={20} color="#94A3B8" />
-        </TouchableOpacity>
-      </View>
+        )}
+        <View style={styles.textContainer}>
+          {label !== "" && <Text style={styles.label}>{label}</Text>}
+          <Text style={styles.value}>{selectedValue}</Text>
+        </View>
+        <Ionicons name="chevron-down" size={20} color="#94A3B8" />
+      </TouchableOpacity>
 
       <Modal
         visible={isOpen}
@@ -117,44 +95,63 @@ export default function DropdownInput({
         animationType="fade"
         onRequestClose={() => setIsOpen(false)}
       >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setIsOpen(false)}
-        />
-
-        <View style={[styles.floatingDropdown, getDropdownStyle()]}>
-          <FlatList
-            data={options}
-            keyExtractor={(item) => item}
-            contentContainerStyle={styles.listContent}
-            renderItem={({ item }) => {
-              const isSelected = selectedValue === item;
-              return (
-                <TouchableOpacity
-                  style={styles.optionItem}
-                  onPress={() => handleSelect(item)}
-                >
-                  {hasIcons && (
-                    <Ionicons
-                      name={getIcon(item)}
-                      size={18}
-                      color={isSelected ? "#2B60E9" : "#94A3B8"}
-                      style={{ marginRight: 12 }}
-                    />
-                  )}
-                  <Text
-                    style={[
-                      styles.optionText,
-                      isSelected && styles.selectedOptionText,
-                    ]}
-                  >
-                    {item}
-                  </Text>
-                </TouchableOpacity>
-              );
-            }}
+        <View style={styles.modalContentWrapper}>
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setIsOpen(false)}
           />
+
+          <View style={styles.bottomSheet}>
+            <View style={styles.dragHandle} />
+
+            <View style={styles.searchContainer}>
+              <Ionicons name="search" size={18} color="#94A3B8" />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                autoFocus={true}
+                autoCorrect={false}
+                clearButtonMode="while-editing"
+              />
+            </View>
+
+            <FlatList
+              data={filteredOptions}
+              keyExtractor={(item) => item}
+              contentContainerStyle={styles.listContent}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }) => {
+                const isSelected = selectedValue === item;
+                return (
+                  <TouchableOpacity
+                    style={styles.optionItem}
+                    onPress={() => handleSelect(item)}
+                  >
+                    {hasIcons && (
+                      <Ionicons
+                        name={getIcon(item)}
+                        size={18}
+                        color={isSelected ? "#2B60E9" : "#94A3B8"}
+                        style={{ marginRight: 12 }}
+                      />
+                    )}
+                    <Text
+                      style={[
+                        styles.optionText,
+                        isSelected && styles.selectedOptionText,
+                      ]}
+                    >
+                      {item}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              }}
+            />
+          </View>
         </View>
       </Modal>
     </View>
@@ -164,7 +161,6 @@ export default function DropdownInput({
 const styles = StyleSheet.create({
   container: {
     marginBottom: 8,
-    overflow: "visible",
   },
   card: {
     flexDirection: "row",
@@ -201,35 +197,67 @@ const styles = StyleSheet.create({
     color: "#1E293B",
     fontWeight: "700",
   },
-  modalOverlay: {
+  keyboardAvoidingView: {
     flex: 1,
-    backgroundColor: "transparent",
   },
-  floatingDropdown: {
-    position: "absolute",
+  modalContentWrapper: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+  },
+  modalOverlay: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  bottomSheet: {
     backgroundColor: "white",
-    borderRadius: 20,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    maxHeight: "80%",
+    minHeight: "80%",
+    paddingTop: 12,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
+    shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
     shadowRadius: 16,
     elevation: 10,
-    overflow: "hidden",
+  },
+  dragHandle: {
+    width: 40,
+    height: 4,
+    backgroundColor: "#E2E8F0",
+    borderRadius: 2,
+    alignSelf: "center",
+    marginBottom: 8,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F1F5F9",
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 16,
+    color: "#1E293B",
+    paddingVertical: 8,
   },
   listContent: {
     paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
+    paddingBottom: Platform.OS === "ios" ? 40 : 20, // Extra padding for bottom home indicator
   },
   optionItem: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 14,
+    paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#F1F5F9",
   },
   optionText: {
-    fontSize: 15,
+    fontSize: 16,
     color: "#475569",
     fontWeight: "500",
   },

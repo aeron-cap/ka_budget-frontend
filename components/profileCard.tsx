@@ -1,17 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 interface Props {
   name: string;
-  email: string;
 }
 
-export default function ProfileCard({ name, email }: Props) {
+export default function ProfileCard({ name }: Props) {
   return (
     <View style={styles.card}>
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{name}</Text>
-        <Text style={styles.email}>{email}</Text>
       </View>
     </View>
   );

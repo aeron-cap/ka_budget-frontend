@@ -1,24 +1,34 @@
-import { SAMPLE_SELECTED_TAGS } from "@/constants/sampleData";
-import { Account } from "@/types/accounts/accounts.type";
+import { useGetAccountsAndBalance } from "@/hooks/useGetAccountsAndBalance";
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet, Text, View } from "react-native";
-
-type BalanceHomeProps = {
-  accounts: string[];
-};
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function BalanceHome() {
+  const {data: accounts, isPending} = useGetAccountsAndBalance();
+
+  if (isPending || accounts?.accounts.length === 0) {
+    return (
+      <View style={styles.balanceContainer}>
+        <LinearGradient
+          colors={["#2B60E9", "#1A3A8A"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.background}
+        />
+        <View style={{ ...StyleSheet.absoluteFillObject, justifyContent: "center", alignItems: "center"}}>
+          <View style={{ justifyContent: "center", alignItems: "center"}}>
+            <Text style={styles.addAccountsText}>Add Accounts from Profile to Show here.</Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   const shortenAccountName = (name: string) => {
     return name.length > 12 ? name.slice(0, 10) + "..." : name;
   };
 
   const getAndFormatBalance = () => {
-    const balance: number = SAMPLE_SELECTED_TAGS.accounts.reduce(
-      (total: number, account: Account) => {
-        return total + parseFloat(account.current_balance || "0");
-      },
-      0,
-    );
+    const balance: number = accounts?.total_balance || 0; 
 
     return balance.toLocaleString("en-US", {
       style: "currency",
@@ -41,57 +51,28 @@ export default function BalanceHome() {
           <View style={styles.headerRow}>
             <Text style={styles.headerText}>Total Balance for Accounts:</Text>
           </View>
-          <View style={styles.tagsSection}>
-            {SAMPLE_SELECTED_TAGS.accounts.slice(0, 3).map((account, idx) => (
-              <View
-                key={idx}
-                style={[
-                  styles.tagPill,
-                  { backgroundColor: account.color + "70" },
-                ]}
-              >
-                <Text style={styles.tagText}>
-                  {shortenAccountName(account.name)}
-                </Text>
-              </View>
-            ))}
-          </View>
-
+            <ScrollView
+              horizontal={true} 
+              showsHorizontalScrollIndicator={false}
+              style={{ flexGrow: 0 }} 
+              contentContainerStyle={styles.tagsSection}
+            >
+              {accounts?.accounts.map((account, idx) => (
+                <View
+                  key={idx}
+                  style={[
+                    styles.tagPill,
+                    { backgroundColor: account.color + "90" },
+                  ]}
+                >
+                  <Text style={styles.tagText}>
+                    {shortenAccountName(account.name)}
+                  </Text>
+                </View>
+              ))}
+            </ScrollView>
           <Text style={styles.balanceText}>{balance}</Text>
         </View>
-
-        {/* <Text style={styles.runningText}>This Month</Text>
-        <View style={styles.movementContainer}>
-          <View style={styles.movement}>
-            <View
-              style={[
-                styles.iconCircle,
-                { backgroundColor: "rgba(255, 255, 255, 0.15)" },
-              ]}
-            >
-              <Ionicons name="arrow-down-outline" size={16} color="#4ADE80" />
-            </View>
-            <View style={styles.movementTextGroup}>
-              <Text style={styles.movementLabel}>Income</Text>
-              <Text style={styles.movementValue}>8,200</Text>
-            </View>
-          </View>
-
-          <View style={styles.movement}>
-            <View
-              style={[
-                styles.iconCircle,
-                { backgroundColor: "rgba(255, 255, 255, 0.15)" },
-              ]}
-            >
-              <Ionicons name="arrow-up-outline" size={16} color="#F87171" />
-            </View>
-            <View style={styles.movementTextGroup}>
-              <Text style={styles.movementLabel}>Expense</Text>
-              <Text style={styles.movementValue}>3,450.75</Text>
-            </View>
-          </View>
-        </View> */}
       </View>
     </View>
   );
@@ -196,4 +177,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
   },
+  addAccountsText: {
+    color: "rgba(255, 255, 255, 0.7)",
+    fontSize: 12,
+    fontWeight: "500",
+    marginTop: 4,
+  }
 });

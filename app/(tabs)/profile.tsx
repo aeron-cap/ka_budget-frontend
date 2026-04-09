@@ -1,24 +1,24 @@
 import AccountsSection from "@/components/accountsSection";
+import SettingsSection from "@/components/settingSection";
+import { useGetUser } from "@/hooks/useGetUser";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Profile() {
+  const { user } = useGetUser();
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Profile</Text>
-        {/* <TouchableOpacity style={styles.settingsButton}>
-          <Ionicons name="settings-outline" size={24} color="#64748B" />
-        </TouchableOpacity> */}
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* <View style={styles.contentPadding}>
-          <ProfileCard name={displayName} email="user@gmail.com" />
+          <ProfileCard name={user ? user.name : ""}/>
         </View> */}
 
         <AccountsSection limits="none" />
-        {/* <SettingsSection /> */}
+        <SettingsSection />
       </ScrollView>
     </SafeAreaView>
   );

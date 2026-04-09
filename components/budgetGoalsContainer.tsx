@@ -18,26 +18,6 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export default function BudgetGoalContainer() {
   const { data: budgets = [], isPending: isFetching } = useGetBudget("5");
-  const { mutate: processBudget, isPending } = useCreateBudget();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentGoal, setCurrentGoal] = useState<Saving | null>(null);
-  const [isEdit, setIsEdit] = useState<boolean>(false);
-
-  const handleSaveSaving = async (goalData: Saving) => {
-    processBudget(goalData, {
-      onSuccess: () => {
-        setIsModalVisible(false);
-      },
-    });
-  };
-
-  const editSavingGoal = (goalData: Saving) => {
-    if (goalData) {
-      setCurrentGoal(goalData);
-      setIsEdit(true);
-      setIsModalVisible(true);
-    }
-  };
 
   if (isFetching) {
     return <ActivityIndicator size="small" color="#000" />;
@@ -61,21 +41,11 @@ export default function BudgetGoalContainer() {
         {(budgets ?? []).map((b, idx) => {
           return (
             <View key={idx} style={style.itemWrapper}>
-              <BudgetGoal goal={b} onPress={() => editSavingGoal(b)} />
+              <BudgetGoal goal={b} onPress={() => null} />
             </View>
           );
         })}
       </ScrollView>
-
-      <AddGoalModal
-        isVisible={isModalVisible}
-        onClose={() => {
-          setIsModalVisible(false);
-        }}
-        onSave={handleSaveSaving}
-        goalData={currentGoal}
-        isEdit={isEdit}
-      />
     </View>
   );
 }

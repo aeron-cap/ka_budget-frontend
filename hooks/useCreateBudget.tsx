@@ -21,6 +21,7 @@ export function useCreateBudget() {
       queryClient.invalidateQueries({ queryKey: ["savings"] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      queryClient.invalidateQueries({ queryKey: ["accountsAndBalance"] });
     },
   });
 }

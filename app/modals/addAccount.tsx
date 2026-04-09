@@ -14,6 +14,7 @@ import {
   Modal,
   Platform,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   TouchableOpacity,
@@ -51,6 +52,7 @@ export default function AddAccount({
     current_balance: "0",
     account_category: "",
     color: "#000000",
+    show_in_home: false,
   });
 
   useEffect(() => {
@@ -77,6 +79,7 @@ export default function AddAccount({
         current_balance: accountData ? accountData.current_balance : "0",
         account_category: accountData?.account_category || "",
         color: accountData?.color || "#000000",
+        show_in_home: accountData?.show_in_home || false,
       };
       setForm(nextForm);
 
@@ -108,7 +111,7 @@ export default function AddAccount({
     onClose();
   };
 
-  const handleInputChange = (name: keyof typeof form, value: string) => {
+  const handleInputChange = (name: keyof typeof form, value: string | boolean) => {
     const nextForm = {
       ...form,
       [name]: value,
@@ -117,7 +120,6 @@ export default function AddAccount({
     setForm(nextForm);
 
     const { errors } = Validator(nextForm, "Account");
-    console.log(errors);
     setIsValidTransaction(errors.length === 0);
   };
 
@@ -130,6 +132,7 @@ export default function AddAccount({
       animationType="none"
       onRequestClose={handleClose}
       statusBarTranslucent
+      navigationBarTranslucent
     >
       <View style={styles.modalWrapper}>
         <Animated.View style={[StyleSheet.absoluteFill, { opacity: fadeAnim }]}>
@@ -160,12 +163,26 @@ export default function AddAccount({
               <Text style={styles.modalTitle}>
                 {isEdit ? "Edit" : "New"} Account
               </Text>
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={handleClose}
-              >
-                <Ionicons name="close" size={20} color="#64748B" />
-              </TouchableOpacity>
+
+              <View style={styles.headerActions}>
+                <View style={styles.switchWrapper}>
+                  <Switch
+                    value={form.show_in_home}
+                    onValueChange={(value) => handleInputChange("show_in_home", value)}
+                    trackColor={{ false: "#E2E8F0", true: form.color || "#2563EB" }}
+                    thumbColor="#FFFFFF"
+                    style={styles.headerSwitch}
+                  />
+                  <Text style={styles.switchHelperText}>Show amount in Home</Text>
+                </View>
+
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={handleClose}
+                >
+                  <Ionicons name="close" size={20} color="#64748B" />
+                </TouchableOpacity>
+              </View>
             </View>
 
             <Text style={styles.inputLabel}>Account Name</Text>
@@ -409,5 +426,22 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "700",
+  },
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  switchWrapper: {
+    alignItems: "center",
+    marginRight: 24,
+    flexDirection: "row",
+  },
+  headerSwitch: {
+    transform: [{ scale: 0.85 }],
+  },
+  switchHelperText: {
+    fontSize: 10,
+    fontWeight: "500",
+    color: "#94A3B8",
   },
 });

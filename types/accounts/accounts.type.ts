@@ -6,8 +6,5 @@ export type Account = {
   current_balance: string | null;
   account_category: string;
   color: string;
-};
-
-export type AccountInHome = {
-  accounts: Account[];
+  show_in_home?: boolean | null;
 };

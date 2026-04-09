@@ -32,3 +32,13 @@ export async function getUserUsingName(name: string) {
     .get();
   return user;
 }
+
+export async function editUserName(newName: string, userId: string) {
+  const newUserString = `${newName}-${userId}`;
+  const user = await db
+    .update(usersTable)
+    .set({ name: newName, user_string: newUserString })
+    .where(eq(usersTable.rand_id, userId))
+    .returning();
+  return user;
+}

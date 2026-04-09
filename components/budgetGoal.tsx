@@ -22,7 +22,7 @@ export default function BudgetGoal({ goal, onPress }: BudgetGoalProps) {
 
   return (
     <TouchableOpacity
-      activeOpacity={0.7}
+      activeOpacity={1}
       onPress={() => onPress(goal)}
       style={style.touchContainer}
     >
