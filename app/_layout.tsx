@@ -2,6 +2,13 @@ import { db, expo } from "@/db";
 import { runMigrations } from "@/db/runMigrations";
 import { getLocalUser } from "@/service/local/service";
 import { getUser } from "@/service/repositories/userRepository";
+import {
+  PlayfairDisplay_400Regular,
+  PlayfairDisplay_400Regular_Italic,
+  PlayfairDisplay_600SemiBold,
+  PlayfairDisplay_700Bold,
+  useFonts,
+} from "@expo-google-fonts/playfair-display";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { router, SplashScreen, Stack } from "expo-router";
@@ -14,6 +21,13 @@ const queryClient = new QueryClient();
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
   const [hasName, setHasName] = useState(false);
+
+  const [fontsLoaded, fontError] = useFonts({
+    PlayfairDisplay_400Regular,
+    PlayfairDisplay_600SemiBold,
+    PlayfairDisplay_400Regular_Italic,
+    PlayfairDisplay_700Bold,
+  });
 
   useDrizzleStudio(expo);
 
@@ -29,7 +43,7 @@ export default function RootLayout() {
             setHasName(true);
           }
         }
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 1500));
       } catch (e) {
         console.warn(e);
       } finally {
@@ -42,14 +56,14 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (isReady) {
+    if (isReady && (fontsLoaded || fontError)) {
       if (hasName) {
         router.replace("/(tabs)");
       }
     }
-  }, [isReady, hasName]);
+  }, [isReady, hasName, fontsLoaded, fontError]);
 
-  if (!isReady) {
+  if (!isReady || (!fontsLoaded && !fontError)) {
     return null;
   }
 
