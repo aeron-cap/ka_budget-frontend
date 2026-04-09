@@ -3,31 +3,24 @@ import {
   editBudget,
 } from "@/service/repositories/budgetRepository";
 import { Saving } from "@/types/savings/savings.type";
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useGetUser } from "./useGetUser";
 
 export function useCreateBudget() {
-  const { user, isLoading } = useGetUser();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const processBudget = async (data: Saving) => {
-    if (isLoading || !user) {
-      return null;
-    }
-
-    setIsSubmitting(true);
-    try {
-      if (data.id !== "" && typeof data.id === "string") {
-        await editBudget(data.id, data, user.id);
+  const { user } = useGetUser();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Saving) => {
+      if (data.id) {
+        return editBudget(data.id, data, user?.id);
       } else {
-        await createBugdet(data, user.id);
+        return createBugdet(data, user?.id);
       }
-    } catch (error) {
-      console.error("Error creating budget:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return { processBudget, isSubmitting };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["savings"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
+    },
+  });
 }

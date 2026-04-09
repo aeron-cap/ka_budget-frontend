@@ -31,7 +31,7 @@ export default function TransactionDetailsModal({
   const [renderModal, setRenderModal] = useState(isVisible);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const { removeTransaction, isDeleting } = useDeleteTransaction();
+  const { mutate: deleteTransaction, isPending } = useDeleteTransaction();
 
   useEffect(() => {
     if (isVisible) {
@@ -100,8 +100,11 @@ export default function TransactionDetailsModal({
   };
 
   const voidTransaction = () => {
-    removeTransaction(transaction.id);
-    onClose();
+    deleteTransaction(transaction, {
+      onSuccess: () => {
+        onClose();
+      },
+    });
   };
 
   const getIcon = (name: string) => {

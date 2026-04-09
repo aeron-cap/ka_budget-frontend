@@ -16,8 +16,7 @@ const ACCOUNTS = [
   "Cash Wallet",
 ];
 
-// TODO: return a state to the modal about the selected data
-export default function AccountDropdown({}) {
+export default function AccountDropdown() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState(ACCOUNTS[0]);
 

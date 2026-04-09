@@ -4,35 +4,28 @@ import { useCreateBudget } from "@/hooks/useCreateBudget";
 import { useGetBudget } from "@/hooks/useGetBudget";
 import { Saving } from "@/types/savings/savings.type";
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 
 export default function BudgetGoalList() {
-  const { budgetList, isFetching, refetch } = useGetBudget("none");
-  const { processBudget, isSubmitting } = useCreateBudget();
+  const { data: budgets = [], isPending: isFetching } = useGetBudget("none");
+  const { mutate: processBudget, isPending } = useCreateBudget();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentGoal, setCurrentGoal] = useState<Saving | null>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const computedHeight = budgetList.length > 0 ? budgetList.length * 160 : 200;
-
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-
-      return () => {};
-    }, [refetch]),
-  );
+  const computedHeight = budgets.length > 0 ? budgets.length * 160 : 200;
 
   if (isFetching) {
     return <ActivityIndicator size="small" color="#000" />;
   }
 
   const handleSaveSaving = async (goalData: Saving) => {
-    await processBudget(goalData);
-    setIsModalVisible(false);
-    refetch();
+    processBudget(goalData, {
+      onSuccess: () => {
+        setIsModalVisible(false);
+      },
+    });
   };
 
   const editSavingGoal = (goalData: Saving) => {
@@ -56,7 +49,7 @@ export default function BudgetGoalList() {
         <Text style={styles.headerTitle}>Saving Goals</Text>
       </View>
 
-      {budgetList.length === 0 ? (
+      {budgets.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>No Saving Goals available.</Text>
           <Text style={styles.emptyHelperText}>
@@ -64,7 +57,7 @@ export default function BudgetGoalList() {
           </Text>
         </View>
       ) : (
-        (budgetList ?? []).map((goal, idx) => {
+        (budgets ?? []).map((goal, idx) => {
           const percentage =
             goal.current_amount === goal.goal_amount
               ? 100

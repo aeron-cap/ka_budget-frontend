@@ -1,27 +1,13 @@
 import { getAllAccounts } from "@/service/repositories/accountRepository";
-import { Account } from "@/types/accounts/accounts.type";
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useGetUser } from "./useGetUser";
 
 export function useGetAccounts(limits: string) {
-  const { user, isLoading } = useGetUser();
-  const [isFetching, setIsFetching] = useState(false);
-  const [data, setData] = useState<Account[]>([]);
-
-  const refetch = useCallback(async () => {
-    if (isLoading || !user) return;
-    setIsFetching(true);
-    try {
-      const result = await getAllAccounts(user.id, limits);
-      setData(result ?? []);
-    } finally {
-      setIsFetching(false);
-    }
-  }, [user, limits, isLoading]);
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
-
-  return { accountList: data, isFetching, refetch };
+  const { user } = useGetUser();
+  return useQuery({
+    queryKey: ["accounts", limits],
+    queryFn: () => getAllAccounts(user?.id || "", limits),
+    enabled: !!user?.id,
+    refetchOnWindowFocus: true,
+  });
 }

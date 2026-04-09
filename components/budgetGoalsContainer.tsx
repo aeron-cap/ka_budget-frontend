@@ -2,8 +2,8 @@ import AddGoalModal from "@/app/modals/addGoal";
 import { useCreateBudget } from "@/hooks/useCreateBudget";
 import { useGetBudget } from "@/hooks/useGetBudget";
 import { Saving } from "@/types/savings/savings.type";
-import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { router } from "expo-router";
+import { useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -17,24 +17,18 @@ import BudgetGoal from "./budgetGoal";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export default function BudgetGoalContainer() {
-  const { budgetList, isFetching, refetch } = useGetBudget("5");
-  const { processBudget, isSubmitting } = useCreateBudget();
+  const { data: budgets = [], isPending: isFetching } = useGetBudget("5");
+  const { mutate: processBudget, isPending } = useCreateBudget();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentGoal, setCurrentGoal] = useState<Saving | null>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-
-      return () => {};
-    }, [refetch]),
-  );
-
   const handleSaveSaving = async (goalData: Saving) => {
-    await processBudget(goalData);
-    setIsModalVisible(false);
-    refetch();
+    processBudget(goalData, {
+      onSuccess: () => {
+        setIsModalVisible(false);
+      },
+    });
   };
 
   const editSavingGoal = (goalData: Saving) => {
@@ -49,7 +43,7 @@ export default function BudgetGoalContainer() {
     return <ActivityIndicator size="small" color="#000" />;
   }
 
-  if (budgetList.length === 0) {
+  if (budgets.length === 0) {
     return <View style={{ paddingBottom: 10 }}></View>;
   }
 
@@ -64,7 +58,7 @@ export default function BudgetGoalContainer() {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={style.scrollContent}
       >
-        {(budgetList ?? []).map((b, idx) => {
+        {(budgets ?? []).map((b, idx) => {
           return (
             <View key={idx} style={style.itemWrapper}>
               <BudgetGoal goal={b} onPress={() => editSavingGoal(b)} />

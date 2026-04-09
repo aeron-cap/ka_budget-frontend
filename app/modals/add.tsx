@@ -8,9 +8,8 @@ import { useCreateTransaction } from "@/hooks/useCreateTransaction";
 import { useGetAccounts } from "@/hooks/useGetAccounts";
 import { Transaction } from "@/types/transactions/transactions.type";
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -38,18 +37,14 @@ export default function AddModal() {
   const [isValidTransaction, setIsValidTransaction] = useState(
     id ? true : false,
   );
-  const { accountList, isFetching, refetch } = useGetAccounts("none");
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
+  const { data: accounts = [], isPending } = useGetAccounts("none");
 
-      return () => {};
-    }, [refetch]),
-  );
   const accountNameList = useMemo(() => {
-    return accountList.map((account) => account.name);
-  }, [accountList]);
-  const { processTransaction, isSubmitting } = useCreateTransaction();
+    return accounts.map((account) => account.name);
+  }, [accounts]);
+
+  const { mutate: processTransaction, isPending: isPendingSaving } =
+    useCreateTransaction();
 
   const [form, setForm] = useState<Transaction>({
     id: "",
@@ -111,7 +106,11 @@ export default function AddModal() {
   };
 
   const saveTransaction = () => {
-    processTransaction(form as Transaction);
+    processTransaction(form, {
+      onSuccess: () => {
+        router.back();
+      },
+    });
   };
 
   return (

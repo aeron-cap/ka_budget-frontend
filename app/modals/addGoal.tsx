@@ -7,13 +7,11 @@ import { useGetAccounts } from "@/hooks/useGetAccounts";
 import { Saving } from "@/types/savings/savings.type";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import { useFocusEffect } from "expo-router";
 import React, {
-  useCallback,
   useEffect,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
 import {
   Animated,
@@ -45,18 +43,10 @@ export default function AddGoalModal({
   goalData,
   isEdit,
 }: AddGoalModalProps) {
-  const { accountList, isFetching, refetch } = useGetAccounts("none");
+  const { data: accounts = [], isPending } = useGetAccounts("none");
   const accountNameList = useMemo(() => {
-    return accountList.map((account) => account.name);
-  }, [accountList]);
-
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-
-      return () => {};
-    }, [refetch]),
-  );
+    return accounts.map((account) => account.name);
+  }, [accounts]);
 
   const [form, setForm] = useState<Saving>({
     id: "",

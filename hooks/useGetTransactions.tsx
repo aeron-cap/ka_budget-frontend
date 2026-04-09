@@ -1,27 +1,13 @@
 import { getAllTransactions } from "@/service/repositories/transactionRepository";
-import { Transaction } from "@/types/transactions/transactions.type";
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useGetUser } from "./useGetUser";
 
 export function useGetTransactions(limits: string) {
-  const { user, isLoading } = useGetUser();
-  const [isFetching, setIsFetching] = useState(false);
-  const [data, setData] = useState<Transaction[]>([]);
-
-  const refetch = useCallback(async () => {
-    if (isLoading || !user) return;
-    setIsFetching(true);
-    try {
-      const result = await getAllTransactions(user.id, limits);
-      setData(result ?? []);
-    } finally {
-      setIsFetching(false);
-    }
-  }, [user, limits, isLoading]);
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
-
-  return { transactionList: data, isFetching, refetch };
+  const { user } = useGetUser();
+  return useQuery({
+    queryKey: ["transactions", limits],
+    queryFn: () => getAllTransactions(user?.id || "", limits),
+    enabled: !!user?.id,
+    refetchOnWindowFocus: true,
+  });
 }

@@ -4,8 +4,7 @@ import { useCreateAccount } from "@/hooks/useCreateAccount";
 import { useGetAccounts } from "@/hooks/useGetAccounts";
 import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect } from "@react-navigation/native";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -23,23 +22,17 @@ type accountListProps = {
 };
 
 export default function AccountsSection({ limits }: accountListProps) {
-  const { accountList, isFetching, refetch } = useGetAccounts(limits);
+  const { data: accounts = [], isPending: isFetching } = useGetAccounts(limits);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentAccount, setCurrentAccount] = useState<Account | null>(null);
-  const { processAccount, isSubmitting } = useCreateAccount();
-
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-
-      return () => {};
-    }, [refetch]),
-  );
+  const { mutate: processAccount, isPending } = useCreateAccount();
 
   const handleSaveAccount = (accountData: Account) => {
-    processAccount(accountData);
-    setIsModalVisible(false);
-    refetch();
+    processAccount(accountData, {
+      onSuccess: () => {
+        setIsModalVisible(false);
+      },
+    });
   };
 
   const handleAccountView = (accountData: Account) => {
@@ -68,7 +61,7 @@ export default function AccountsSection({ limits }: accountListProps) {
         </TouchableOpacity>
       </View>
 
-      {accountList.length === 0 ? (
+      {accounts.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>No Accounts available.</Text>
         </View>
@@ -78,7 +71,7 @@ export default function AccountsSection({ limits }: accountListProps) {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          {accountList.map((account) => {
+          {accounts.map((account) => {
             return (
               <View key={account.id}>
                 <AccountCard

@@ -1,26 +1,25 @@
-import { useGetUser } from "./useGetUser";
-import { useState } from "react";
-import { router } from "expo-router";
 import { deleteAccount } from "@/service/repositories/accountRepository";
+import { Transaction } from "@/types/transactions/transactions.type";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useGetUser } from "./useGetUser";
 
 export function useDeleteAccount() {
-  const { user, isLoading } = useGetUser();
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const removeAccount = async (accountId: string) => {
-    if (isLoading || !user) {
-      return null;
-    }
-
-    setIsDeleting(true);
-    try {
-      await deleteAccount(accountId, user.id);
-    } catch (error) {
+  const { user } = useGetUser();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: Transaction) => {
+      if (!user.id) {
+        throw new Error("User not found");
+      }
+      return await deleteAccount(data.id, user?.id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
+      queryClient.invalidateQueries({ queryKey: ["savings"] });
+    },
+    onError: (error) => {
       console.error("Error deleting account:", error);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  return { removeAccount, isDeleting };
+    },
+  });
 }

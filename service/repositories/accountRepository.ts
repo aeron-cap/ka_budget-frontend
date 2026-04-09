@@ -19,6 +19,14 @@ export async function createAccount(data: Account, userId: string) {
     })
     .returning();
 
+  const transactionDetails: TransactionDetails = {
+    user_id: userId,
+    account: data.name || "",
+    category: data.account_category || "",
+  };
+
+  calculateCurrentBalance(transactionDetails);
+
   return account;
 }
 
@@ -32,6 +40,14 @@ export async function editAccount(
     .set(data)
     .where(and(eq(accountsTable.id, id), eq(accountsTable.user_id, userId)))
     .returning();
+
+  const transactionDetails: TransactionDetails = {
+    user_id: userId,
+    account: data.name || "",
+    category: data.account_category || "",
+  };
+
+  calculateCurrentBalance(transactionDetails);
 
   return account;
 }

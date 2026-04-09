@@ -3,37 +3,24 @@ import {
   editTransaction,
 } from "@/service/repositories/transactionRepository";
 import { Transaction } from "@/types/transactions/transactions.type";
-import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useGetUser } from "./useGetUser";
 
 export function useCreateTransaction() {
-  const { user, isLoading } = useGetUser();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter();
-
-  const processTransaction = async (data: Transaction) => {
-    if (isLoading || !user) {
-      return null;
-    }
-
-    setIsSubmitting(true);
-    try {
-      if (data.id !== "" && typeof data.id === "string") {
-        await editTransaction(data.id, data, user.id);
-        router.dismiss();
+  const { user } = useGetUser();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Transaction) => {
+      if (data.id) {
+        return editTransaction(data.id, data, user?.id);
       } else {
-        const newTransaction = await createTransaction(data, user.id);
-        if (newTransaction) {
-          router.replace("/(tabs)/history");
-        }
+        return createTransaction(data, user?.id);
       }
-    } catch (error) {
-      console.error("Error creating transaction:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return { processTransaction, isSubmitting };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["savings"] });
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
+    },
+  });
 }
