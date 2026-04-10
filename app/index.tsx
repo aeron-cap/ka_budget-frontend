@@ -36,7 +36,6 @@ export default function LoginScreen(): React.JSX.Element {
           savedUser.user_string,
         );
         if (savedLocalUser) {
-          // TODO: fix the keyboard avoiding for add account Modal
           // TODO: when reloading, the login is shown for a brief moment
           // TODO: the fix was in the _layout file, add the checker there, but make it as a helper
           const hasAccount = await getAllAccounts(savedUser.rand_id, "none");
@@ -70,6 +69,11 @@ export default function LoginScreen(): React.JSX.Element {
   };
 
   const handleSaveAccount = async (accountData: Account): Promise<void> => {
+    setShowInitialAddAccountModal(false);
+    router.replace("/(tabs)");
+  };
+
+  const handleSkipAddAccount = (): void => {
     setShowInitialAddAccountModal(false);
     router.replace("/(tabs)");
   };
@@ -129,8 +133,9 @@ export default function LoginScreen(): React.JSX.Element {
       <AddAccount
         isVisible={showInitialAddAccountModal}
         isEdit={false}
-        onClose={() => setShowInitialAddAccountModal(false)}
+        onClose={() => handleSkipAddAccount()}
         onSave={handleSaveAccount}
+        isOnboarding={true}
       />
     </View>
   );

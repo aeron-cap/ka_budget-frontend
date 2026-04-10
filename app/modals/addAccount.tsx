@@ -3,6 +3,7 @@ import DropdownInput from "@/components/dropdownInput";
 import { accountTypes } from "@/constants/accountTypes";
 import { categories } from "@/constants/categories";
 import { Validator } from "@/helpers/helpers";
+import { getLocalUser } from "@/service/local/service";
 import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
@@ -10,7 +11,8 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
-  KeyboardAvoidingView,
+  Keyboard,
+  KeyboardEvent,
   Modal,
   Platform,
   ScrollView,
@@ -29,6 +31,7 @@ interface AddAccountProps {
   onSave: (accountData: Account) => void;
   accountData?: Account | null;
   isEdit: boolean;
+  isOnboarding?: boolean;
 }
 
 export default function AddAccount({
@@ -37,12 +40,14 @@ export default function AddAccount({
   onSave,
   accountData,
   isEdit,
+  isOnboarding = false,
 }: AddAccountProps): React.JSX.Element | null {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [renderModal, setRenderModal] = useState(isVisible);
   const [isValidTransaction, setIsValidTransaction] = useState(false);
+  const [userName, setUserName] = useState("");
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const [form, setForm] = useState<Account>({
     id: "",
@@ -52,8 +57,49 @@ export default function AddAccount({
     current_balance: "0",
     account_category: "",
     color: "#FFFFFF",
-    show_in_home: false,
+    show_in_home: true,
   });
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      const userStr = await getLocalUser();
+      if (userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          if (user && user.name) {
+            setUserName(user.name);
+          }
+        } catch (e) {
+          setUserName("");
+        }
+      }
+    };
+    if (isOnboarding) {
+      fetchUserName();
+    }
+  }, [isOnboarding]);
+
+  useEffect(() => {
+    const showEvent =
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent =
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+
+    const onShow = (e: KeyboardEvent) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    };
+    const onHide = () => {
+      setKeyboardHeight(0);
+    };
+
+    const showSub = Keyboard.addListener(showEvent, onShow);
+    const hideSub = Keyboard.addListener(hideEvent, onHide);
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (isVisible) {
@@ -79,13 +125,14 @@ export default function AddAccount({
         current_balance: accountData ? accountData.current_balance : "0",
         account_category: accountData?.account_category || "",
         color: accountData?.color || "#FFFFFF",
-        show_in_home: accountData?.show_in_home || false,
+        show_in_home: accountData?.show_in_home || true,
       };
       setForm(nextForm);
 
       const { errors } = Validator(nextForm, "Account");
       setIsValidTransaction(errors.length === 0);
     } else {
+      setKeyboardHeight(0);
       Animated.parallel([
         Animated.timing(slideAnim, {
           toValue: SCREEN_HEIGHT,
@@ -99,26 +146,17 @@ export default function AddAccount({
         }),
       ]).start(() => setRenderModal(false));
     }
-  }, [isVisible, slideAnim, fadeAnim, accountData]);
+  }, [isVisible, accountData]);
 
   const handleSave = () => {
     onSave(form);
-    setIsDropdownOpen(false);
-  };
-
-  const handleClose = () => {
-    setIsDropdownOpen(false);
-    onClose();
   };
 
   const handleInputChange = (
     name: keyof typeof form,
     value: string | boolean,
   ) => {
-    const nextForm = {
-      ...form,
-      [name]: value,
-    };
+    const nextForm = { ...form, [name]: value };
     setForm(nextForm);
     const { errors } = Validator(nextForm, "Account");
     setIsValidTransaction(errors.length === 0);
@@ -126,170 +164,188 @@ export default function AddAccount({
 
   if (!renderModal) return null;
 
+  const scrollPaddingBottom =
+    keyboardHeight > 0 ? keyboardHeight + 80 : Platform.OS === "ios" ? 40 : 24;
+
   return (
     <Modal
       visible={renderModal}
       transparent={true}
       animationType="none"
-      onRequestClose={handleClose}
-      statusBarTranslucent
-      navigationBarTranslucent
+      onRequestClose={onClose}
     >
       <View style={styles.modalWrapper}>
         <Animated.View style={[StyleSheet.absoluteFill, { opacity: fadeAnim }]}>
-          <BlurView
-            intensity={60}
-            tint="dark"
-            style={StyleSheet.absoluteFill}
-          />
-          <TouchableOpacity
-            style={styles.dismissArea}
-            activeOpacity={1}
-            onPress={handleClose}
-          />
+          {isOnboarding ? (
+            <View style={styles.onboardingBackground}>
+              <View style={styles.onboardingTopRow}>
+                <TouchableOpacity
+                  style={styles.skipButton}
+                  onPress={onClose}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.skipText}>Let&apos;s do it later</Text>
+                  <Ionicons name="chevron-forward" size={16} color="#A39B95" />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.onboardingHeaderContainer}>
+                <Text style={styles.onboardingGreeting}>
+                  Greetings, {userName}!
+                </Text>
+                <Text style={styles.onboardingSubtitle}>
+                  Let&apos;s get started by adding your first account to track
+                  your wealth.
+                </Text>
+              </View>
+            </View>
+          ) : (
+            <>
+              <BlurView
+                intensity={60}
+                tint="dark"
+                style={StyleSheet.absoluteFill}
+              />
+              <TouchableOpacity
+                style={styles.dismissArea}
+                activeOpacity={1}
+                onPress={onClose}
+              />
+            </>
+          )}
         </Animated.View>
 
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          pointerEvents="box-none"
-          style={styles.keyboardAvoid}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        <Animated.View
+          style={[
+            styles.modalContent,
+            { transform: [{ translateY: slideAnim }] },
+          ]}
         >
-          <Animated.View
-            style={[
-              styles.modalContent,
-              { transform: [{ translateY: slideAnim }] },
+          <ScrollView
+            bounces={false}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="interactive"
+            contentContainerStyle={[
+              styles.scrollContainer,
+              { paddingBottom: scrollPaddingBottom },
             ]}
           >
-            <ScrollView
-              bounces={false}
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps="handled"
-              contentContainerStyle={styles.scrollContainer}
-            >
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>
-                  {isEdit ? "Edit" : "New"} Account
-                </Text>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                {isEdit ? "Edit" : "New"} Account
+              </Text>
 
-                <View style={styles.headerActions}>
-                  <TouchableOpacity
-                    style={styles.switchWrapper}
-                    activeOpacity={0.9}
-                    onPress={() =>
-                      handleInputChange("show_in_home", !form.show_in_home)
-                    }
+              <View style={styles.headerActions}>
+                <TouchableOpacity
+                  style={styles.switchWrapper}
+                  activeOpacity={0.9}
+                  onPress={() =>
+                    handleInputChange("show_in_home", !form.show_in_home)
+                  }
+                >
+                  <View
+                    style={[
+                      styles.checkbox,
+                      form.show_in_home && styles.checkboxActive,
+                    ]}
                   >
-                    <View
-                      style={[
-                        styles.checkbox,
-                        form.show_in_home && styles.checkboxActive,
-                      ]}
-                    >
-                      {form.show_in_home && (
-                        <Ionicons name="checkmark" size={14} color="#1C1816" />
-                      )}
-                    </View>
-                    <Text style={styles.switchHelperText}>Dashboard</Text>
-                  </TouchableOpacity>
+                    {form.show_in_home && (
+                      <Ionicons name="checkmark" size={14} color="#1C1816" />
+                    )}
+                  </View>
+                  <Text style={styles.switchHelperText}>Dashboard</Text>
+                </TouchableOpacity>
 
+                {!isOnboarding && (
                   <TouchableOpacity
                     style={styles.closeButton}
-                    onPress={handleClose}
+                    onPress={onClose}
                   >
                     <Ionicons name="close" size={24} color="#FFFFFF" />
                   </TouchableOpacity>
-                </View>
+                )}
               </View>
+            </View>
 
-              <Text style={styles.inputLabel}>Account Name</Text>
+            <Text style={styles.inputLabel}>Account Name</Text>
+            <TextInput
+              style={styles.inputField}
+              placeholder="e.g. Daily Expenses"
+              placeholderTextColor="#78716C"
+              value={form.name}
+              onChangeText={(value) => handleInputChange("name", value)}
+              selectionColor="#FFFFFF"
+            />
+
+            <Text style={styles.inputLabel}>Account Type</Text>
+            <DropdownInput
+              label=""
+              selectedValue={form.account_type}
+              iconName="wallet-outline"
+              options={accountTypes}
+              onSelect={(text) => handleInputChange("account_type", text)}
+              hasIcon={false}
+            />
+
+            <Text style={styles.inputLabel}>Account Category</Text>
+            <DropdownInput
+              label=""
+              selectedValue={form.account_category}
+              iconName="grid-outline"
+              options={categories}
+              onSelect={(text) => handleInputChange("account_category", text)}
+              hasIcon={false}
+            />
+
+            <Text style={styles.inputLabel}>Initial Balance</Text>
+            <View style={styles.amountInputContainer}>
               <TextInput
-                style={styles.inputField}
-                placeholder="e.g. Chase Checking"
+                style={styles.amountInput}
+                placeholder="0.00"
                 placeholderTextColor="#78716C"
-                value={form.name}
-                onChangeText={(value) => handleInputChange("name", value)}
+                keyboardType="numeric"
+                value={form.initial_balance}
+                onChangeText={(value) =>
+                  handleInputChange("initial_balance", value)
+                }
                 selectionColor="#FFFFFF"
               />
+            </View>
 
-              <Text style={styles.inputLabel}>Account Type</Text>
-              <View style={styles.dropdownContainer}>
-                <DropdownInput
-                  label=""
-                  selectedValue={form.account_type}
-                  iconName="wallet-outline"
-                  options={accountTypes}
-                  onSelect={(text) => handleInputChange("account_type", text)}
-                  hasIcon={false}
-                />
-              </View>
+            <Text style={styles.inputLabel}>Theme Color</Text>
+            <ColorPicker
+              selectedColor={form.color}
+              changeColor={(color) => handleInputChange("color", color)}
+            />
 
-              <Text style={styles.inputLabel}>Account Category</Text>
-              <View style={styles.dropdownContainer}>
-                <DropdownInput
-                  label=""
-                  selectedValue={form.account_category}
-                  iconName="grid-outline"
-                  options={categories}
-                  onSelect={(text) =>
-                    handleInputChange("account_category", text)
-                  }
-                  hasIcon={false}
-                />
-              </View>
-
-              <View style={styles.lowerSection}>
-                <Text style={styles.inputLabel}>Initial Balance</Text>
-                <View style={styles.amountInputContainer}>
-                  <TextInput
-                    style={styles.amountInput}
-                    placeholder="0.00"
-                    placeholderTextColor="#78716C"
-                    keyboardType="numeric"
-                    value={form.initial_balance}
-                    onChangeText={(value) =>
-                      handleInputChange("initial_balance", value)
-                    }
-                    selectionColor="#FFFFFF"
-                  />
-                </View>
-
-                <Text style={styles.inputLabel}>Theme Color</Text>
-                <ColorPicker
-                  selectedColor={form.color}
-                  changeColor={(color) => handleInputChange("color", color)}
-                />
-
-                <TouchableOpacity
-                  style={[
-                    styles.saveBtn,
-                    {
-                      backgroundColor: isValidTransaction
-                        ? form.color
-                        : "rgba(255, 255, 255, 0.1)",
-                    },
-                  ]}
-                  onPress={handleSave}
-                  disabled={!isValidTransaction}
-                  activeOpacity={0.9}
-                >
-                  <Text
-                    style={[
-                      styles.saveBtnText,
-                      !isValidTransaction && styles.saveBtnTextDisabled,
-                      isValidTransaction && {
-                        color: form.color === "#FFFFFF" ? "#1C1816" : "#FFFFFF",
-                      },
-                    ]}
-                  >
-                    {isEdit ? "Edit" : "Save"} Account
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
-            <View style={styles.bottomExtension} />
-          </Animated.View>
-        </KeyboardAvoidingView>
+            <TouchableOpacity
+              style={[
+                styles.saveBtn,
+                {
+                  backgroundColor: isValidTransaction
+                    ? form.color
+                    : "rgba(255, 255, 255, 0.1)",
+                },
+              ]}
+              onPress={handleSave}
+              disabled={!isValidTransaction}
+              activeOpacity={0.9}
+            >
+              <Text
+                style={[
+                  styles.saveBtnText,
+                  !isValidTransaction && styles.saveBtnTextDisabled,
+                  isValidTransaction && {
+                    color: form.color === "#FFFFFF" ? "#1C1816" : "#FFFFFF",
+                  },
+                ]}
+              >
+                {isEdit ? "Edit" : "Save"} Account
+              </Text>
+            </TouchableOpacity>
+          </ScrollView>
+          <View style={styles.bottomExtension} />
+        </Animated.View>
       </View>
     </Modal>
   );
@@ -300,10 +356,40 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
   },
-  keyboardAvoid: {
-    flex: 1,
+  onboardingBackground: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "#1C1816",
+    paddingTop: Platform.OS === "ios" ? 60 : 40,
+    paddingHorizontal: 16,
+  },
+  onboardingTopRow: {
+    flexDirection: "row",
     justifyContent: "flex-end",
     width: "100%",
+  },
+  skipButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+    paddingLeft: 16,
+  },
+  skipText: {
+    fontSize: 14,
+    color: "#A39B95",
+    marginRight: 2,
+    includeFontPadding: false,
+    textAlignVertical: "center",
+  },
+  onboardingHeaderContainer: {},
+  onboardingGreeting: {
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 32,
+    color: "#FFFFFF",
+  },
+  onboardingSubtitle: {
+    fontSize: 18,
+    color: "#A39B95",
+    lineHeight: 22,
   },
   dismissArea: {
     ...StyleSheet.absoluteFillObject,
@@ -317,7 +403,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     paddingHorizontal: 16,
     paddingTop: 24,
-    paddingBottom: Platform.OS === "ios" ? 60 : 40,
+    flexGrow: 1,
   },
   bottomExtension: {
     position: "absolute",
@@ -341,13 +427,11 @@ const styles = StyleSheet.create({
   closeButton: {
     width: 36,
     height: 36,
-    borderRadius: 0,
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     justifyContent: "center",
     alignItems: "center",
   },
   inputLabel: {
-    fontFamily: "PlayfairDisplay_400Regular_Italic",
     fontSize: 14,
     color: "#A39B95",
     marginBottom: 8,
@@ -355,7 +439,6 @@ const styles = StyleSheet.create({
   },
   inputField: {
     backgroundColor: "rgba(255, 255, 255, 0.05)",
-    borderRadius: 0,
     paddingHorizontal: 16,
     height: 60,
     fontFamily: "PlayfairDisplay_600SemiBold",
@@ -366,15 +449,10 @@ const styles = StyleSheet.create({
     minHeight: 60,
     justifyContent: "center",
   },
-  lowerSection: {
-    zIndex: -1,
-    elevation: -1,
-  },
   amountInputContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.05)",
-    borderRadius: 0,
     paddingHorizontal: 16,
     height: 60,
   },
@@ -385,7 +463,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   saveBtn: {
-    borderRadius: 0,
     height: 60,
     justifyContent: "center",
     alignItems: "center",
@@ -403,10 +480,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   switchWrapper: {
+    flexDirection: "row",
     alignItems: "center",
     marginRight: 16,
-    flexDirection: "row",
-    paddingVertical: 8,
   },
   checkbox: {
     width: 18,
@@ -422,7 +498,6 @@ const styles = StyleSheet.create({
     borderColor: "#FFFFFF",
   },
   switchHelperText: {
-    fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 14,
     color: "#FFFFFF",
   },
