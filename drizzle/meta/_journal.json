@@ -57,6 +57,13 @@
       "when": 1775901557385,
       "tag": "0007_stiff_nico_minoru",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1775916821728,
+      "tag": "0008_grey_bucky",
+      "breakpoints": true
     }
   ]
 }
