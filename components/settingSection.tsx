@@ -26,53 +26,29 @@ export default function SettingsSection() {
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Settings</Text>
 
-      <View style={{ flexDirection: "column", gap: "25" }}>
+      <View style={styles.listContainer}>
         <View style={styles.card}>
-          <TouchableOpacity style={styles.settingsRow}>
+          <TouchableOpacity style={styles.settingsRow} activeOpacity={0.4}>
             <View style={styles.rowLeft}>
-              <View style={[styles.iconBox, { backgroundColor: "#EFF6FF" }]}>
-                <Ionicons name="person-outline" size={20} color="#2563EB" />
+              <View style={styles.iconBox}>
+                <Ionicons name="person-outline" size={20} color="#FFFFFF" />
               </View>
               <Text style={styles.rowText}>Personal Information</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#94A3B8" />
+            <Ionicons name="chevron-forward" size={20} color="#78716C" />
           </TouchableOpacity>
-
-          {/* <View style={styles.settingsRow}>
-            <View style={styles.rowLeft}>
-              <View style={[styles.iconBox, { backgroundColor: '#F1F5F9' }]}>
-                <Ionicons name="moon-outline" size={20} color="#475569" />
-              </View>
-              <Text style={styles.rowText}>Dark Mode</Text>
-            </View>
-            <Switch
-              value={isDarkMode}
-              onValueChange={setIsDarkMode}
-              trackColor={{ false: '#E2E8F0', true: '#2563EB' }}
-              thumbColor={'white'}
-            />
-          </View> */}
-
-          {/* <TouchableOpacity style={[styles.settingsRow, styles.lastRow]}>
-            <View style={styles.rowLeft}>
-              <View style={[styles.iconBox, { backgroundColor: "#DCFCE7" }]}>
-                <Ionicons name="help-circle-outline" size={20} color="#16A34A" />
-              </View>
-              <Text style={styles.rowText}>Help & Support</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#94A3B8" />
-          </TouchableOpacity> */}
         </View>
 
         <View style={styles.logoutButtonContainer}>
           <TouchableOpacity
             style={styles.logoutButton}
+            activeOpacity={0.4}
             onPress={() => logout()}
           >
             <View style={styles.rowLeft}>
               <Text style={styles.logoutText}>Logout</Text>
             </View>
-            <Ionicons name="exit" size={20} color="#ffffff" />
+            <Ionicons name="exit" size={20} color="#FD3C4A" />
           </TouchableOpacity>
         </View>
       </View>
@@ -82,35 +58,28 @@ export default function SettingsSection() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingBottom: 40,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#0F172A",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 24,
+    color: "#FFFFFF",
     marginBottom: 16,
   },
+  listContainer: {
+    flexDirection: "column",
+    gap: 24,
+  },
   card: {
-    backgroundColor: "white",
-    borderRadius: 24,
-    padding: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
   },
   settingsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    marginBottom: 4,
-  },
-  lastRow: {
-    marginBottom: 0,
+    height: 80,
+    paddingHorizontal: 16,
   },
   rowLeft: {
     flexDirection: "row",
@@ -119,37 +88,29 @@ const styles = StyleSheet.create({
   iconBox: {
     width: 40,
     height: 40,
-    borderRadius: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,
   },
   rowText: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#1E293B",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#FFFFFF",
   },
   logoutButtonContainer: {
-    marginTop: 20,
-    backgroundColor: "#5a0000",
-    borderRadius: 24,
-    padding: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
   },
   logoutButton: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 12,
+    height: 60,
+    paddingHorizontal: 16,
   },
   logoutText: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#F87171",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#FD3C4A",
   },
 });

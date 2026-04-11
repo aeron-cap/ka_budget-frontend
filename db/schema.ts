@@ -62,8 +62,6 @@ export const accountsTable = sqliteTable("accounts", {
   provider: text("provider"),
   initial_balance: numeric().notNull().default("0"),
   current_balance: numeric().default("0"),
-  account_category: text("account_category").notNull(),
-  color: text().notNull(),
   created_at: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(strftime('%s', 'now'))`),

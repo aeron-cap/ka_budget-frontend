@@ -382,7 +382,7 @@ export const accountProviderUI = {
   ],
   Cash: [
     {
-      name: "Wallet / Purse",
+      name: "Wallet",
       color1: "#8B4513",
       color2: "#A0522D",
       "logo-link": "/assets/logos/wallet.png",

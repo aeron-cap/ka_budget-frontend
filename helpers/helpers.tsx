@@ -16,7 +16,7 @@ const accountRequiredKeys: (keyof Account)[] = [
   "name",
   "account_type",
   "initial_balance",
-  "account_category",
+  "provider",
 ];
 
 const savingRequiredKeys: (keyof Saving)[] = [

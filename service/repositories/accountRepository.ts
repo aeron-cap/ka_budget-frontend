@@ -22,7 +22,7 @@ export async function createAccount(data: Account, userId: string) {
   const transactionDetails: TransactionDetails = {
     user_id: userId,
     account: data.name || "",
-    category: data.account_category || "",
+    category: "",
   };
 
   calculateCurrentBalance(transactionDetails);
@@ -44,7 +44,7 @@ export async function editAccount(
   const transactionDetails: TransactionDetails = {
     user_id: userId,
     account: data.name || "",
-    category: data.account_category || "",
+    category: "",
   };
 
   calculateCurrentBalance(transactionDetails);
@@ -88,8 +88,8 @@ export async function deleteAccount(id: string, userId: string) {
 export async function calculateCurrentBalance(data: TransactionDetails) {
   const results = await db
     .select({
-      income: sql<number>`COALESCE(sum(case when transaction_type = 'Income' then amount else 0 end), 0)`,
-      expense: sql<number>`COALESCE(sum(case when transaction_type = 'Expense' then amount else 0 end), 0)`,
+      income: sql<number>`COALESCE(sum(case when transaction_type = 'Income' and transaction_account = ${data.account} then amount else 0 end), 0)`,
+      expense: sql<number>`COALESCE(sum(case when transaction_type = 'Expense'  and transaction_account = ${data.account} then amount else 0 end), 0)`,
       transferred: sql<number>`COALESCE(sum(case when transaction_type = 'Transfer' and transaction_account = ${data.account} then amount else 0 end), 0)`,
       received: sql<number>`COALESCE(sum(case when transaction_type = 'Transfer' and receiving_account = ${data.account} then amount else 0 end), 0)`,
       fee: sql<number>`COALESCE(sum(case when transaction_type = 'Transfer' and transaction_account = ${data.account} then fee else 0 end), 0)`,
@@ -124,17 +124,27 @@ export async function calculateCurrentBalance(data: TransactionDetails) {
 }
 
 export async function getAccountsAndBalance(userId: string) {
-  const accounts = await db.
-    select()
+  const accounts = await db
+    .select()
     .from(accountsTable)
-    .where(and(eq(accountsTable.user_id, userId), eq(accountsTable.show_in_home, true)));
+    .where(
+      and(
+        eq(accountsTable.user_id, userId),
+        eq(accountsTable.show_in_home, true),
+      ),
+    );
 
   const total = await db
     .select({
       total_balance: sql<number>`COALESCE(sum(current_balance), 0)`,
     })
     .from(accountsTable)
-    .where(and(eq(accountsTable.user_id, userId), eq(accountsTable.show_in_home, true)));
+    .where(
+      and(
+        eq(accountsTable.user_id, userId),
+        eq(accountsTable.show_in_home, true),
+      ),
+    );
 
   return {
     accounts,

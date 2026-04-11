@@ -105,13 +105,13 @@ export default function AddGoalModal({
     }
   }, [isVisible, slideAnim, fadeAnim, goalData, accountNameList]);
 
-  const handleInputChange = (name: keyof typeof form, value: string) => {
+  const handleInputChange = (key: keyof typeof form, value: string) => {
     setForm((prev) => ({
       ...prev,
-      [name]: value,
+      [key]: value,
     }));
 
-    const { errors } = Validator({ ...form, [name]: value }, "Saving");
+    const { errors } = Validator({ ...form, [key]: value }, "Saving");
     setIsSavingsValid(errors.length === 0);
   };
 

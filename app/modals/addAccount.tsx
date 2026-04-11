@@ -1,8 +1,6 @@
-import ColorPicker from "@/components/colorPicker";
 import DropdownInput from "@/components/dropdownInput";
 import { accountProviders, accountTypes } from "@/constants/accountTypes";
-import { categories } from "@/constants/categories";
-import { Validator } from "@/helpers/helpers";
+import { getGradientColors, Validator } from "@/helpers/helpers";
 import { getLocalUser } from "@/service/local/service";
 import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
@@ -54,8 +52,6 @@ export default function AddAccount({
     account_type: accountTypes[0],
     initial_balance: "0",
     current_balance: "0",
-    account_category: "",
-    color: "#FFFFFF",
     show_in_home: true,
     provider: accountProviders[accountTypes[0]][0],
   });
@@ -105,8 +101,6 @@ export default function AddAccount({
         account_type: accountData ? accountData.account_type : accountTypes[0],
         initial_balance: accountData ? accountData.initial_balance : "0",
         current_balance: accountData ? accountData.current_balance : "0",
-        account_category: accountData?.account_category || "",
-        color: accountData?.color || "#FFFFFF",
         show_in_home: accountData?.show_in_home || true,
         provider: accountData?.provider || providers[0] || "",
       };
@@ -151,6 +145,11 @@ export default function AddAccount({
 
     const { errors } = Validator(nextForm, "Account");
     setIsValidTransaction(errors.length === 0);
+  };
+
+  const getProviderColors = (accountType: string, provider: string) => {
+    const colors = getGradientColors(accountType, provider);
+    return colors[0];
   };
 
   if (!renderModal) return null;
@@ -256,8 +255,16 @@ export default function AddAccount({
                 value={form.name}
                 onChangeText={(value) => handleInputChange("name", value)}
                 selectionColor="#FFFFFF"
+                maxLength={25}
               />
-              <View style={{ flexDirection: "row", width: "100%", gap: 12 }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: "100%",
+                  gap: 12,
+                  marginBottom: -8,
+                }}
+              >
                 <View style={{ flex: 1 }}>
                   <Text style={styles.inputLabel}>Account Type</Text>
                   <DropdownInput
@@ -282,15 +289,6 @@ export default function AddAccount({
                   />
                 </View>
               </View>
-              <Text style={styles.inputLabel}>Account Category</Text>
-              <DropdownInput
-                label=""
-                selectedValue={form.account_category}
-                iconName="grid-outline"
-                options={categories}
-                onSelect={(text) => handleInputChange("account_category", text)}
-                hasIcon={false}
-              />
               <Text style={styles.inputLabel}>Initial Balance</Text>
               <View style={styles.amountInputContainer}>
                 <TextInput
@@ -305,17 +303,15 @@ export default function AddAccount({
                   selectionColor="#FFFFFF"
                 />
               </View>
-              <Text style={styles.inputLabel}>Theme Color</Text>
-              <ColorPicker
-                selectedColor={form.color}
-                changeColor={(color) => handleInputChange("color", color)}
-              />
               <TouchableOpacity
                 style={[
                   styles.saveBtn,
                   {
                     backgroundColor: isValidTransaction
-                      ? form.color
+                      ? getProviderColors(
+                          form.account_type,
+                          form.provider || "",
+                        )
                       : "rgba(255, 255, 255, 0.1)",
                   },
                 ]}
@@ -328,7 +324,13 @@ export default function AddAccount({
                     styles.saveBtnText,
                     !isValidTransaction && styles.saveBtnTextDisabled,
                     isValidTransaction && {
-                      color: form.color === "#FFFFFF" ? "#1C1816" : "#FFFFFF",
+                      color:
+                        getProviderColors(
+                          form.account_type,
+                          form.provider || "",
+                        ) === "#FFFFFF"
+                          ? "#1C1816"
+                          : "#FFFFFF",
                     },
                   ]}
                 >

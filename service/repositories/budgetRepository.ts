@@ -87,8 +87,8 @@ export async function deleteBudget(id: string, userId: string) {
 export async function calculateCurrentAmount(data: TransactionDetails) {
   const results = await db
     .select({
-      income: sql<number>`COALESCE(sum(case when transaction_type = 'Income' and transaction_category = ${data.category} then amount else 0 end), 0)`,
-      expense: sql<number>`COALESCE(sum(case when transaction_type = 'Expense' and transaction_category = ${data.category} then amount else 0 end), 0)`,
+      income: sql<number>`COALESCE(sum(case when transaction_type = 'Income' and transaction_category = ${data.category} and transaction_account = ${data.account} then amount else 0 end), 0)`,
+      expense: sql<number>`COALESCE(sum(case when transaction_type = 'Expense' and transaction_category = ${data.category} and transaction_account = ${data.account} then amount else 0 end), 0)`,
       transferred: sql<number>`COALESCE(sum(case when transaction_type = 'Transfer' and transaction_account = ${data.account} and transaction_category = ${data.category} then amount else 0 end), 0)`,
       received: sql<number>`COALESCE(sum(case when transaction_type = 'Transfer' and receiving_account = ${data.account} and transaction_category = ${data.category} then amount else 0 end), 0)`,
       fee: sql<number>`COALESCE(sum(case when transaction_type = 'Transfer' and transaction_account = ${data.account} and transaction_category = ${data.category} then fee else 0 end), 0)`,

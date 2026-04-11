@@ -79,7 +79,7 @@ export default function AccountCard({
 }
 
 const screenWidth = Dimensions.get("window").width;
-const cardWidth = screenWidth * 0.75;
+const cardWidth = screenWidth * 0.7;
 
 const styles = StyleSheet.create({
   accountCard: {
@@ -88,6 +88,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     padding: 16,
     justifyContent: "space-between",
+    borderRadius: 12,
   },
   iconContainer: {
     width: 36,

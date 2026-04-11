@@ -30,16 +30,11 @@ export async function createTransaction(data: Transaction, userId: string) {
 
 export async function editTransaction(
   id: string,
-  data: Partial<Transaction>,
+  data: Transaction,
   userId: string,
 ) {
-  const transaction = await db
-    .update(transactionsTable)
-    .set(data)
-    .where(
-      and(eq(transactionsTable.id, id), eq(transactionsTable.user_id, userId)),
-    )
-    .returning();
+  await deleteTransaction(id, userId);
+  const transaction = await createTransaction(data, userId);
 
   updateAccountBalances(transaction, userId);
 

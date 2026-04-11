@@ -2,11 +2,15 @@ import AccountsSection from "@/components/accountsSection";
 import ProfileCard from "@/components/profileCard";
 import SettingsSection from "@/components/settingSection";
 import { useGetUser } from "@/hooks/useGetUser";
+import { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import EditUser from "../modals/editUser";
 
 export default function Profile() {
   const { user } = useGetUser();
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.header}>
@@ -21,6 +25,8 @@ export default function Profile() {
         <AccountsSection limits="none" />
         <SettingsSection />
       </ScrollView>
+
+      <EditUser isVisible={isEditModalVisible} onClose={() => {}} />
     </SafeAreaView>
   );
 }

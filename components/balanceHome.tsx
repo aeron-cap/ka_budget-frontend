@@ -1,9 +1,14 @@
+import { getGradientColors } from "@/helpers/helpers";
 import { useGetAccountsAndBalance } from "@/hooks/useGetAccountsAndBalance";
 import { LinearGradient } from "expo-linear-gradient";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function BalanceHome() {
-  const {data: accounts, isPending} = useGetAccountsAndBalance();
+  const { data: accounts, isPending } = useGetAccountsAndBalance();
+
+  const getAccountColor = (accountType: string, provider: string) => {
+    return getGradientColors(accountType, provider)[0];
+  };
 
   if (isPending || accounts?.accounts.length === 0) {
     return (
@@ -14,9 +19,17 @@ export default function BalanceHome() {
           end={{ x: 1, y: 1 }}
           style={styles.background}
         />
-        <View style={{ ...StyleSheet.absoluteFillObject, justifyContent: "center", alignItems: "center"}}>
-          <View style={{ justifyContent: "center", alignItems: "center"}}>
-            <Text style={styles.addAccountsText}>Add Accounts from Profile to Show here.</Text>
+        <View
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <Text style={styles.addAccountsText}>
+              Add Accounts from Profile to Show here.
+            </Text>
           </View>
         </View>
       </View>
@@ -28,7 +41,7 @@ export default function BalanceHome() {
   };
 
   const getAndFormatBalance = () => {
-    const balance: number = accounts?.total_balance || 0; 
+    const balance: number = accounts?.total_balance || 0;
 
     return balance.toLocaleString("en-US", {
       style: "currency",
@@ -51,26 +64,32 @@ export default function BalanceHome() {
           <View style={styles.headerRow}>
             <Text style={styles.headerText}>Total Balance for Accounts:</Text>
           </View>
-            <ScrollView
-              horizontal={true} 
-              showsHorizontalScrollIndicator={false}
-              style={{ flexGrow: 0 }} 
-              contentContainerStyle={styles.tagsSection}
-            >
-              {accounts?.accounts.map((account, idx) => (
-                <View
-                  key={idx}
-                  style={[
-                    styles.tagPill,
-                    { backgroundColor: account.color + "90" },
-                  ]}
-                >
-                  <Text style={styles.tagText}>
-                    {shortenAccountName(account.name)}
-                  </Text>
-                </View>
-              ))}
-            </ScrollView>
+          <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            style={{ flexGrow: 0 }}
+            contentContainerStyle={styles.tagsSection}
+          >
+            {accounts?.accounts.map((account, idx) => (
+              <View
+                key={idx}
+                style={[
+                  styles.tagPill,
+                  {
+                    backgroundColor:
+                      getAccountColor(
+                        account.account_type,
+                        account.provider || "",
+                      ) + "90",
+                  },
+                ]}
+              >
+                <Text style={styles.tagText}>
+                  {shortenAccountName(account.name)}
+                </Text>
+              </View>
+            ))}
+          </ScrollView>
           <Text style={styles.balanceText}>{balance}</Text>
         </View>
       </View>
@@ -182,5 +201,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "500",
     marginTop: 4,
-  }
+  },
 });
