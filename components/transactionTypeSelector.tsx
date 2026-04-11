@@ -23,6 +23,7 @@ export default function TransactionTypeSelector({
         return (
           <TouchableOpacity
             key={type}
+            activeOpacity={0.9}
             onPress={() => onSelect(type)}
             style={[
               styles.button,
@@ -34,7 +35,9 @@ export default function TransactionTypeSelector({
             <Text
               style={[
                 styles.text,
-                isActive ? styles.activeText : styles.inactiveText,
+                isActive
+                  ? { color: activeColor === "#FFFFFF" ? "#1C1816" : "#FFFFFF" }
+                  : styles.inactiveText,
               ]}
             >
               {type}
@@ -49,35 +52,23 @@ export default function TransactionTypeSelector({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    backgroundColor: "white",
-    padding: 6,
-    borderRadius: 24,
-    marginHorizontal: 24,
-    marginTop: -32,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 4,
-    zIndex: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    height: 60,
+    marginHorizontal: 16,
   },
   button: {
     flex: 1,
-    paddingVertical: 14,
-    borderRadius: 18,
+    justifyContent: "center",
     alignItems: "center",
   },
   inactiveButton: {
     backgroundColor: "transparent",
   },
   text: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  activeText: {
-    color: "white",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 16,
   },
   inactiveText: {
-    color: "#64748B",
+    color: "#78716C",
   },
 });

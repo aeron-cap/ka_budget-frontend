@@ -6,19 +6,14 @@ import { Validator } from "@/helpers/helpers";
 import { useGetAccounts } from "@/hooks/useGetAccounts";
 import { Saving } from "@/types/savings/savings.type";
 import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
   KeyboardAvoidingView,
   Modal,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -116,16 +111,12 @@ export default function AddGoalModal({
       [name]: value,
     }));
 
-    const { errors } = Validator(form, "Saving");
+    const { errors } = Validator({ ...form, [name]: value }, "Saving");
     setIsSavingsValid(errors.length === 0);
   };
 
   const handleSave = () => {
     onSave(form);
-  };
-
-  const handleClose = () => {
-    onClose();
   };
 
   if (!renderModal) return null;
@@ -135,120 +126,112 @@ export default function AddGoalModal({
       visible={renderModal}
       transparent={true}
       animationType="none"
-      onRequestClose={handleClose}
-      statusBarTranslucent
+      onRequestClose={onClose}
+      statusBarTranslucent={true}
     >
-      <View style={styles.modalWrapper}>
-        <Animated.View style={[StyleSheet.absoluteFill, { opacity: fadeAnim }]}>
-          <BlurView
-            intensity={60}
-            tint="dark"
-            style={StyleSheet.absoluteFill}
-          />
-          <TouchableOpacity
-            style={styles.dismissArea}
-            activeOpacity={1}
-            onPress={handleClose}
-          />
-        </Animated.View>
-
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "padding"}
-          pointerEvents="box-none"
-          style={styles.keyboardAvoid}
-        >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardAvoid}
+      >
+        <View style={styles.modalWrapper}>
           <Animated.View
             style={[
               styles.modalContent,
-              { transform: [{ translateY: slideAnim }] },
+              { transform: [{ translateY: slideAnim }], opacity: fadeAnim },
             ]}
           >
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>
-                {isEdit ? "Edit" : "New"} Savings Goal
-              </Text>
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={handleClose}
-              >
-                <Ionicons name="close" size={20} color="#64748B" />
-              </TouchableOpacity>
-            </View>
-
-            <View style={{ flexDirection: "row", gap: 12 }}>
-              <View style={{ flexDirection: "column", width: "50%" }}>
-                <Text style={styles.inputLabel}>Goal Name</Text>
-                <TextInput
-                  style={styles.inputField}
-                  placeholder="e.g. Dream House"
-                  placeholderTextColor="#94A3B8"
-                  value={form.name}
-                  onChangeText={(text) => handleInputChange("name", text)}
-                />
+            <ScrollView
+              bounces={false}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="interactive"
+              contentContainerStyle={styles.scrollContainer}
+            >
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>
+                  {isEdit ? "Edit" : "New"} Savings Goal
+                </Text>
+                <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                  <Ionicons name="close" size={24} color="#FFFFFF" />
+                </TouchableOpacity>
               </View>
 
-              <View style={{ flexDirection: "column", width: "50%" }}>
-                <Text style={styles.inputLabel}>Category</Text>
-                <DropdownInput
-                  label=""
-                  selectedValue={form.saving_category}
-                  iconName="radio-button-on"
-                  options={categories}
-                  onSelect={(text) =>
-                    handleInputChange("saving_category", text)
-                  }
-                  hasIcon={false}
-                />
-              </View>
-            </View>
-
-            <View style={{ flexDirection: "row", gap: 12 }}>
-              <View style={{ flexDirection: "column", width: "50%" }}>
-                <Text style={styles.inputLabel}>Initial Amount</Text>
-                <View style={styles.amountInputContainer}>
-                  <Text style={styles.currencyPrefix}>P</Text>
+              <View style={styles.row}>
+                <View style={styles.flexItem}>
+                  <Text style={styles.inputLabel}>Goal Name</Text>
                   <TextInput
-                    style={styles.amountInput}
-                    placeholder=""
-                    placeholderTextColor="#94A3B8"
-                    keyboardType="numeric"
-                    value={form.initial_amount}
-                    onChangeText={(text) =>
-                      handleInputChange("initial_amount", text)
+                    style={styles.inputField}
+                    placeholder="e.g. Dream House"
+                    placeholderTextColor="#78716C"
+                    value={form.name}
+                    onChangeText={(text) => handleInputChange("name", text)}
+                    selectionColor="#FFFFFF"
+                  />
+                </View>
+
+                <View style={styles.flexItem}>
+                  <Text style={styles.inputLabel}>Category</Text>
+                  <DropdownInput
+                    label=""
+                    selectedValue={form.saving_category}
+                    iconName="grid-outline"
+                    options={categories}
+                    onSelect={(text) =>
+                      handleInputChange("saving_category", text)
                     }
+                    hasIcon={false}
                   />
                 </View>
               </View>
 
-              <View style={{ flexDirection: "column", width: "50%" }}>
-                <Text style={styles.inputLabel}>Target Amount</Text>
-                <View style={styles.amountInputContainer}>
-                  <Text style={styles.currencyPrefix}>P</Text>
-                  <TextInput
-                    style={styles.amountInput}
-                    placeholder=""
-                    placeholderTextColor="#94A3B8"
-                    keyboardType="numeric"
-                    value={form.goal_amount}
-                    onChangeText={(text) =>
-                      handleInputChange("goal_amount", text)
-                    }
-                  />
+              <View style={styles.row}>
+                <View style={styles.flexItem}>
+                  <Text style={styles.inputLabel}>Initial Amount</Text>
+                  <View style={styles.amountInputContainer}>
+                    <Text style={styles.currencyPrefix}>P</Text>
+                    <TextInput
+                      style={styles.amountInput}
+                      placeholder="0.00"
+                      placeholderTextColor="#78716C"
+                      keyboardType="numeric"
+                      value={form.initial_amount}
+                      onChangeText={(text) =>
+                        handleInputChange("initial_amount", text)
+                      }
+                      selectionColor="#FFFFFF"
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.flexItem}>
+                  <Text style={styles.inputLabel}>Target Amount</Text>
+                  <View style={styles.amountInputContainer}>
+                    <Text style={styles.currencyPrefix}>P</Text>
+                    <TextInput
+                      style={styles.amountInput}
+                      placeholder="0.00"
+                      placeholderTextColor="#78716C"
+                      keyboardType="numeric"
+                      value={form.goal_amount}
+                      onChangeText={(text) =>
+                        handleInputChange("goal_amount", text)
+                      }
+                      selectionColor="#FFFFFF"
+                    />
+                  </View>
                 </View>
               </View>
-            </View>
 
-            <Text style={styles.inputLabel}>Account</Text>
-            <DropdownInput
-              label=""
-              selectedValue={form.account}
-              iconName="radio-button-on"
-              options={accountNameList}
-              onSelect={(text) => handleInputChange("account", text)}
-              hasIcon={false}
-            />
+              <Text style={styles.inputLabel}>Account</Text>
+              <DropdownInput
+                label=""
+                selectedValue={form.account}
+                iconName="wallet-outline"
+                options={accountNameList}
+                onSelect={(text) => handleInputChange("account", text)}
+                hasIcon={false}
+              />
 
-            <View style={styles.lowerSection}>
               <Text style={styles.inputLabel}>Theme Color</Text>
               <ColorPicker
                 selectedColor={form.color}
@@ -256,55 +239,58 @@ export default function AddGoalModal({
               />
 
               <TouchableOpacity
-                style={[styles.saveBtn, { backgroundColor: form.color }]}
+                style={[
+                  styles.saveBtn,
+                  {
+                    backgroundColor: isSavingsValid
+                      ? form.color
+                      : "rgba(255, 255, 255, 0.1)",
+                  },
+                ]}
+                activeOpacity={0.9}
                 onPress={handleSave}
+                disabled={!isSavingsValid}
               >
-                <Text style={styles.saveBtnText}>
+                <Text
+                  style={[
+                    styles.saveBtnText,
+                    !isSavingsValid && styles.saveBtnTextDisabled,
+                    isSavingsValid && {
+                      color: form.color === "#FFFFFF" ? "#1C1816" : "#FFFFFF",
+                    },
+                  ]}
+                >
                   {isEdit ? "Edit" : "Create"} Goal
                 </Text>
               </TouchableOpacity>
-            </View>
-
+            </ScrollView>
             <View style={styles.bottomExtension} />
           </Animated.View>
-        </KeyboardAvoidingView>
-      </View>
+        </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  keyboardAvoid: {
+    flex: 1,
+  },
   modalWrapper: {
     flex: 1,
     justifyContent: "flex-end",
   },
-  keyboardAvoid: {
-    width: "100%",
-    justifyContent: "flex-end",
-  },
-  dismissArea: {
-    ...StyleSheet.absoluteFillObject,
-  },
   modalContent: {
-    backgroundColor: "white",
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    paddingBottom: Platform.OS === "ios" ? 40 : 32,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 10,
+    flex: 1,
+    backgroundColor: "#1C1816",
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255, 255, 255, 0.1)",
+    paddingTop: Platform.OS === "ios" ? 60 : 40,
   },
-  bottomExtension: {
-    position: "absolute",
-    bottom: -1000,
-    left: 0,
-    right: 0,
-    height: 1000,
-    backgroundColor: "white",
+  scrollContainer: {
+    flexGrow: 1,
+    paddingHorizontal: 16,
+    paddingBottom: Platform.OS === "ios" ? 60 : 40,
   },
   modalHeader: {
     flexDirection: "row",
@@ -313,130 +299,77 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   modalTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#0F172A",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 24,
+    color: "#FFFFFF",
   },
   closeButton: {
     width: 36,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: "#F1F5F9",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     justifyContent: "center",
     alignItems: "center",
   },
+  row: {
+    flexDirection: "row",
+    width: "100%",
+    gap: 12,
+  },
+  flexItem: {
+    flex: 1,
+  },
   inputLabel: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#475569",
+    fontSize: 14,
+    color: "#A39B95",
     marginBottom: 8,
     marginTop: 16,
   },
   inputField: {
-    backgroundColor: "#F8FAFC",
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    borderRadius: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     paddingHorizontal: 16,
-    height: 60,
-    fontSize: 15,
-    color: "#1E293B",
+    height: 52,
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 14,
+    color: "#FFFFFF",
   },
   amountInputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F8FAFC",
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    borderRadius: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     paddingHorizontal: 16,
-    height: 50,
+    height: 60,
   },
   currencyPrefix: {
-    fontSize: 15,
-    color: "#64748B",
-    fontWeight: "600",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#78716C",
     marginRight: 8,
   },
   amountInput: {
     flex: 1,
-    fontSize: 15,
-    color: "#1E293B",
-  },
-  dropdownZIndexWrapper: {
-    ...(Platform.OS === "ios"
-      ? { zIndex: 1000 }
-      : { elevation: 1000, zIndex: 1000 }),
-  },
-  dropdownAnchor: {
-    position: "relative",
-    zIndex: 1000,
-  },
-  absoluteDropdownList: {
-    position: "absolute",
-    top: 54,
-    left: 0,
-    right: 0,
-    backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    borderRadius: 12,
-    paddingVertical: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 10,
-    zIndex: 1000,
-  },
-  dropdownTrigger: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#F8FAFC",
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    height: 50,
-  },
-  dropdownText: {
-    fontSize: 15,
-    color: "#1E293B",
-  },
-  dropdownItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F1F5F9",
-  },
-  lastDropdownItem: {
-    borderBottomWidth: 0,
-  },
-  dropdownItemText: {
-    fontSize: 15,
-    color: "#475569",
-  },
-  dropdownItemTextActive: {
-    color: "#2563EB",
-    fontWeight: "600",
-  },
-  lowerSection: {
-    ...(Platform.OS === "ios" ? { zIndex: -1 } : { elevation: -1, zIndex: -1 }),
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#FFFFFF",
   },
   saveBtn: {
-    borderRadius: 14,
-    height: 54,
+    height: 60,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 32,
   },
   saveBtnText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "700",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+  },
+  saveBtnTextDisabled: {
+    color: "#78716C",
+  },
+  bottomExtension: {
+    position: "absolute",
+    bottom: -1000,
+    left: 0,
+    right: 0,
+    height: 1000,
+    backgroundColor: "#1C1816",
   },
 });

@@ -43,15 +43,16 @@ export default function DateAndFileInputs({
       setShowPicker(false);
     }
   };
+
   return (
-    <View style={[styles.row, styleType === "Transfer" ? { height: 86 } : {}]}>
+    <View style={styles.container}>
       <TouchableOpacity
         style={styles.dateCard}
-        activeOpacity={0.7}
+        activeOpacity={0.9}
         onPress={togglePicker}
       >
         <Text style={styles.dateText}>{formattedDate}</Text>
-        <Ionicons name="calendar" size={18} color="#94A3B8" />
+        <Ionicons name="calendar" size={20} color="#78716C" />
       </TouchableOpacity>
 
       {showPicker && (
@@ -62,59 +63,25 @@ export default function DateAndFileInputs({
           onChange={onChange}
         />
       )}
-
-      {/*<TouchableOpacity style={styles.fileCard} activeOpacity={0.7}>*/}
-      {/*  <Ionicons name="attach" size={24} color="#64748B" />*/}
-      {/*  <Text style={styles.fileText}>Add file</Text>*/}
-      {/*</TouchableOpacity>*/}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  row: {
-    flexDirection: "row",
-    gap: 16,
-    marginBottom: 16,
+  container: {
+    width: "100%",
   },
   dateCard: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: 24,
+    justifyContent: "space-between",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     paddingHorizontal: 16,
-    paddingVertical: 18,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 2,
+    height: 60,
   },
   dateText: {
-    flex: 1,
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#1E293B",
-    marginLeft: 12,
-  },
-  fileCard: {
-    width: 80,
-    backgroundColor: "white",
-    borderRadius: 24,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  fileText: {
-    fontSize: 11,
-    color: "#64748B",
-    fontWeight: "500",
-    marginTop: 4,
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#FFFFFF",
   },
 });

@@ -52,8 +52,8 @@ export default function AddModal() {
     amount: "0",
     note: "",
     transaction_type: "Income",
-    transaction_account: accountNameList[0],
-    receiving_account: accountNameList[0],
+    transaction_account: accountNameList[0] || "",
+    receiving_account: accountNameList[0] || "",
     receiving_category: "",
     saving_name: "",
     fee: "0",
@@ -100,7 +100,6 @@ export default function AddModal() {
     }
 
     const { errors } = Validator(nextForm, "Transaction");
-    console.log(errors);
     setIsValidTransaction(errors.length === 0);
   };
 
@@ -116,36 +115,34 @@ export default function AddModal() {
     <View style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 200 : 0}
+        style={styles.keyboardAvoid}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
       >
-        <SafeAreaView
-          edges={["top"]}
-          style={[styles.header, { backgroundColor: activeColor }]}
-        >
+        <SafeAreaView edges={["top"]} style={styles.header}>
           <View style={styles.headerTopRow}>
             <TouchableOpacity
               onPress={() => router.back()}
-              style={styles.backButton}
+              style={styles.closeButton}
             >
-              <Ionicons name="arrow-back" size={24} color="white" />
+              <Ionicons name="close" size={24} color="#FFFFFF" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>
               {id ? "Edit" : "New"} Transaction
             </Text>
-            <View style={{ width: 40 }} />
+            <View style={{ width: 36 }} />
           </View>
 
           <Text style={styles.howMuchText}>How much?</Text>
 
           <View style={styles.amountContainer}>
             <TextInput
-              style={styles.amountInput}
+              style={[styles.amountInput, { color: activeColor }]}
               value={form.amount}
               onChangeText={(text) => handleInputChange("amount", text)}
               keyboardType="numeric"
-              placeholder="0"
-              placeholderTextColor="rgba(255,255,255,0.6)"
+              placeholder="0.00"
+              placeholderTextColor="#78716C"
+              selectionColor="#FFFFFF"
             />
           </View>
         </SafeAreaView>
@@ -159,19 +156,16 @@ export default function AddModal() {
         <ScrollView
           style={styles.formContainer}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
         >
-          <View
-            style={{
-              flexDirection: "row",
-              width: "100%",
-              gap: 12,
-            }}
-          >
-            <View style={{ flex: 1 }}>
+          <View style={styles.row}>
+            <View style={styles.flexItem}>
+              <Text style={styles.inputLabel}>Category</Text>
               <DropdownInput
-                label="Category"
+                label=""
                 selectedValue={form.transaction_category}
-                iconName="radio-button-on"
+                iconName="grid-outline"
                 options={categories}
                 onSelect={(text) =>
                   handleInputChange("transaction_category", text)
@@ -181,11 +175,12 @@ export default function AddModal() {
             </View>
 
             {form.transaction_type === "Transfer" && (
-              <View style={{ flex: 1 }}>
+              <View style={styles.flexItem}>
+                <Text style={styles.inputLabel}>Receiving Category</Text>
                 <DropdownInput
-                  label="Receiving Category"
+                  label=""
                   selectedValue={form.receiving_category ?? ""}
-                  iconName="radio-button-on"
+                  iconName="grid-outline"
                   options={categories}
                   onSelect={(text) =>
                     handleInputChange("receiving_category", text)
@@ -196,18 +191,13 @@ export default function AddModal() {
             )}
           </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              width: "100%",
-              gap: 12,
-            }}
-          >
-            <View style={{ flex: 1 }}>
+          <View style={styles.row}>
+            <View style={styles.flexItem}>
+              <Text style={styles.inputLabel}>Account</Text>
               <DropdownInput
-                label="Account"
+                label=""
                 selectedValue={form.transaction_account}
-                iconName="trending-up"
+                iconName="wallet-outline"
                 options={accountNameList}
                 onSelect={(text) =>
                   handleInputChange("transaction_account", text)
@@ -217,11 +207,12 @@ export default function AddModal() {
             </View>
 
             {form.transaction_type === "Transfer" && (
-              <View style={{ flex: 1 }}>
+              <View style={styles.flexItem}>
+                <Text style={styles.inputLabel}>Receiving Account</Text>
                 <DropdownInput
-                  label="Receiving Account"
+                  label=""
                   selectedValue={form?.receiving_account ?? accountNameList[0]}
-                  iconName="trending-down"
+                  iconName="wallet-outline"
                   options={accountNameList}
                   onSelect={(text) =>
                     handleInputChange("receiving_account", text)
@@ -232,14 +223,9 @@ export default function AddModal() {
             )}
           </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              width: "100%",
-              gap: 12,
-            }}
-          >
-            <View style={{ flex: 1 }}>
+          <View style={styles.row}>
+            <View style={styles.flexItem}>
+              <Text style={styles.inputLabel}>Date</Text>
               <DateAndFileInputs
                 selectedDate={form.datetime}
                 onSelect={(text) => handleInputChange("datetime", text)}
@@ -248,53 +234,58 @@ export default function AddModal() {
             </View>
 
             {form.transaction_type === "Transfer" && (
-              <View style={{ flex: 1 }}>
-                <View style={styles.transferFeeInput}>
-                  <Text style={styles.inputLabel}>Transfer Fee</Text>
-                  <View style={styles.amountInputContainer}>
-                    <TextInput
-                      style={styles.feeInput}
-                      placeholder="0"
-                      placeholderTextColor="#94A3B8"
-                      keyboardType="numeric"
-                      value={form.fee ?? "0"}
-                      onChangeText={(text) => handleInputChange("fee", text)}
-                    />
-                  </View>
+              <View style={styles.flexItem}>
+                <Text style={styles.inputLabel}>Transfer Fee</Text>
+                <View style={styles.amountInputContainer}>
+                  <TextInput
+                    style={styles.feeInput}
+                    placeholder="0.00"
+                    placeholderTextColor="#78716C"
+                    keyboardType="numeric"
+                    value={form.fee ?? "0"}
+                    onChangeText={(text) => handleInputChange("fee", text)}
+                    selectionColor="#FFFFFF"
+                  />
                 </View>
               </View>
             )}
           </View>
 
-          <View style={styles.noteContainer}>
-            <TextInput
-              style={styles.noteInput}
-              placeholder="Add note..."
-              placeholderTextColor="#94A3B8"
-              multiline
-              value={form.note ?? ""}
-              onChangeText={(text) => handleInputChange("note", text)}
-            />
-          </View>
+          <Text style={styles.inputLabel}>Note</Text>
+          <TextInput
+            style={styles.noteInput}
+            placeholder="Add note..."
+            placeholderTextColor="#78716C"
+            multiline
+            value={form.note ?? ""}
+            onChangeText={(text) => handleInputChange("note", text)}
+            selectionColor="#FFFFFF"
+          />
 
           <TouchableOpacity
             style={[
-              styles.saveButton,
-              isValidTransaction
-                ? { backgroundColor: "#2B60E9" }
-                : { backgroundColor: "gray" },
+              styles.saveBtn,
+              {
+                backgroundColor: isValidTransaction
+                  ? activeColor
+                  : "rgba(255, 255, 255, 0.1)",
+              },
             ]}
-            activeOpacity={0.8}
-            onPress={() => saveTransaction()}
+            activeOpacity={0.9}
+            onPress={saveTransaction}
             disabled={!isValidTransaction}
           >
-            <Ionicons
-              name="checkmark"
-              size={20}
-              color="white"
-              style={{ marginRight: 8 }}
-            />
-            <Text style={styles.saveButtonText}>Save Transaction</Text>
+            <Text
+              style={[
+                styles.saveBtnText,
+                !isValidTransaction && styles.saveBtnTextDisabled,
+                isValidTransaction && {
+                  color: activeColor === "#FFFFFF" ? "#1C1816" : "#FFFFFF",
+                },
+              ]}
+            >
+              {isEdit ? "Edit" : "Save"} Transaction
+            </Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -305,37 +296,39 @@ export default function AddModal() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8FAFC",
+    backgroundColor: "#1C1816",
+  },
+  keyboardAvoid: {
+    flex: 1,
   },
   header: {
-    paddingHorizontal: 20,
-    paddingBottom: 60,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
+    paddingHorizontal: 16,
+    paddingBottom: 24,
+    backgroundColor: "#1C1816",
   },
   headerTopRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 32,
-    paddingTop: 24,
+    marginBottom: 24,
+    paddingTop: 16,
   },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  closeButton: {
+    width: 36,
+    height: 36,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     justifyContent: "center",
     alignItems: "center",
   },
   headerTitle: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "700",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 24,
+    color: "#FFFFFF",
   },
   howMuchText: {
-    color: "rgba(255, 255, 255, 0.8)",
+    fontFamily: "PlayfairDisplay_400Regular",
     fontSize: 16,
+    color: "#A39B95",
     textAlign: "center",
     marginBottom: 8,
   },
@@ -343,110 +336,70 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-  },
-  currencySymbol: {
-    color: "white",
-    fontSize: 32,
-    fontWeight: "700",
-    marginBottom: 10,
-    marginRight: 8,
+    height: 80,
   },
   amountInput: {
+    fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 48,
-    fontWeight: "800",
     color: "#FFFFFF",
     textAlign: "center",
     textAlignVertical: "center",
     width: "100%",
   },
-  feeInput: {
-    fontSize: 12,
-    fontWeight: "800",
-    color: "black",
-    width: "100%",
-  },
   formContainer: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 24,
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
-  noteContainer: {
-    backgroundColor: "white",
-    borderRadius: 24,
-    padding: 20,
-    minHeight: 120,
-    marginBottom: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  noteInput: {
-    fontSize: 15,
-    color: "#1E293B",
-    textAlignVertical: "top",
-  },
-  saveButton: {
+  row: {
     flexDirection: "row",
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 40,
-    shadowColor: "#2B60E9",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  saveButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  keyboardAvoid: {
-    flex: 1,
     width: "100%",
-    justifyContent: "flex-end",
+    gap: 12,
+  },
+  flexItem: {
+    flex: 1,
   },
   inputLabel: {
-    fontSize: 12,
-    color: "#94A3B8",
-    fontWeight: "500",
-    marginBottom: 4,
-  },
-  inputField: {
-    backgroundColor: "#F8FAFC",
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    height: 50,
-    fontSize: 15,
-    color: "#1E293B",
+    fontSize: 14,
+    color: "#A39B95",
+    marginBottom: 8,
+    marginTop: 16,
   },
   amountInputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F8FAFC",
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    borderRadius: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     paddingHorizontal: 16,
-    height: 40,
+    height: 60,
   },
-  currencyPrefix: {
-    fontSize: 15,
-    color: "#64748B",
-    fontWeight: "600",
-    marginRight: 8,
+  feeInput: {
+    flex: 1,
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#FFFFFF",
   },
-  transferFeeInput: {
-    padding: 12,
-    backgroundColor: "white",
-    elevation: 1,
-    marginBottom: 16,
-    borderRadius: 24,
+  noteInput: {
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    minHeight: 120,
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 14,
+    color: "#FFFFFF",
+    textAlignVertical: "top",
+  },
+  saveBtn: {
+    height: 60,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 32,
+    marginBottom: 60,
+  },
+  saveBtnText: {
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+  },
+  saveBtnTextDisabled: {
+    color: "#78716C",
   },
 });

@@ -166,7 +166,6 @@ export default function AddAccount({
               keyboardDismissMode="interactive"
               contentContainerStyle={styles.scrollContainer}
             >
-              {/* --- ONBOARDING SECTION --- */}
               {isOnboarding && (
                 <>
                   <View style={styles.onboardingTopRow}>
@@ -195,7 +194,6 @@ export default function AddAccount({
                 </>
               )}
 
-              {/* --- MAIN HEADER SECTION --- */}
               <View
                 style={[styles.modalHeader, isOnboarding && { marginTop: 24 }]}
               >
@@ -235,7 +233,6 @@ export default function AddAccount({
                 </View>
               </View>
 
-              {/* --- FORM FIELDS --- */}
               <Text style={styles.inputLabel}>Account Name</Text>
               <TextInput
                 style={styles.inputField}
@@ -320,12 +317,10 @@ export default function AddAccount({
 const styles = StyleSheet.create({
   keyboardAvoid: {
     flex: 1,
-    backgroundColor: "#1C1816",
   },
   modalWrapper: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
     flex: 1,
@@ -394,7 +389,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inputLabel: {
-    fontFamily: "PlayfairDisplay_400Regular_Italic",
     fontSize: 14,
     color: "#A39B95",
     marginBottom: 8,
@@ -403,7 +397,7 @@ const styles = StyleSheet.create({
   inputField: {
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     paddingHorizontal: 16,
-    height: 60,
+    height: 52,
     fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 18,
     color: "#FFFFFF",

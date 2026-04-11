@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontFamily: "PlayfairDisplay_600SemiBold",
-    fontSize: 18,
+    fontSize: 14,
     color: "#FFFFFF",
   },
   modalContentWrapper: {
