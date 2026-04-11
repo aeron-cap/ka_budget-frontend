@@ -7,4 +7,5 @@ export type Account = {
   account_category: string;
   color: string;
   show_in_home?: boolean | null;
+  provider: string | null;
 };

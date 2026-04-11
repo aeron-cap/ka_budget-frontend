@@ -1,12 +1,12 @@
 import ColorPicker from "@/components/colorPicker";
 import DropdownInput from "@/components/dropdownInput";
-import { accountTypes } from "@/constants/accountTypes";
+import { accountProviders, accountTypes } from "@/constants/accountTypes";
 import { categories } from "@/constants/categories";
 import { Validator } from "@/helpers/helpers";
 import { getLocalUser } from "@/service/local/service";
 import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -57,7 +57,12 @@ export default function AddAccount({
     account_category: "",
     color: "#FFFFFF",
     show_in_home: true,
+    provider: accountProviders[accountTypes[0]][0],
   });
+
+  const providers = useMemo(() => {
+    return accountProviders[form.account_type] || [];
+  }, [form.account_type]);
 
   useEffect(() => {
     const fetchUserName = async () => {
@@ -103,6 +108,7 @@ export default function AddAccount({
         account_category: accountData?.account_category || "",
         color: accountData?.color || "#FFFFFF",
         show_in_home: accountData?.show_in_home || true,
+        provider: accountData?.provider || providers[0] || "",
       };
       setForm(nextForm);
 
@@ -134,6 +140,15 @@ export default function AddAccount({
   ) => {
     const nextForm = { ...form, [name]: value };
     setForm(nextForm);
+
+    if (
+      name === "account_type" &&
+      !accountProviders[value as string]?.includes(form.provider || "")
+    ) {
+      nextForm.provider = accountProviders[value as string][0] || "";
+      setForm(nextForm);
+    }
+
     const { errors } = Validator(nextForm, "Account");
     setIsValidTransaction(errors.length === 0);
   };
@@ -242,15 +257,31 @@ export default function AddAccount({
                 onChangeText={(value) => handleInputChange("name", value)}
                 selectionColor="#FFFFFF"
               />
-              <Text style={styles.inputLabel}>Account Type</Text>
-              <DropdownInput
-                label=""
-                selectedValue={form.account_type}
-                iconName="wallet-outline"
-                options={accountTypes}
-                onSelect={(text) => handleInputChange("account_type", text)}
-                hasIcon={false}
-              />
+              <View style={{ flexDirection: "row", width: "100%", gap: 12 }}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.inputLabel}>Account Type</Text>
+                  <DropdownInput
+                    label=""
+                    selectedValue={form.account_type}
+                    iconName="wallet-outline"
+                    options={accountTypes}
+                    onSelect={(text) => handleInputChange("account_type", text)}
+                    hasIcon={false}
+                  />
+                </View>
+
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.inputLabel}>Account Provider</Text>
+                  <DropdownInput
+                    label=""
+                    selectedValue={form.provider || ""}
+                    iconName="grid-outline"
+                    options={providers}
+                    onSelect={(text) => handleInputChange("provider", text)}
+                    hasIcon={false}
+                  />
+                </View>
+              </View>
               <Text style={styles.inputLabel}>Account Category</Text>
               <DropdownInput
                 label=""
@@ -398,7 +429,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     paddingHorizontal: 16,
     height: 52,
-    fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 18,
     color: "#FFFFFF",
   },
@@ -411,7 +441,6 @@ const styles = StyleSheet.create({
   },
   amountInput: {
     flex: 1,
-    fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 18,
     color: "#FFFFFF",
   },

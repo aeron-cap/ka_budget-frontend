@@ -1,6 +1,8 @@
 import { accountTypeIcons } from "@/constants/uiElements";
+import { getGradientColors } from "@/helpers/helpers";
 import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import {
   Dimensions,
   StyleSheet,
@@ -16,10 +18,14 @@ type AccountCardProps = {
 
 const getAccountIcon = (type: string) => {
   if (type in accountTypeIcons) {
-    return accountTypeIcons[type];
+    return accountTypeIcons[type as keyof typeof accountTypeIcons];
   }
 
   return "wallet-outline";
+};
+
+const getProviderGradient = (account_type: string, provider: string) => {
+  return getGradientColors(account_type, provider);
 };
 
 export default function AccountCard({
@@ -27,66 +33,65 @@ export default function AccountCard({
   onPress,
 }: AccountCardProps) {
   return (
-    <TouchableOpacity
-      style={styles.accountCard}
-      onPress={() => onPress(accountData)}
-      activeOpacity={0.7}
-    >
-      <View style={styles.iconContainer}>
-        <Ionicons
-          name={getAccountIcon(accountData.account_type)}
-          size={20}
-          color={accountData.color || "#2563EB"}
-        />
-      </View>
-
-      <View style={styles.infoContainer}>
-        <Text
-          style={[styles.accountName, { color: accountData.color || "black" }]}
-          numberOfLines={1}
-        >
-          {accountData.name}
-        </Text>
-        <Text style={styles.accountType}>{accountData.account_type}</Text>
-      </View>
-
-      <Text style={styles.balanceText}>
-        {parseFloat(accountData.current_balance || "0").toLocaleString(
-          "en-US",
-          {
-            style: "currency",
-            currency: "PHP",
-            minimumFractionDigits: 2,
-          },
+    <TouchableOpacity onPress={() => onPress(accountData)} activeOpacity={0.9}>
+      <LinearGradient
+        colors={getProviderGradient(
+          accountData.account_type || "",
+          accountData.provider || "",
         )}
-      </Text>
+        start={{ x: -1.5, y: 0 }}
+        end={{ x: 1.5, y: 1 }}
+        style={styles.accountCard}
+      >
+        <View style={styles.iconContainer}>
+          <Ionicons
+            name={getAccountIcon(accountData.account_type)}
+            size={32}
+            color={accountData.color || "#FFFFFF"}
+          />
+        </View>
+
+        <View style={styles.infoContainer}>
+          <Text
+            style={[styles.accountName, { color: "#FFFFFF" }]}
+            numberOfLines={1}
+          >
+            {accountData.name}
+          </Text>
+          <Text style={[styles.accountType, { color: "#FFFFFF" }]}>
+            {accountData.account_type} - {accountData.provider}
+          </Text>
+        </View>
+
+        <Text style={styles.balanceText}>
+          {parseFloat(accountData.current_balance || "0").toLocaleString(
+            "en-US",
+            {
+              style: "currency",
+              currency: "PHP",
+              minimumFractionDigits: 2,
+            },
+          )}
+        </Text>
+      </LinearGradient>
     </TouchableOpacity>
   );
 }
 
 const screenWidth = Dimensions.get("window").width;
-const cardWidth = (screenWidth - 48 - 12) / 2;
+const cardWidth = screenWidth * 0.75;
 
 const styles = StyleSheet.create({
   accountCard: {
     width: cardWidth,
     height: 160,
-    backgroundColor: "white",
-    borderRadius: 24,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     padding: 16,
-    marginBottom: 12,
     justifyContent: "space-between",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 12,
-    elevation: 3,
   },
   iconContainer: {
     width: 36,
     height: 36,
-    borderRadius: 12,
-    backgroundColor: "rgba(43, 96, 233, 0.1)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -94,18 +99,19 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   accountName: {
-    fontSize: 15,
-    fontWeight: "600",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
   },
   accountType: {
-    fontSize: 12,
-    color: "#94A3B8",
-    marginTop: 2,
+    fontFamily: "PlayfairDisplay_400Regular",
+    fontSize: 16,
+    color: "#78716C",
+    marginTop: 4,
   },
   balanceText: {
+    fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 18,
-    fontWeight: "700",
-    color: "#1E293B",
+    color: "#FFFFFF",
     marginTop: "auto",
   },
 });

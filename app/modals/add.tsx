@@ -326,7 +326,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   howMuchText: {
-    fontFamily: "PlayfairDisplay_400Regular",
     fontSize: 16,
     color: "#A39B95",
     textAlign: "center",
@@ -383,7 +382,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
     minHeight: 120,
-    fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 14,
     color: "#FFFFFF",
     textAlignVertical: "top",

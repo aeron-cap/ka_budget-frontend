@@ -1,3 +1,4 @@
+import { accountProviderUI } from "@/constants/uiElements";
 import { Account } from "@/types/accounts/accounts.type";
 import { Saving } from "@/types/savings/savings.type";
 import { Transaction } from "@/types/transactions/transactions.type";
@@ -89,4 +90,25 @@ export function Validator(
   }
 
   return { errors };
+}
+
+export function getGradientColors(
+  accountType: string,
+  provider: string,
+): [string, string] {
+  if (!accountType || !provider) {
+    return ["#ffffff0d", "#ffffff0d"];
+  }
+
+  const uiData = accountProviderUI[
+    accountType as keyof typeof accountProviderUI
+  ].find((ui) => {
+    return ui.name === provider;
+  });
+
+  if (uiData) {
+    return [uiData.color1, uiData.color2];
+  } else {
+    return ["#ffffff0d", "#ffffff0d"];
+  }
 }

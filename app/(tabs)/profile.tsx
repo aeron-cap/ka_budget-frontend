@@ -1,4 +1,5 @@
 import AccountsSection from "@/components/accountsSection";
+import ProfileCard from "@/components/profileCard";
 import SettingsSection from "@/components/settingSection";
 import { useGetUser } from "@/hooks/useGetUser";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -13,9 +14,9 @@ export default function Profile() {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* <View style={styles.contentPadding}>
-          <ProfileCard name={user ? user.name : ""}/>
-        </View> */}
+        <View style={styles.contentPadding}>
+          <ProfileCard name={user ? user.name : ""} />
+        </View>
 
         <AccountsSection limits="none" />
         <SettingsSection />
@@ -27,36 +28,23 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8FAFC",
-    padding: 4,
+    backgroundColor: "#232323",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingHorizontal: 16,
+    paddingTop: 24,
     paddingBottom: 24,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#0F172A",
-  },
-  settingsButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 32,
+    color: "#FFFFFF",
   },
   contentPadding: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
+    marginBottom: 24,
   },
 });

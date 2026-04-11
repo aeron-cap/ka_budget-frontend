@@ -3,6 +3,7 @@ import { useCreateAccount } from "@/hooks/useCreateAccount";
 import { useGetAccounts } from "@/hooks/useGetAccounts";
 import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
   ScrollView,
@@ -43,7 +44,7 @@ export default function AccountsSection({ limits }: accountListProps) {
   };
 
   if (isFetching) {
-    return <ActivityIndicator size="small" color="#000" />;
+    return <ActivityIndicator size="small" color="#FFFFFF" />;
   }
 
   return (
@@ -51,10 +52,17 @@ export default function AccountsSection({ limits }: accountListProps) {
       <View style={styles.headerRow}>
         <Text style={styles.sectionTitle}>My Accounts</Text>
         <TouchableOpacity
-          style={styles.addButton}
+          activeOpacity={0.9}
           onPress={() => handleCreateNewAccount()}
         >
-          <Ionicons name="add" size={20} color="#2563EB" />
+          <LinearGradient
+            colors={["#1C1816", "#67412e"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.addButton}
+          >
+            <Ionicons name="add" size={24} color="#FFFFFF" />
+          </LinearGradient>
         </TouchableOpacity>
       </View>
 
@@ -101,69 +109,34 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 16,
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#0F172A",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 24,
+    color: "#FFFFFF",
   },
   addButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "#DBEAFE",
+    width: 36,
+    height: 36,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     justifyContent: "center",
     alignItems: "center",
   },
   scrollContent: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     gap: 16,
-  },
-  accountCard: {
-    backgroundColor: "#17202A",
-    width: 160,
-    height: 160,
-    borderRadius: 24,
-    padding: 20,
-    justifyContent: "space-between",
-  },
-  cardTopRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  iconBox: {
-    width: 36,
-    height: 36,
-    borderRadius: 12,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  accountNumber: {
-    color: "#94A3B8",
-    fontSize: 13,
-  },
-  cardBottom: {},
-  accountLabel: {
-    color: "#94A3B8",
-    fontSize: 12,
-    marginBottom: 4,
-  },
-  accountBalance: {
-    color: "white",
-    fontSize: 20,
-    fontWeight: "700",
   },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
-    textAlign: "center",
+    alignItems: "center",
+    height: 120,
   },
   emptyText: {
+    fontFamily: "PlayfairDisplay_400Regular",
     fontSize: 16,
-    color: "#888",
+    color: "#78716C",
     textAlign: "center",
   },
 });

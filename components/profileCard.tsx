@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 interface Props {
   name: string;
@@ -9,6 +9,14 @@ export default function ProfileCard({ name }: Props) {
   return (
     <View style={styles.card}>
       <View style={styles.infoContainer}>
+        <View
+          style={{
+            width: 64,
+            height: 64,
+            borderRadius: 32,
+            backgroundColor: "rgba(255, 255, 255, 0.1)",
+          }}
+        />
         <Text style={styles.name}>{name}</Text>
       </View>
     </View>
@@ -17,53 +25,21 @@ export default function ProfileCard({ name }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    borderRadius: 24,
+    flexDirection: "row",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
-  },
-  avatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    borderWidth: 2,
-    borderColor: '#E2E8F0',
   },
   infoContainer: {
-    marginLeft: 16,
-    justifyContent: 'center',
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 16,
   },
   name: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#0F172A',
-    marginBottom: 4,
-  },
-  email: {
-    fontSize: 14,
-    color: '#64748B',
-    marginBottom: 8,
-  },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#EFF6FF',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    alignSelf: 'flex-start',
-  },
-  badgeText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#2563EB',
-    marginLeft: 4,
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 24,
+    color: "#FFFFFF",
   },
 });

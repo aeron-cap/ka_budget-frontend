@@ -59,6 +59,7 @@ export const accountsTable = sqliteTable("accounts", {
   id: text().primaryKey(),
   name: text().notNull(),
   account_type: text("account_type").notNull(),
+  provider: text("provider"),
   initial_balance: numeric().notNull().default("0"),
   current_balance: numeric().default("0"),
   account_category: text("account_category").notNull(),
@@ -69,6 +70,6 @@ export const accountsTable = sqliteTable("accounts", {
   updated_at: integer("updated_at", { mode: "timestamp_ms" })
     .notNull()
     .$onUpdate(() => new Date()),
-  show_in_home: integer('show_in_home', { mode: 'boolean' }).default(false),
+  show_in_home: integer("show_in_home", { mode: "boolean" }).default(false),
   user_id: text("user_id").notNull(),
 });

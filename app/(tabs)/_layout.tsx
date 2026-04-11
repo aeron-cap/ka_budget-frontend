@@ -116,11 +116,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: Platform.OS === "ios" ? 32 : 24,
     height: 60,
-    backgroundColor: "#1C1816",
     marginBottom: 18,
     marginRight: 100,
     marginLeft: 26,
     paddingTop: 10,
+    borderColor: "#1C1816",
   },
   tabBarBackground: {
     flex: 1,
