@@ -36,15 +36,7 @@ export default function LoginScreen(): React.JSX.Element {
           savedUser.user_string,
         );
         if (savedLocalUser) {
-          // TODO: when reloading, the login is shown for a brief moment
-          // TODO: the fix was in the _layout file, add the checker there, but make it as a helper
-          const hasAccount = await getAllAccounts(savedUser.rand_id, "none");
-          if (!hasAccount || hasAccount.length === 0) {
-            setShowInitialAddAccountModal(true);
-          } else {
-            setShowInitialAddAccountModal(false);
-            router.replace("/(tabs)");
-          }
+          await openInitialAddAccountModal(savedLocalUser.id);
         }
       } else {
         const savedLocalUser = await saveLocalUser(trimmedName);
@@ -63,18 +55,16 @@ export default function LoginScreen(): React.JSX.Element {
     if (!hasAccount || hasAccount.length === 0) {
       setShowInitialAddAccountModal(true);
     } else {
-      setShowInitialAddAccountModal(false);
       router.replace("/(tabs)");
+      setShowInitialAddAccountModal(false);
     }
   };
 
   const handleSaveAccount = async (accountData: Account): Promise<void> => {
-    setShowInitialAddAccountModal(false);
     router.replace("/(tabs)");
   };
 
   const handleSkipAddAccount = (): void => {
-    setShowInitialAddAccountModal(false);
     router.replace("/(tabs)");
   };
 
@@ -123,7 +113,7 @@ export default function LoginScreen(): React.JSX.Element {
                   !name.trim() && styles.buttonTextDisabled,
                 ]}
               >
-                Get started
+                Get Started
               </Text>
             </TouchableOpacity>
           </View>

@@ -27,7 +27,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.aeroncap.ka_budgetfrontend"
+      "package": "com.aeroncap.ka_budgetfrontend",
+      "softwareKeyboardLayoutMode": "resize"
     },
     "web": {
       "output": "static",

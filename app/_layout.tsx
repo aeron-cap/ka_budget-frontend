@@ -43,12 +43,10 @@ export default function RootLayout() {
             setHasName(true);
           }
         }
-        await new Promise((resolve) => setTimeout(resolve, 1500));
       } catch (e) {
         console.warn(e);
       } finally {
         setIsReady(true);
-        await SplashScreen.hideAsync();
       }
     }
 
@@ -60,12 +58,13 @@ export default function RootLayout() {
       if (hasName) {
         router.replace("/(tabs)");
       }
+      setTimeout(async () => {
+        await SplashScreen.hideAsync();
+      }, 0);
+    } else {
+      SplashScreen.preventAutoHideAsync();
     }
   }, [isReady, hasName, fontsLoaded, fontError]);
-
-  if (!isReady || (!fontsLoaded && !fontError)) {
-    return null;
-  }
 
   return (
     <QueryClientProvider client={queryClient}>
