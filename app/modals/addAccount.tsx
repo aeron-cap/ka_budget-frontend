@@ -84,12 +84,12 @@ export default function AddAccount({
       Animated.parallel([
         Animated.timing(slideAnim, {
           toValue: 0,
-          duration: 300,
+          duration: 500,
           useNativeDriver: true,
         }),
         Animated.timing(fadeAnim, {
           toValue: 1,
-          duration: 300,
+          duration: 500,
           useNativeDriver: true,
         }),
       ]).start();
@@ -112,12 +112,12 @@ export default function AddAccount({
       Animated.parallel([
         Animated.timing(slideAnim, {
           toValue: SCREEN_HEIGHT,
-          duration: 250,
+          duration: 500,
           useNativeDriver: true,
         }),
         Animated.timing(fadeAnim, {
           toValue: 0,
-          duration: 250,
+          duration: 500,
           useNativeDriver: true,
         }),
       ]).start(() => setRenderModal(false));

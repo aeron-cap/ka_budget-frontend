@@ -16,7 +16,7 @@ export default function ProtrudingAddIcon({ onPress }: ProtrudingAddIconProps) {
       }}
     >
       <LinearGradient
-        colors={["#2B60E9", "#1A3A8A"]}
+        colors={["#1C1816", "#67412e"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.button}
@@ -31,17 +31,13 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",
+    marginLeft: 38,
   },
   button: {
-    width: 68,
-    height: 68,
-    borderRadius: 40,
+    width: 60,
+    height: 60,
     backgroundColor: "#2f95dc",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 80,
-    borderWidth: 4,
-    borderColor: "white",
-    elevation: 8,
   },
 });
