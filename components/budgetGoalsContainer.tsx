@@ -1,16 +1,13 @@
-import AddGoalModal from "@/app/modals/addGoal";
-import { useCreateBudget } from "@/hooks/useCreateBudget";
 import { useGetBudget } from "@/hooks/useGetBudget";
-import { Saving } from "@/types/savings/savings.type";
 import { router } from "expo-router";
-import { useState } from "react";
 import {
-  ActivityIndicator,
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    ActivityIndicator,
+    Dimensions,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import BudgetGoal from "./budgetGoal";
 
@@ -20,7 +17,7 @@ export default function BudgetGoalContainer() {
   const { data: budgets = [], isPending: isFetching } = useGetBudget("5");
 
   if (isFetching) {
-    return <ActivityIndicator size="small" color="#000" />;
+    return <ActivityIndicator size="small" color="#FFFFFF" />;
   }
 
   if (budgets.length === 0) {
@@ -31,11 +28,17 @@ export default function BudgetGoalContainer() {
     <View style={style.wrapper}>
       <View style={style.headerContainer}>
         <Text style={style.headerText}>Saving Goals</Text>
-        <Text onPress={() => router.push("/(tabs)/insights")}>See more</Text>
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() => router.push("/(tabs)/insights")}
+        >
+          <Text style={style.seeMoreText}>See more</Text>
+        </TouchableOpacity>
       </View>
       <ScrollView
         horizontal={true}
         showsHorizontalScrollIndicator={false}
+        style={style.scrollView}
         contentContainerStyle={style.scrollContent}
       >
         {(budgets ?? []).map((b, idx) => {
@@ -52,44 +55,35 @@ export default function BudgetGoalContainer() {
 
 const style = StyleSheet.create({
   wrapper: {
-    width: SCREEN_WIDTH,
-    alignSelf: "center",
-    height: 220,
-    margin: 8,
-    marginBottom: 24,
+    marginTop: 24,
+    marginBottom: 8,
+  },
+  scrollView: {
+    // Negative margin to allow the horizontal scroll to bleed to the screen edges
+    // while keeping the content aligned with the parent padding
+    marginHorizontal: -16,
   },
   scrollContent: {
-    paddingHorizontal: 24,
-    gap: 8,
+    paddingHorizontal: 16,
+    gap: 16,
   },
   itemWrapper: {
-    width: SCREEN_WIDTH * 0.5,
+    width: SCREEN_WIDTH * 0.65,
   },
   headerContainer: {
-    paddingLeft: 24,
-    marginBottom: 16,
-    marginRight: 24,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    marginBottom: 16,
   },
   headerText: {
-    fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 24,
+    color: "#FFFFFF",
   },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    textAlign: "center",
-  },
-  emptyText: {
-    fontSize: 16,
-    color: "#888",
-    textAlign: "center",
-  },
-  emptyHelperText: {
+  seeMoreText: {
+    fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 14,
-    color: "#888",
-    textAlign: "center",
+    color: "#A39B95",
   },
 });

@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 type HomeGreetingProps = {
   name: string;
@@ -15,19 +15,19 @@ export default function HomeGreeting({ name }: HomeGreetingProps) {
       return {
         greeting: "Good Afternoon",
         iconName: "sunny-outline",
-        iconColor: "#FF8C00",
+        iconColor: "#F97316",
       };
     } else if (currentHour >= 18 || currentHour < 4) {
       return {
         greeting: "Good Evening",
         iconName: "moon-outline",
-        iconColor: "#94A3B8",
+        iconColor: "#A39B95",
       };
     }
     return {
       greeting: "Good Morning",
       iconName: "sunny-outline",
-      iconColor: "#FFD700",
+      iconColor: "#FBBF24",
     };
   };
 
@@ -53,7 +53,7 @@ export default function HomeGreeting({ name }: HomeGreetingProps) {
         style={styles.icon}
       />
       <Text style={styles.greetText}>
-        {data?.greeting}, {firstName}{" "}
+        {data?.greeting}, {firstName}
       </Text>
     </View>
   );
@@ -63,21 +63,15 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 4,
-    marginBottom: 4,
+    marginBottom: 24,
   },
   icon: {
-    marginRight: 8,
+    marginRight: 12,
   },
   greetText: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: "black",
-  },
-  nameText: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "black",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 22,
+    color: "#FFFFFF",
+    marginBottom: 4,
   },
 });

@@ -6,17 +6,17 @@ import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Animated,
-  Dimensions,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Animated,
+    Dimensions,
+    KeyboardAvoidingView,
+    Modal,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -101,7 +101,7 @@ export default function AddAccount({
         account_type: accountData ? accountData.account_type : accountTypes[0],
         initial_balance: accountData ? accountData.initial_balance : "0",
         current_balance: accountData ? accountData.current_balance : "0",
-        show_in_home: accountData?.show_in_home || true,
+        show_in_home: accountData?.show_in_home || false,
         provider: accountData?.provider || providers[0] || "",
       };
       setForm(nextForm);

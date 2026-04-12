@@ -15,36 +15,33 @@ export default function BudgetGoal({ goal, onPress }: BudgetGoalProps) {
 
   const getIcon = (name: string) => {
     if (name in categoryIconsAndTypes) {
-      return categoryIconsAndTypes[name].icon;
+      return categoryIconsAndTypes[name as keyof typeof categoryIconsAndTypes]
+        .icon;
     }
     return "wallet-outline";
   };
 
   return (
     <TouchableOpacity
-      activeOpacity={1}
+      activeOpacity={0.9}
       onPress={() => onPress(goal)}
       style={style.touchContainer}
     >
-      <View style={[style.goalContainer]}>
+      <View style={style.goalContainer}>
         <View>
-          <View
-            style={[
-              style.iconContainer,
-              { backgroundColor: goal.color, borderRadius: 12 },
-            ]}
-          >
+          <View style={[style.iconContainer, { backgroundColor: goal.color }]}>
             <Ionicons
               name={getIcon(goal.saving_category)}
-              size={18}
-              color={"white"}
+              size={24}
+              color={goal.color === "#FFFFFF" ? "#1C1816" : "#FFFFFF"}
             />
           </View>
-          <Text style={style.description}>{goal.name}</Text>
+          <Text style={style.description} numberOfLines={1}>
+            {goal.name}
+          </Text>
         </View>
         <View style={style.progress}>
-          <Text style={{ marginBottom: 4, fontSize: 12 }}>
-            {" "}
+          <Text style={style.progressText}>
             {parseFloat(goal.current_amount).toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
@@ -55,12 +52,15 @@ export default function BudgetGoal({ goal, onPress }: BudgetGoalProps) {
               maximumFractionDigits: 2,
             })}
           </Text>
-          <View style={{ overflow: "hidden", borderRadius: 12 }}>
+          <View style={style.progressBarWrapper}>
             <View style={style.progressBarBackground}>
               <View
                 style={[
                   style.progressBarFill,
-                  { width: `${percentage}%`, backgroundColor: goal.color },
+                  {
+                    width: `${percentage > 100 ? 100 : percentage}%`,
+                    backgroundColor: goal.color,
+                  },
                 ]}
               />
             </View>
@@ -72,49 +72,54 @@ export default function BudgetGoal({ goal, onPress }: BudgetGoalProps) {
 }
 
 const style = StyleSheet.create({
+  touchContainer: {
+    flex: 1,
+    borderRadius: 24,
+    padding: 20,
+    width: "100%",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    justifyContent: "space-between",
+  },
   goalContainer: {
     flex: 1,
     flexDirection: "column",
     justifyContent: "space-between",
   },
   iconContainer: {
-    height: 40,
-    width: 40,
+    height: 48,
+    width: 48,
     justifyContent: "center",
     alignItems: "center",
-    padding: 8,
-    marginBottom: 12,
+    borderRadius: 16,
+    marginBottom: 16,
   },
   description: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "slate",
-    marginBottom: 8,
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 20,
+    color: "#FFFFFF",
+    marginBottom: 16,
   },
   progress: {
+    marginBottom: 4,
+  },
+  progressText: {
+    fontFamily: "PlayfairDisplay_400Regular",
+    fontSize: 12,
+    color: "#A39B95",
     marginBottom: 8,
   },
-  touchContainer: {
-    flex: 1,
-    borderRadius: 28,
-    padding: 20,
-    width: 200,
-    backgroundColor: "white",
-    justifyContent: "space-between",
-  },
-  percentageText: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#1E293B",
+  progressBarWrapper: {
+    overflow: "hidden",
+    borderRadius: 12,
   },
   progressBarBackground: {
-    height: 6,
-    backgroundColor: "#F1F5F9",
-    borderRadius: 3,
+    height: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderRadius: 4,
     overflow: "hidden",
   },
   progressBarFill: {
     height: "100%",
-    borderRadius: 3,
+    borderRadius: 4,
   },
 });

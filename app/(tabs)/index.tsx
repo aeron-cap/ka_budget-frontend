@@ -5,7 +5,13 @@ import TransactionList from "@/components/transactionList";
 import { useGetUser } from "@/hooks/useGetUser";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
@@ -29,53 +35,71 @@ export default function Index() {
   }
 
   return (
-    <ScrollView style={{ flex: 1 }}>
-      <SafeAreaView edges={["top"]} style={{ flex: 1 }}>
-        <View style={[styles.screenContainer]}>
-          <HomeGreeting name={userName} />
-          <BalanceHome />
-          <BudgetGoalContainer />
-
-          <View style={styles.transactionContainer}>
-            <View style={styles.headerContainer}>
-              <Text style={styles.headerText}>Recent Transactions</Text>
-              <Text
-                onPress={() => {
-                  router.push("/(tabs)/history");
-                }}
-              >
-                See more
-              </Text>
-            </View>
-            <TransactionList limits="5" />
-          </View>
-        </View>
+    <View style={styles.mainBackground}>
+      <SafeAreaView edges={["top"]} style={styles.headerCard}>
+        <HomeGreeting name={userName} />
+        <BalanceHome />
       </SafeAreaView>
-    </ScrollView>
+
+      <ScrollView
+        style={styles.listContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <BudgetGoalContainer />
+
+        <View style={styles.transactionContainer}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Recent Transactions</Text>
+            <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={() => {
+                router.push("/(tabs)/history");
+              }}
+            >
+              <Text style={styles.seeMoreText}>See more</Text>
+            </TouchableOpacity>
+          </View>
+          <TransactionList limits="5" />
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screenContainer: {
+  mainBackground: {
     flex: 1,
-    backgroundColor: "slate",
-    padding: 24,
+    backgroundColor: "#232323",
+  },
+  headerCard: {
+    backgroundColor: "#1C1816",
+    paddingHorizontal: 16,
+    paddingTop: 24,
+    paddingBottom: 24,
+  },
+  listContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
   },
   transactionContainer: {
     flex: 1,
     paddingBottom: 100,
+    marginTop: 24,
   },
-  headerContainer: {
-    marginBottom: 16,
+  sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    marginBottom: 16,
   },
-  headerText: {
-    fontSize: 18,
-    fontWeight: "bold",
+  sectionTitle: {
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 24,
+    color: "#FFFFFF",
   },
-  transactionsContainer: {
-    gap: 12,
+  seeMoreText: {
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 14,
+    color: "#A39B95",
   },
 });
