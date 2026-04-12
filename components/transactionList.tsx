@@ -1,16 +1,20 @@
 import TransactionDetailsModal from "@/app/modals/transaction";
 import { useGetTransactions } from "@/hooks/useGetTransactions";
 import { Transaction } from "@/types/transactions/transactions.type";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import TransactionRow from "./transactionRow";
 
 type transactionListProps = {
   limits: string;
+  searchQuery?: string;
 };
 
-export default function TransactionList({ limits }: transactionListProps) {
+export default function TransactionList({
+  limits,
+  searchQuery,
+}: transactionListProps) {
   const { data: transactions = [], isPending } = useGetTransactions(limits);
   const [selectedTransaction, setSelectedTransaction] =
     useState<Transaction | null>(null);
@@ -20,6 +24,28 @@ export default function TransactionList({ limits }: transactionListProps) {
     setSelectedTransaction(transaction);
     setIsModalVisible(true);
   };
+
+  const filteredTransactions = useMemo(() => {
+    if (!searchQuery) return transactions;
+
+    if (!transactions) return [];
+
+    return transactions.filter(
+      (t) =>
+        t.note?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        t.transaction_category
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        t.transaction_account
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        t.receiving_account
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        t.amount.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+        t.transaction_type.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }, [transactions, searchQuery]);
 
   if (isPending) {
     return <ActivityIndicator size="small" color="#000" />;
@@ -45,7 +71,7 @@ export default function TransactionList({ limits }: transactionListProps) {
 
   return (
     <View style={style.container}>
-      {(transactions ?? []).map((t: Transaction) => {
+      {(filteredTransactions ?? []).map((t: Transaction) => {
         return (
           <TransactionRow
             key={t.id}

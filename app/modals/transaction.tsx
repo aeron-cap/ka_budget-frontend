@@ -2,17 +2,16 @@ import { categoryIconsAndTypes } from "@/constants/uiElements";
 import { useDeleteTransaction } from "@/hooks/useDeleteTransaction";
 import { Transaction } from "@/types/transactions/transactions.type";
 import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Animated,
-  Dimensions,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Animated,
+    Dimensions,
+    Modal,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -22,6 +21,12 @@ interface TransactionDetailsModalProps {
   onClose: () => void;
   transaction: Transaction | null;
 }
+
+const transactionColors = {
+  Income: "#00A86B",
+  Expense: "#FD3C4A",
+  Transfer: "#2B60E9",
+};
 
 export default function TransactionDetailsModal({
   isVisible,
@@ -68,9 +73,10 @@ export default function TransactionDetailsModal({
 
   const isIncome = transaction.transaction_type === "Income";
   const amountPrefix = isIncome ? "+" : "-";
-  const amountColor = isIncome ? "#10B981" : "#0F172A";
-  const iconBgColor = isIncome ? "#ECFDF5" : "#FEF2F2";
-  const iconColor = isIncome ? "#10B981" : "#EF4444";
+  const typeColor =
+    transactionColors[
+      transaction.transaction_type as keyof typeof transactionColors
+    ] || "#FFFFFF";
 
   const dateObj = new Date(transaction.datetime);
 
@@ -109,7 +115,8 @@ export default function TransactionDetailsModal({
 
   const getIcon = (name: string) => {
     if (name in categoryIconsAndTypes) {
-      return categoryIconsAndTypes[name].icon;
+      return categoryIconsAndTypes[name as keyof typeof categoryIconsAndTypes]
+        .icon;
     }
 
     return "cash-outline";
@@ -121,59 +128,53 @@ export default function TransactionDetailsModal({
       transparent={true}
       animationType="none"
       onRequestClose={onClose}
-      statusBarTranslucent
+      statusBarTranslucent={true}
     >
       <View style={styles.modalWrapper}>
-        <Animated.View style={[StyleSheet.absoluteFill, { opacity: fadeAnim }]}>
-          <BlurView
-            intensity={60}
-            tint="dark"
-            style={StyleSheet.absoluteFill}
-          />
-          <TouchableOpacity
-            style={styles.dismissArea}
-            activeOpacity={1}
-            onPress={onClose}
-          />
-        </Animated.View>
-
         <Animated.View
           style={[
             styles.modalContent,
-            { transform: [{ translateY: slideAnim }] },
+            { transform: [{ translateY: slideAnim }], opacity: fadeAnim },
           ]}
         >
           <View style={styles.headerContainer}>
-            <View style={styles.handleBar} />
-            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-              <Ionicons name="close" size={20} color="#64748B" />
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={onClose}
+              activeOpacity={0.9}
+            >
+              <Ionicons name="close" size={24} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
 
           <View style={styles.headerInfo}>
-            <View
-              style={[styles.iconContainer, { backgroundColor: iconBgColor }]}
-            >
+            <View style={styles.iconContainer}>
               <Ionicons
                 name={getIcon(transaction.transaction_category)}
-                size={32}
-                color={iconColor}
+                size={40}
+                color={typeColor}
               />
             </View>
-            <Text style={[styles.amountText, { color: amountColor }]}>
+            <Text style={[styles.amountText, { color: typeColor }]}>
               {amountPrefix}
-              {transaction.amount}
+              {parseFloat(transaction.amount).toLocaleString("en-US", {
+                style: "currency",
+                currency: "PHP",
+                minimumFractionDigits: 2,
+              })}
             </Text>
-            <Text>{transaction.note}</Text>
+            <Text style={styles.payeeText}>
+              {transaction.note || transaction.transaction_category}
+            </Text>
           </View>
 
           <View style={styles.detailsCard}>
-            <View style={[styles.detailRow]}>
+            <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Date</Text>
               <Text style={styles.detailValue}>{dateTime}</Text>
             </View>
 
-            <View style={[styles.detailRow]}>
+            <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Category</Text>
               <Text style={styles.detailValue}>
                 {transaction.transaction_category}
@@ -191,14 +192,14 @@ export default function TransactionDetailsModal({
           <View style={styles.actionButtonsContainer}>
             <TouchableOpacity
               style={styles.voidButton}
-              activeOpacity={0.7}
+              activeOpacity={0.9}
               onPress={() => voidTransaction()}
             >
               <Text style={styles.voidButtonText}>Void</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.editButton}
-              activeOpacity={0.7}
+              activeOpacity={0.9}
               onPress={() => editTransaction()}
             >
               <Text style={styles.editButtonText}>Edit</Text>
@@ -214,219 +215,97 @@ const styles = StyleSheet.create({
   modalWrapper: {
     flex: 1,
     justifyContent: "flex-end",
-  },
-  dismissArea: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  keyboardAvoid: {
-    width: "100%",
-    justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: "white",
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    paddingHorizontal: 24,
-    paddingTop: 12,
+    backgroundColor: "#1C1816",
+    borderTopWidth: 1,
+    paddingHorizontal: 16,
+    paddingTop: 16,
     paddingBottom: 40,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 10,
   },
   headerContainer: {
-    alignItems: "center",
-    marginBottom: 20,
-    position: "relative",
-  },
-  handleBar: {
-    width: 40,
-    height: 4,
-    backgroundColor: "#CBD5E1",
-    borderRadius: 2,
-    marginBottom: 12,
+    alignItems: "flex-end",
+    marginBottom: 24,
   },
   closeButton: {
-    position: "absolute",
-    right: 0,
-    top: 0,
     width: 36,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: "#F8FAFC",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     justifyContent: "center",
     alignItems: "center",
   },
   headerInfo: {
     alignItems: "center",
-    marginBottom: 14,
+    marginBottom: 32,
   },
   iconContainer: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: 80,
+    height: 80,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 14,
+    marginBottom: 16,
   },
   amountText: {
-    fontSize: 32,
-    fontWeight: "800",
-    marginBottom: 4,
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 40,
+    marginBottom: 8,
   },
   payeeText: {
-    fontSize: 16,
-    color: "#64748B",
-    fontWeight: "500",
+    fontFamily: "PlayfairDisplay_400Regular",
+    fontSize: 18,
+    color: "#A39B95",
   },
   detailsCard: {
-    backgroundColor: "#F8FAFC",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    padding: 24,
+    marginBottom: 32,
   },
   detailRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F1F5F9",
   },
   lastDetailRow: {
-    borderBottomWidth: 0,
     paddingBottom: 0,
   },
   detailLabel: {
-    fontSize: 14,
-    color: "#64748B",
-    fontWeight: "500",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 16,
+    color: "#A39B95",
   },
   detailValue: {
-    fontSize: 14,
-    color: "#0F172A",
-    fontWeight: "600",
-  },
-  statusCompleted: {
-    color: "#10B981",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 16,
+    color: "#FFFFFF",
   },
   actionButtonsContainer: {
     flexDirection: "row",
-    gap: 16,
+    gap: 12,
   },
   voidButton: {
     flex: 1,
-    height: 56,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cancelButton: {
-    flex: 1,
-    height: 56,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "red",
-    backgroundColor: "white",
+    height: 60,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     justifyContent: "center",
     alignItems: "center",
   },
   voidButtonText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#0F172A",
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "red",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#FD3C4A",
   },
   editButton: {
     flex: 1,
-    height: 56,
-    borderRadius: 16,
-    backgroundColor: "#2563EB",
+    height: 60,
+    backgroundColor: "#FFFFFF",
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#2563EB",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
   },
   editButtonText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "white",
-  },
-  saveButton: {
-    flex: 1,
-    height: 56,
-    borderRadius: 16,
-    backgroundColor: "green",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "green",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  saveButtonText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "white",
-  },
-  detailRowEdit: {
-    alignItems: "center",
-  },
-  editInput: {
-    backgroundColor: "#EFF6FF",
-    borderWidth: 1,
-    borderColor: "#BFDBFE",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    fontSize: 14,
-    color: "#1E293B",
-    fontWeight: "600",
-    minWidth: 150,
-    textAlign: "right",
-  },
-  editAmountContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#EFF6FF",
-    borderWidth: 1,
-    borderColor: "#BFDBFE",
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 4,
-    marginBottom: 8,
-  },
-  editAmountPrefix: {
-    fontSize: 24,
-    fontWeight: "800",
-    marginRight: 4,
-  },
-  editAmountInput: {
-    fontSize: 28,
-    fontWeight: "800",
-    minWidth: 100,
-  },
-  editPayeeInput: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#0F172A",
-    backgroundColor: "#EFF6FF",
-    borderWidth: 1,
-    borderColor: "#BFDBFE",
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    minWidth: 180,
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#1C1816",
   },
 });

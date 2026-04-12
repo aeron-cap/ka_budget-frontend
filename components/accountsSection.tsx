@@ -6,11 +6,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import AccountCard from "./accountCards";
@@ -119,7 +119,6 @@ const styles = StyleSheet.create({
   addButton: {
     width: 36,
     height: 36,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
     justifyContent: "center",
     alignItems: "center",
   },

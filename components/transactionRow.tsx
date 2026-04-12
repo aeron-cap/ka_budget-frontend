@@ -9,21 +9,9 @@ interface TransactionRowProps {
 }
 
 const transactionColors = {
-  Income: {
-    bg: "#ECFDF5",
-    icon: "#34D399",
-    text: "#065F46",
-  },
-  Expense: {
-    bg: "#FEF3F2",
-    icon: "#F87171",
-    text: "#B91C1C",
-  },
-  Transfer: {
-    bg: "#EFF6FF",
-    icon: "#60A5FA",
-    text: "#1E40AF",
-  },
+  Income: "#00A86B",
+  Expense: "#FD3C4A",
+  Transfer: "#2B60E9",
 };
 
 export default function TransactionRow({
@@ -32,9 +20,7 @@ export default function TransactionRow({
 }: TransactionRowProps) {
   const dateObj = new Date(transaction.datetime);
   const type = transaction.transaction_type as keyof typeof transactionColors;
-  const bgColor = transactionColors[type].bg || "#F1F5F9";
-  const iconColor = transactionColors[type].icon || "#94A3B8";
-  const textColor = transactionColors[type].text || "#1E293B";
+  const typeColor = transactionColors[type] || "#FFFFFF";
 
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -50,7 +36,8 @@ export default function TransactionRow({
 
   const getIcon = (name: string) => {
     if (name in categoryIconsAndTypes) {
-      return categoryIconsAndTypes[name].icon;
+      return categoryIconsAndTypes[name as keyof typeof categoryIconsAndTypes]
+        .icon;
     }
 
     return "wallet-outline";
@@ -62,17 +49,17 @@ export default function TransactionRow({
       activeOpacity={0.7}
       onPress={onPress}
     >
-      <View style={[style.iconBackground, { backgroundColor: bgColor }]}>
+      <View style={style.iconBackground}>
         <Ionicons
           name={getIcon(transaction.transaction_category)}
-          size={22}
-          color={iconColor}
+          size={24}
+          color={typeColor}
         />
       </View>
 
       <View style={style.infoSection}>
         <Text style={style.nameText} numberOfLines={1}>
-          {transaction.note ?? ""}
+          {transaction.note || transaction.transaction_category}
         </Text>
         <Text style={style.subText}>
           {transaction.transaction_category} • {dateTime}
@@ -80,7 +67,7 @@ export default function TransactionRow({
       </View>
 
       <View style={style.amountSection}>
-        <Text style={[style.amountText, { color: textColor }]}>
+        <Text style={[style.amountText, { color: typeColor }]}>
           {type === "Expense" ? "-" : "+"}
           {parseFloat(transaction.amount).toLocaleString("en-US", {
             style: "currency",
@@ -97,42 +84,36 @@ const style = StyleSheet.create({
   touchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     padding: 16,
-    borderRadius: 20,
     marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 4,
   },
   iconBackground: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
+    width: 48,
+    height: 48,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     justifyContent: "center",
     alignItems: "center",
   },
   infoSection: {
     flex: 1,
-    marginLeft: 10,
+    marginLeft: 16,
   },
   nameText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#1E293B",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#FFFFFF",
   },
   subText: {
-    fontSize: 12,
-    color: "#94A3B8",
-    marginTop: 2,
+    fontSize: 14,
+    color: "#78716C",
+    marginTop: 4,
   },
   amountSection: {
     alignItems: "flex-end",
   },
   amountText: {
-    fontSize: 16,
-    fontWeight: "800",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
   },
 });

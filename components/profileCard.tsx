@@ -26,7 +26,7 @@ export default function ProfileCard({ name }: Props) {
 const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: "#1C1816",
     padding: 20,
     alignItems: "center",
     marginBottom: 24,

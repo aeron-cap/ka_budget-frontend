@@ -59,7 +59,7 @@ export default function SettingsSection() {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
-    paddingBottom: 40,
+    paddingVertical: 28,
   },
   sectionTitle: {
     fontFamily: "PlayfairDisplay_600SemiBold",
