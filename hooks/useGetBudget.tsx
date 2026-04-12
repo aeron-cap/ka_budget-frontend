@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useGetUser } from "./useGetUser";
 
 export function useGetBudget(limits: string) {
-  const { user } = useGetUser();
+  const { data: user } = useGetUser();
   return useQuery({
     queryKey: ["savings", limits],
     queryFn: () => getAllBudgets(user?.id || "", limits),

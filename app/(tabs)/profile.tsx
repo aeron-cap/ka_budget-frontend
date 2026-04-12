@@ -8,8 +8,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import EditUser from "../modals/editUser";
 
 export default function Profile() {
-  const { user } = useGetUser();
+  const { data: user } = useGetUser();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+
+  const editInfo = () => {
+    setIsEditModalVisible(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalVisible(false);
+  };
 
   return (
     <View style={styles.mainBackground}>
@@ -25,10 +33,14 @@ export default function Profile() {
         style={styles.listContainer}
       >
         <AccountsSection limits="none" />
-        <SettingsSection />
+        <SettingsSection editInfo={() => editInfo()} />
       </ScrollView>
 
-      <EditUser isVisible={isEditModalVisible} onClose={() => {}} />
+      <EditUser
+        isVisible={isEditModalVisible}
+        onClose={() => closeEditModal()}
+        user={user ?? ""}
+      />
     </View>
   );
 }

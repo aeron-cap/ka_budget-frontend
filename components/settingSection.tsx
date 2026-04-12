@@ -6,7 +6,11 @@ import { Route, useNavigation } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function SettingsSection() {
+type SettingsSectionProps = {
+  editInfo: () => void;
+};
+
+export default function SettingsSection({ editInfo }: SettingsSectionProps) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const queryClient = useQueryClient();
   const rootNavigation = useNavigation("/");
@@ -22,13 +26,21 @@ export default function SettingsSection() {
     );
   };
 
+  const editPersonalInfo = () => {
+    editInfo();
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Settings</Text>
 
       <View style={styles.listContainer}>
         <View style={styles.card}>
-          <TouchableOpacity style={styles.settingsRow} activeOpacity={0.4}>
+          <TouchableOpacity
+            style={styles.settingsRow}
+            activeOpacity={0.4}
+            onPress={() => editPersonalInfo()}
+          >
             <View style={styles.rowLeft}>
               <View style={styles.iconBox}>
                 <Ionicons name="person-outline" size={20} color="#FFFFFF" />

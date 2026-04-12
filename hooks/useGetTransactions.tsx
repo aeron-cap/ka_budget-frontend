@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useGetUser } from "./useGetUser";
 
 export function useGetTransactions(limits: string) {
-  const { user } = useGetUser();
+  const { data: user } = useGetUser();
   return useQuery({
     queryKey: ["transactions", limits],
     queryFn: () => getAllTransactions(user?.id || "", limits),

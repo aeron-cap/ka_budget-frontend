@@ -1,13 +1,15 @@
+import { useEditUser } from "@/hooks/useEditUser";
 import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  Animated,
-  Dimensions,
-  Modal,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+    Animated,
+    Dimensions,
+    Modal,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -15,12 +17,70 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 type EdituserProps = {
   isVisible: boolean;
   onClose: () => void;
+  user: any;
 };
 
-export default function EditUser({ isVisible, onClose }: EdituserProps) {
+export default function EditUser({ isVisible, onClose, user }: EdituserProps) {
   const [renderModal, setRenderModal] = useState(isVisible);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const { mutate: processEditName, isPending } = useEditUser();
+
+  const [form, setForm] = useState({
+    name: user ? user.name : "",
+  });
+
+  useEffect(() => {
+    if (isVisible) {
+      setRenderModal(true);
+      Animated.parallel([
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+
+      setForm({
+        name: user ? user.name : "",
+      });
+    } else {
+      Animated.parallel([
+        Animated.timing(slideAnim, {
+          toValue: SCREEN_HEIGHT,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start(() => setRenderModal(false));
+    }
+  }, [isVisible, slideAnim, fadeAnim, user]);
+
+  if (!renderModal) return null;
+
+  const handleInputChange = (key: keyof typeof form, value: string) => {
+    setForm((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleUpdate = async () => {
+    processEditName(form.name, {
+      onSuccess: () => {
+        onClose();
+      },
+    });
+  };
 
   return (
     <Modal
@@ -28,88 +88,57 @@ export default function EditUser({ isVisible, onClose }: EdituserProps) {
       transparent={true}
       animationType="none"
       onRequestClose={onClose}
-      statusBarTranslucent
+      statusBarTranslucent={true}
     >
       <View style={styles.modalWrapper}>
-        <Animated.View style={[StyleSheet.absoluteFill, { opacity: fadeAnim }]}>
-          <BlurView
-            intensity={60}
-            tint="dark"
-            style={StyleSheet.absoluteFill}
-          />
-          <TouchableOpacity
-            style={styles.dismissArea}
-            activeOpacity={1}
-            onPress={onClose}
-          />
-        </Animated.View>
-
         <Animated.View
           style={[
             styles.modalContent,
-            { transform: [{ translateY: slideAnim }] },
+            { transform: [{ translateY: slideAnim }], opacity: fadeAnim },
           ]}
         >
           <View style={styles.headerContainer}>
-            <View style={styles.handleBar} />
-            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-              <Ionicons name="close" size={20} color="#64748B" />
+            <Text style={styles.headerTitle}>Edit Profile</Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={onClose}
+              activeOpacity={0.9}
+            >
+              <Ionicons name="close" size={24} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
 
-          {/* <View style={styles.headerInfo}>
-            <View
-              style={[styles.iconContainer, { backgroundColor: iconBgColor }]}
-            >
-              <Ionicons
-                name={getIcon(transaction.transaction_category)}
-                size={32}
-                color={iconColor}
-              />
-            </View>
-            <Text style={[styles.amountText, { color: amountColor }]}>
-              {amountPrefix}
-              {transaction.amount}
-            </Text>
-            <Text>{transaction.note}</Text>
-          </View> */}
-
-          {/* <View style={styles.detailsCard}>
-            <View style={[styles.detailRow]}>
-              <Text style={styles.detailLabel}>Date</Text>
-              <Text style={styles.detailValue}>{dateTime}</Text>
+          <View style={styles.formContainer}>
+            <View style={styles.row}>
+              <View style={styles.flexItem}>
+                <Text style={styles.inputLabel}>Name</Text>
+                <TextInput
+                  style={styles.inputField}
+                  placeholder="Enter your name"
+                  placeholderTextColor="#78716C"
+                  value={form.name}
+                  onChangeText={(text) => handleInputChange("name", text)}
+                  selectionColor="#FFFFFF"
+                  maxLength={25}
+                />
+              </View>
             </View>
 
-            <View style={[styles.detailRow]}>
-              <Text style={styles.detailLabel}>Category</Text>
-              <Text style={styles.detailValue}>
-                {transaction.transaction_category}
-              </Text>
-            </View>
-
-            <View style={[styles.detailRow, styles.lastDetailRow]}>
-              <Text style={styles.detailLabel}>Account</Text>
-              <Text style={styles.detailValue}>
-                {transaction.transaction_account}
-              </Text>
-            </View>
-          </View> */}
-
-          <View style={styles.actionButtonsContainer}>
-            {/* <TouchableOpacity
-              style={styles.voidButton}
+            <TouchableOpacity
+              style={[
+                form.name.trim() === ""
+                  ? {
+                      ...styles.updateButton,
+                      backgroundColor: "rgba(255, 255, 255, 0.5)",
+                    }
+                  : styles.updateButton,
+              ]}
               activeOpacity={0.7}
-              onPress={() => voidTransaction()}
+              onPress={handleUpdate}
+              disabled={form.name.trim() === ""}
             >
-              <Text style={styles.voidButtonText}>Void</Text>
-            </TouchableOpacity> */}
-            {/* <TouchableOpacity
-              style={styles.editButton}
-              activeOpacity={0.7}
-              onPress={() => editTransaction()}
-            >
-              <Text style={styles.editButtonText}>Edit</Text>
-            </TouchableOpacity> */}
+              <Text style={styles.updateButtonText}>Update Profile</Text>
+            </TouchableOpacity>
           </View>
         </Animated.View>
       </View>
@@ -121,219 +150,71 @@ const styles = StyleSheet.create({
   modalWrapper: {
     flex: 1,
     justifyContent: "flex-end",
-  },
-  dismissArea: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  keyboardAvoid: {
-    width: "100%",
-    justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: "white",
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    paddingHorizontal: 24,
-    paddingTop: 12,
+    backgroundColor: "#1C1816",
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255, 255, 255, 0.1)",
+    paddingHorizontal: 16,
+    paddingTop: 16,
     paddingBottom: 40,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 10,
+    minHeight: SCREEN_HEIGHT * 0.88,
   },
   headerContainer: {
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
-    position: "relative",
+    justifyContent: "space-between",
+    marginBottom: 24,
   },
-  handleBar: {
-    width: 40,
-    height: 4,
-    backgroundColor: "#CBD5E1",
-    borderRadius: 2,
-    marginBottom: 12,
+  headerTitle: {
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 24,
+    color: "#FFFFFF",
   },
   closeButton: {
-    position: "absolute",
-    right: 0,
-    top: 0,
     width: 36,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: "#F8FAFC",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     justifyContent: "center",
     alignItems: "center",
   },
-  headerInfo: {
-    alignItems: "center",
-    marginBottom: 14,
+  formContainer: {
+    flex: 1,
+    flexDirection: "column",
   },
-  iconContainer: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 14,
-  },
-  amountText: {
-    fontSize: 32,
-    fontWeight: "800",
-    marginBottom: 4,
-  },
-  payeeText: {
-    fontSize: 16,
-    color: "#64748B",
-    fontWeight: "500",
-  },
-  detailsCard: {
-    backgroundColor: "#F8FAFC",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
-  },
-  detailRow: {
+  row: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F1F5F9",
+    width: "100%",
+    gap: 12,
   },
-  lastDetailRow: {
-    borderBottomWidth: 0,
-    paddingBottom: 0,
-  },
-  detailLabel: {
-    fontSize: 14,
-    color: "#64748B",
-    fontWeight: "500",
-  },
-  detailValue: {
-    fontSize: 14,
-    color: "#0F172A",
-    fontWeight: "600",
-  },
-  statusCompleted: {
-    color: "#10B981",
-  },
-  actionButtonsContainer: {
-    flexDirection: "row",
-    gap: 16,
-  },
-  voidButton: {
+  flexItem: {
     flex: 1,
-    height: 56,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
   },
-  cancelButton: {
-    flex: 1,
-    height: 56,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "red",
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  voidButtonText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#0F172A",
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "red",
-  },
-  editButton: {
-    flex: 1,
-    height: 56,
-    borderRadius: 16,
-    backgroundColor: "#2563EB",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#2563EB",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  editButtonText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "white",
-  },
-  saveButton: {
-    flex: 1,
-    height: 56,
-    borderRadius: 16,
-    backgroundColor: "green",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "green",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  saveButtonText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "white",
-  },
-  detailRowEdit: {
-    alignItems: "center",
-  },
-  editInput: {
-    backgroundColor: "#EFF6FF",
-    borderWidth: 1,
-    borderColor: "#BFDBFE",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    fontSize: 14,
-    color: "#1E293B",
-    fontWeight: "600",
-    minWidth: 150,
-    textAlign: "right",
-  },
-  editAmountContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#EFF6FF",
-    borderWidth: 1,
-    borderColor: "#BFDBFE",
-    borderRadius: 12,
+  inputField: {
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     paddingHorizontal: 16,
-    paddingVertical: 4,
+    height: 60,
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 16,
+    color: "#FFFFFF",
+  },
+  inputLabel: {
+    fontFamily: "PlayfairDisplay_400Regular",
+    fontSize: 14,
+    color: "#A39B95",
     marginBottom: 8,
   },
-  editAmountPrefix: {
-    fontSize: 24,
-    fontWeight: "800",
-    marginRight: 4,
+  updateButton: {
+    height: 60,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 32,
   },
-  editAmountInput: {
-    fontSize: 28,
-    fontWeight: "800",
-    minWidth: 100,
-  },
-  editPayeeInput: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#0F172A",
-    backgroundColor: "#EFF6FF",
-    borderWidth: 1,
-    borderColor: "#BFDBFE",
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    minWidth: 180,
+  updateButtonText: {
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#1C1816",
   },
 });

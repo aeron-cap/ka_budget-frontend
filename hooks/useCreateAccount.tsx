@@ -1,13 +1,13 @@
 import {
-  createAccount,
-  editAccount,
+    createAccount,
+    editAccount,
 } from "@/service/repositories/accountRepository";
 import { Account } from "@/types/accounts/accounts.type";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useGetUser } from "./useGetUser";
 
 export function useCreateAccount() {
-  const { user } = useGetUser();
+  const { data: user } = useGetUser();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: Account) => {

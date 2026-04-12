@@ -1,24 +1,16 @@
 import { getLocalUser } from "@/service/local/service";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export function useGetUser() {
-  const [user, setUser] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const userNameRaw = await getLocalUser();
-        const parsedUser = userNameRaw ? JSON.parse(userNameRaw) : null;
-        setUser(parsedUser);
-      } catch (e) {
-        console.error("Failed to parse user", e);
-      } finally {
-        setIsLoading(false);
+  return useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const localUser = await getLocalUser();
+      if (localUser) {
+        return JSON.parse(localUser);
+      } else {
+        return null;
       }
-    }
-    fetchUser();
-  }, []);
-
-  return { user, isLoading };
+    },
+  });
 }

@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useGetUser } from "./useGetUser";
 
 export function useDeleteAccount() {
-  const { user } = useGetUser();
+  const { data: user } = useGetUser();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: Transaction) => {

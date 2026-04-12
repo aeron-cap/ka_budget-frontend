@@ -15,17 +15,17 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
-  const { user, isLoading } = useGetUser();
+  const { data: user, isPending } = useGetUser();
   const [userName, setUserName] = useState("");
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && user && user.name) {
+    if (!isPending && user && user.name) {
       setUserName(user.name);
     }
-  }, [user, isLoading]);
+  }, [user, isPending]);
 
-  if (isLoading) {
+  if (isPending) {
     return null;
   }
 

@@ -1,13 +1,13 @@
 import {
-  createBugdet,
-  editBudget,
+    createBugdet,
+    editBudget,
 } from "@/service/repositories/budgetRepository";
 import { Saving } from "@/types/savings/savings.type";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useGetUser } from "./useGetUser";
 
 export function useCreateBudget() {
-  const { user } = useGetUser();
+  const { data: user } = useGetUser();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: Saving) => {
