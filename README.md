@@ -66,3 +66,12 @@ npx expo prebuild
 
 adb logcat
 ```
+
+```bash
+# buidling
+on android/
+
+./gradlew assembleRelease
+or
+./gradlew bundleRelease
+```
