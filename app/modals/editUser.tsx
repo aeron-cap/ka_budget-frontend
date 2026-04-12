@@ -33,21 +33,23 @@ export default function EditUser({ isVisible, onClose, user }: EdituserProps) {
   useEffect(() => {
     if (isVisible) {
       setRenderModal(true);
-      Animated.parallel([
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
-
       setForm({
         name: user ? user.name : "",
+      });
+      requestAnimationFrame(() => {
+        Animated.parallel([
+          Animated.spring(slideAnim, {
+            toValue: 0,
+            useNativeDriver: true,
+            damping: 50,
+            stiffness: 500,
+          }),
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+        ]).start();
       });
     } else {
       Animated.parallel([

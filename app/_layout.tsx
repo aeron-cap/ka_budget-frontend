@@ -3,11 +3,11 @@ import { runMigrations } from "@/db/runMigrations";
 import { getLocalUser } from "@/service/local/service";
 import { getUser } from "@/service/repositories/userRepository";
 import {
-  PlayfairDisplay_400Regular,
-  PlayfairDisplay_400Regular_Italic,
-  PlayfairDisplay_600SemiBold,
-  PlayfairDisplay_700Bold,
-  useFonts,
+    PlayfairDisplay_400Regular,
+    PlayfairDisplay_400Regular_Italic,
+    PlayfairDisplay_600SemiBold,
+    PlayfairDisplay_700Bold,
+    useFonts,
 } from "@expo-google-fonts/playfair-display";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";

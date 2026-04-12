@@ -6,11 +6,11 @@ import {
     getUserUsingName,
 } from "@/service/repositories/userRepository";
 import { Account } from "@/types/accounts/accounts.type";
-import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
+    Image,
     Platform,
     StyleSheet,
     Text,
@@ -88,7 +88,11 @@ export default function LoginScreen(): React.JSX.Element {
         <View style={styles.container}>
           <View style={styles.contentWrapper}>
             <View style={styles.logoBadge}>
-              <Ionicons name="wallet-outline" size={48} color="#FFFFFF" />
+              <Image
+                source={require("@/assets/images/Montra-white-transparent.png")}
+                style={{ width: 150, height: 150 }}
+              />
+              <Text style={styles.appNameText}>Montra</Text>
             </View>
 
             <View style={styles.textContainer}>
@@ -163,9 +167,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   logoBadge: {
-    width: 96,
+    width: 120,
     height: 96,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
@@ -217,5 +220,12 @@ const styles = StyleSheet.create({
   },
   buttonTextDisabled: {
     color: "#78716C",
+  },
+  appNameText: {
+    fontFamily: "PlayfairDisplay_700Bold",
+    fontSize: 30,
+    color: "#da9827",
+    letterSpacing: 0.5,
+    marginTop: -12,
   },
 });
