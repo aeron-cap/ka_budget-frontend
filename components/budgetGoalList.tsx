@@ -4,6 +4,7 @@ import { useCreateBudget } from "@/hooks/useCreateBudget";
 import { useGetBudget } from "@/hooks/useGetBudget";
 import { Saving } from "@/types/savings/savings.type";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
@@ -14,10 +15,9 @@ export default function BudgetGoalList() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentGoal, setCurrentGoal] = useState<Saving | null>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const computedHeight = budgets.length > 0 ? budgets.length * 160 : 200;
 
   if (isFetching) {
-    return <ActivityIndicator size="small" color="#000" />;
+    return <ActivityIndicator size="small" color="#FFFFFF" />;
   }
 
   const handleSaveSaving = async (goalData: Saving) => {
@@ -38,13 +38,14 @@ export default function BudgetGoalList() {
 
   const getIcon = (name: string) => {
     if (name in categoryIconsAndTypes) {
-      return categoryIconsAndTypes[name].icon;
+      return categoryIconsAndTypes[name as keyof typeof categoryIconsAndTypes]
+        .icon;
     }
     return "wallet-outline";
   };
 
   return (
-    <View style={[styles.container, { height: computedHeight }]}>
+    <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.headerTitle}>Saving Goals</Text>
       </View>
@@ -84,13 +85,15 @@ export default function BudgetGoalList() {
                   >
                     <Ionicons
                       name={getIcon(goal.saving_category)}
-                      size={20}
-                      color="white"
+                      size={24}
+                      color={goal.color === "#FFFFFF" ? "#1C1816" : "#FFFFFF"}
                     />
                   </View>
 
                   <View style={styles.infoContainer}>
-                    <Text style={styles.goalTitle}>{goal.name}</Text>
+                    <Text style={styles.goalTitle}>
+                      {goal.name} - {goal.account}
+                    </Text>
                     <Text style={styles.goalSubtitle}>
                       {parseFloat(goal.current_amount).toLocaleString("en-US", {
                         minimumFractionDigits: 2,
@@ -122,20 +125,27 @@ export default function BudgetGoalList() {
       )}
 
       <TouchableOpacity
-        style={styles.newGoalButton}
+        activeOpacity={0.7}
         onPress={() => {
           setCurrentGoal(null);
           setIsEdit(false);
           setIsModalVisible(true);
         }}
       >
-        <Ionicons
-          name="flash"
-          size={18}
-          color="#2563EB"
-          style={styles.newGoalIcon}
-        />
-        <Text style={styles.newGoalText}>Set New Saving Goal</Text>
+        <LinearGradient
+          colors={["#1C1816", "#67412e"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.newGoalButton}
+        >
+          <Ionicons
+            name="flash"
+            size={20}
+            color="#FFFFFF"
+            style={styles.newGoalIcon}
+          />
+          <Text style={styles.newGoalText}>Create New Saving/Budget</Text>
+        </LinearGradient>
       </TouchableOpacity>
 
       <AddGoalModal
@@ -152,20 +162,8 @@ export default function BudgetGoalList() {
 }
 
 const styles = StyleSheet.create({
-  touchContainer: {
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
   container: {
     flex: 1,
-    borderRadius: 24,
   },
   headerContainer: {
     flexDirection: "row",
@@ -174,91 +172,86 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#0F172A",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 24,
+    color: "#FFFFFF",
   },
-  manageText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#3B82F6",
+  touchContainer: {
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    padding: 16,
+    marginBottom: 16,
   },
   cardTopRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: 16,
   },
   iconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    width: 48,
+    height: 48,
     justifyContent: "center",
     alignItems: "center",
   },
   infoContainer: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: 16,
   },
   goalTitle: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#1E293B",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 14,
+    color: "#FFFFFF",
     marginBottom: 4,
   },
   goalSubtitle: {
-    fontSize: 12,
-    color: "#64748B",
-    fontWeight: "500",
+    fontFamily: "PlayfairDisplay_400Regular",
+    fontSize: 14,
+    color: "#A39B95",
   },
   percentageText: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#1E293B",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#FFFFFF",
   },
   progressBarBackground: {
-    height: 6,
-    backgroundColor: "#F1F5F9",
-    borderRadius: 3,
-    overflow: "hidden",
+    height: 8,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   progressBarFill: {
     height: "100%",
-    borderRadius: 3,
   },
   newGoalButton: {
-    marginTop: 8,
-    paddingVertical: 16,
-    borderRadius: 20,
-    borderWidth: 1.5,
-    borderStyle: "dashed",
-    borderColor: "#BFDBFE",
-    backgroundColor: "#EFF6FF",
+    height: 60,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 8,
   },
   newGoalIcon: {
     marginRight: 8,
   },
   newGoalText: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#2563EB",
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 18,
+    color: "#FFFFFF",
   },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
-    textAlign: "center",
-    paddingBottom: 20,
+    alignItems: "center",
+    paddingVertical: 40,
   },
   emptyText: {
+    fontFamily: "PlayfairDisplay_400Regular",
     fontSize: 16,
-    color: "#888",
+    color: "#78716C",
     textAlign: "center",
+    marginBottom: 8,
   },
   emptyHelperText: {
+    fontFamily: "PlayfairDisplay_400Regular",
     fontSize: 14,
-    color: "#888",
+    color: "#78716C",
     textAlign: "center",
   },
 });

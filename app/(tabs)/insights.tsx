@@ -4,48 +4,40 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Insights() {
   return (
-    <ScrollView style={{ flex: 1 }}>
-      <SafeAreaView edges={["top"]} style={styles.container}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>Insights</Text>
-        </View>
-
-        {/* <GraphContainer />
-
-        <View style={styles.cashFlowContainer}>
-          <CashflowCard type={"Income"} color={"green"} percent={"10%"} />
-          <CashflowCard type={"Expense"} color={"red"} percent={"10%"} />
-        </View> */}
-
-        <BudgetGoalList />
+    <View style={styles.mainBackground}>
+      <SafeAreaView edges={["top"]} style={styles.headerCard}>
+        <Text style={styles.headerTitle}>Insights</Text>
       </SafeAreaView>
-    </ScrollView>
+
+      <ScrollView
+        style={styles.listContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <BudgetGoalList />
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  mainBackground: {
     flex: 1,
-    padding: 24,
+    backgroundColor: "#232323",
   },
-  headerContainer: {
-    height: 80,
-    padding: 8,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignContent: "center",
-    marginBottom: -18,
+  headerCard: {
+    backgroundColor: "#1C1816",
+    paddingHorizontal: 16,
+    paddingTop: 24,
+    paddingBottom: 24,
   },
-  headerText: {
-    fontWeight: "bold",
-    fontSize: 24,
+  headerTitle: {
+    fontFamily: "PlayfairDisplay_600SemiBold",
+    fontSize: 32,
+    color: "#FFFFFF",
   },
-  calendarButton: {
-    marginTop: 8,
-  },
-  cashFlowContainer: {
-    flexDirection: "row",
-    gap: 16,
-    marginBottom: 16,
+  listContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
 });

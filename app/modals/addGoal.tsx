@@ -8,17 +8,17 @@ import { Saving } from "@/types/savings/savings.type";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Animated,
-  Dimensions,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Animated,
+    Dimensions,
+    KeyboardAvoidingView,
+    Modal,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -166,6 +166,7 @@ export default function AddGoalModal({
                     value={form.name}
                     onChangeText={(text) => handleInputChange("name", text)}
                     selectionColor="#FFFFFF"
+                    maxLength={15}
                   />
                 </View>
 

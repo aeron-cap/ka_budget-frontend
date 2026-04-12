@@ -52,7 +52,7 @@ export default function AccountsSection({ limits }: accountListProps) {
       <View style={styles.headerRow}>
         <Text style={styles.sectionTitle}>My Accounts</Text>
         <TouchableOpacity
-          activeOpacity={0.9}
+          activeOpacity={0.7}
           onPress={() => handleCreateNewAccount()}
         >
           <LinearGradient

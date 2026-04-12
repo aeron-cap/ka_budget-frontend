@@ -4,11 +4,11 @@ import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Dimensions,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 type AccountCardProps = {
@@ -33,7 +33,7 @@ export default function AccountCard({
   onPress,
 }: AccountCardProps) {
   return (
-    <TouchableOpacity onPress={() => onPress(accountData)} activeOpacity={0.9}>
+    <TouchableOpacity onPress={() => onPress(accountData)} activeOpacity={0.7}>
       <LinearGradient
         colors={getProviderGradient(
           accountData.account_type || "",
@@ -47,7 +47,7 @@ export default function AccountCard({
           <Ionicons
             name={getAccountIcon(accountData.account_type)}
             size={32}
-            color={accountData.color || "#FFFFFF"}
+            color={"#FFFFFF"}
           />
         </View>
 

@@ -12,45 +12,45 @@ export default function Profile() {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      <View style={styles.header}>
+    <View style={styles.mainBackground}>
+      <SafeAreaView edges={["top"]} style={styles.headerCard}>
         <Text style={styles.headerTitle}>Profile</Text>
-      </View>
-
-      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.contentPadding}>
           <ProfileCard name={user ? user.name : ""} />
         </View>
+      </SafeAreaView>
 
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={styles.listContainer}
+      >
         <AccountsSection limits="none" />
         <SettingsSection />
       </ScrollView>
 
       <EditUser isVisible={isEditModalVisible} onClose={() => {}} />
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  mainBackground: {
     flex: 1,
     backgroundColor: "#232323",
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  headerCard: {
+    backgroundColor: "#1C1816",
     paddingHorizontal: 16,
     paddingTop: 24,
-    paddingBottom: 24,
   },
   headerTitle: {
     fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 32,
     color: "#FFFFFF",
   },
-  contentPadding: {
-    paddingHorizontal: 16,
-    marginBottom: 24,
+  listContainer: {
+    flex: 1,
+    paddingTop: 16,
   },
+  contentPadding: {},
 });
