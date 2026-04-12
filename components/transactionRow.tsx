@@ -23,12 +23,12 @@ export default function TransactionRow({
   const typeColor = transactionColors[type] || "#FFFFFF";
 
   const formattedDate = new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
+    month: "numeric",
+    day: "2-digit",
   }).format(dateObj);
 
   const formattedTime = new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
+    hour: "2-digit",
     minute: "2-digit",
   }).format(dateObj);
 
@@ -62,7 +62,7 @@ export default function TransactionRow({
           {transaction.note || transaction.transaction_category}
         </Text>
         <Text style={style.subText}>
-          {transaction.transaction_category} • {dateTime}
+          {transaction.transaction_account} • {dateTime}
         </Text>
       </View>
 
@@ -105,7 +105,7 @@ const style = StyleSheet.create({
     color: "#FFFFFF",
   },
   subText: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#78716C",
     marginTop: 4,
   },
