@@ -62,19 +62,6 @@ export default function AddGoalModal({
   useEffect(() => {
     if (isVisible) {
       setRenderModal(true);
-      Animated.parallel([
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
-
       setForm({
         id: goalData?.id ?? "",
         color: goalData?.color ?? THEME_COLORS[0],
@@ -88,6 +75,22 @@ export default function AddGoalModal({
           : "0",
         goal_amount: goalData?.goal_amount ? goalData?.goal_amount : "0",
         saving_category: goalData?.saving_category ?? "",
+      });
+
+      requestAnimationFrame(() => {
+        Animated.parallel([
+          Animated.spring(slideAnim, {
+            toValue: 0,
+            useNativeDriver: true,
+            damping: 50,
+            stiffness: 500,
+          }),
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+        ]).start();
       });
     } else {
       Animated.parallel([
@@ -103,7 +106,7 @@ export default function AddGoalModal({
         }),
       ]).start(() => setRenderModal(false));
     }
-  }, [isVisible, slideAnim, fadeAnim, goalData, accountNameList]);
+  }, [isVisible, goalData, accountNameList]);
 
   const handleInputChange = (key: keyof typeof form, value: string) => {
     setForm((prev) => ({

@@ -82,19 +82,6 @@ export default function AddAccount({
   useEffect(() => {
     if (isVisible) {
       setRenderModal(true);
-      Animated.parallel([
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-      ]).start();
-
       const nextForm = {
         id: accountData ? accountData.id : "",
         name: accountData ? accountData.name : "",
@@ -108,16 +95,32 @@ export default function AddAccount({
 
       const { errors } = Validator(nextForm, "Account");
       setIsValidTransaction(errors.length === 0);
+
+      requestAnimationFrame(() => {
+        Animated.parallel([
+          Animated.spring(slideAnim, {
+            toValue: 0,
+            useNativeDriver: true,
+            damping: 50,
+            stiffness: 500,
+          }),
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      });
     } else {
       Animated.parallel([
         Animated.timing(slideAnim, {
           toValue: SCREEN_HEIGHT,
-          duration: 500,
+          duration: 250,
           useNativeDriver: true,
         }),
         Animated.timing(fadeAnim, {
           toValue: 0,
-          duration: 500,
+          duration: 250,
           useNativeDriver: true,
         }),
       ]).start(() => setRenderModal(false));

@@ -1,8 +1,9 @@
+import { useCreateAccount } from "@/hooks/useCreateAccount";
 import { saveLocalUser, setLocalUser } from "@/service/local/service";
 import { getAllAccounts } from "@/service/repositories/accountRepository";
 import {
-  createUser,
-  getUserUsingName,
+    createUser,
+    getUserUsingName,
 } from "@/service/repositories/userRepository";
 import { Account } from "@/types/accounts/accounts.type";
 import { Ionicons } from "@expo/vector-icons";
@@ -10,12 +11,12 @@ import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Platform,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AddAccount from "./modals/addAccount";
@@ -24,6 +25,7 @@ export default function LoginScreen(): React.JSX.Element {
   const [name, setName] = useState<string>("");
   const [showInitialAddAccountModal, setShowInitialAddAccountModal] =
     useState<boolean>(false);
+  const { mutate: processAccount, isPending } = useCreateAccount();
 
   const handleLogin = async (): Promise<void> => {
     const trimmedName = name.trim();
@@ -61,11 +63,22 @@ export default function LoginScreen(): React.JSX.Element {
   };
 
   const handleSaveAccount = async (accountData: Account): Promise<void> => {
-    router.replace("/(tabs)");
+    processAccount(accountData, {
+      onSuccess: async () => {
+        setShowInitialAddAccountModal(false);
+
+        setTimeout(() => {
+          router.replace("/(tabs)");
+        }, 150);
+      },
+    });
   };
 
   const handleSkipAddAccount = (): void => {
-    router.replace("/(tabs)");
+    setShowInitialAddAccountModal(false);
+    setTimeout(() => {
+      router.replace("/(tabs)");
+    }, 150);
   };
 
   return (
@@ -113,7 +126,7 @@ export default function LoginScreen(): React.JSX.Element {
                   !name.trim() && styles.buttonTextDisabled,
                 ]}
               >
-                Get Started
+                Let&apos;s Get Started
               </Text>
             </TouchableOpacity>
           </View>

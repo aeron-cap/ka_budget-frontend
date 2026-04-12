@@ -20,17 +20,20 @@ export default function Index() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isPending && user && user.name) {
-      setUserName(user.name);
+    if (!user && !isPending) {
+      const timeout = setTimeout(() => {
+        router.replace("/");
+      }, 0);
+
+      return () => clearTimeout(timeout);
     }
-  }, [user, isPending]);
+  }, [user, isPending, router]);
 
   if (isPending) {
     return null;
   }
 
   if (!user) {
-    router.replace("/");
     return null;
   }
 
