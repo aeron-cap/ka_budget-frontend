@@ -103,8 +103,7 @@ const style = StyleSheet.create({
     marginBottom: 4,
   },
   progressText: {
-    fontFamily: "PlayfairDisplay_400Regular",
-    fontSize: 12,
+    fontSize: 14,
     color: "#A39B95",
     marginBottom: 8,
   },

@@ -113,7 +113,6 @@ const style = StyleSheet.create({
     alignItems: "flex-end",
   },
   amountText: {
-    fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 18,
   },
 });

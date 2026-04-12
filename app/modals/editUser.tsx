@@ -195,7 +195,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     paddingHorizontal: 16,
     height: 60,
-    fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 16,
     color: "#FFFFFF",
   },

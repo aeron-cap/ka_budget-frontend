@@ -250,7 +250,7 @@ export default function AddAccount({
               <Text style={styles.inputLabel}>Account Name</Text>
               <TextInput
                 style={styles.inputField}
-                placeholder="e.g. Chase Checking"
+                placeholder="e.g. Personal Wallet"
                 placeholderTextColor="#78716C"
                 value={form.name}
                 onChangeText={(value) => handleInputChange("name", value)}
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     paddingHorizontal: 16,
     height: 52,
-    fontSize: 18,
+    fontSize: 16,
     color: "#FFFFFF",
   },
   amountInputContainer: {

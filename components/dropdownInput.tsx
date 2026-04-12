@@ -1,19 +1,19 @@
 import {
-  accountTypeIcons,
-  categoryIconsAndTypes,
+    accountTypeIcons,
+    categoryIconsAndTypes,
 } from "@/constants/uiElements";
 import { CategoryName } from "@/types/entities/categories.type";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useMemo, useState } from "react";
 import {
-  FlatList,
-  Modal,
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    FlatList,
+    Modal,
+    Platform,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 type DropdownProps = {
@@ -238,7 +238,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "rgba(255, 255, 255, 0.05)",
   },
   optionText: {
-    fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 18,
     color: "#A39B95",
   },

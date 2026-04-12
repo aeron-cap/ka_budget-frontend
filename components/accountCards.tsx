@@ -104,13 +104,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   accountType: {
-    fontFamily: "PlayfairDisplay_400Regular",
     fontSize: 16,
     color: "#78716C",
     marginTop: 4,
   },
   balanceText: {
-    fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 18,
     color: "#FFFFFF",
     marginTop: "auto",

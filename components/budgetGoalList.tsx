@@ -203,12 +203,10 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   goalSubtitle: {
-    fontFamily: "PlayfairDisplay_400Regular",
     fontSize: 14,
     color: "#A39B95",
   },
   percentageText: {
-    fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 18,
     color: "#FFFFFF",
   },

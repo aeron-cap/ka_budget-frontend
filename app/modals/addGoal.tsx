@@ -329,7 +329,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     paddingHorizontal: 16,
     height: 52,
-    fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 14,
     color: "#FFFFFF",
   },
@@ -348,7 +347,6 @@ const styles = StyleSheet.create({
   },
   amountInput: {
     flex: 1,
-    fontFamily: "PlayfairDisplay_600SemiBold",
     fontSize: 18,
     color: "#FFFFFF",
   },
