@@ -4,7 +4,7 @@ import HomeGreeting from "@/components/homeGreeting";
 import TransactionList from "@/components/transactionList";
 import { useGetUser } from "@/hooks/useGetUser";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
     ScrollView,
     StyleSheet,
@@ -16,7 +16,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const { data: user, isPending } = useGetUser();
-  const [userName, setUserName] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -40,7 +39,7 @@ export default function Index() {
   return (
     <View style={styles.mainBackground}>
       <SafeAreaView edges={["top"]} style={styles.headerCard}>
-        <HomeGreeting name={userName} />
+        <HomeGreeting name={user ? user.name : ""} />
         <BalanceHome />
       </SafeAreaView>
 
