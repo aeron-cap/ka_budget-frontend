@@ -130,7 +130,7 @@ export default function LoginScreen(): React.JSX.Element {
                   !name.trim() && styles.buttonTextDisabled,
                 ]}
               >
-                Let&apos;s Get Started
+                {"Let's Get Started"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -167,8 +167,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   logoBadge: {
-    width: 120,
-    height: 96,
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
@@ -213,9 +211,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#1C1816",
-    fontSize: 17,
-    fontWeight: "600",
-    letterSpacing: -0.3,
+    fontSize: 18,
     fontFamily: "PlayfairDisplay_600SemiBold",
   },
   buttonTextDisabled: {
@@ -223,9 +219,8 @@ const styles = StyleSheet.create({
   },
   appNameText: {
     fontFamily: "PlayfairDisplay_700Bold",
-    fontSize: 30,
+    fontSize: 24,
     color: "#da9827",
-    letterSpacing: 0.5,
     marginTop: -12,
   },
 });
